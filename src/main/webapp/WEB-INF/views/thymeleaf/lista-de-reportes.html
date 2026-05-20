@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Reporte de Mascota</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .contenedor-detalle {
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #1a1d20;
+            border-bottom: 2px solid #f1f3f5;
+            padding-bottom: 12px;
+        }
+
+        .alert-success {
+            background-color: #f4fce3;
+            border: 1px solid #d8f5a2;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .alert-success p {
+            margin: 0;
+            color: #37b24d;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .seccion-foto {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .seccion-foto h2 {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #495057;
+            margin-top: 0;
+            margin-bottom: 10px;
+            align-self: flex-start;
+        }
+
+        .seccion-foto img {
+            border-radius: 6px;
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .lista-datos {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 0;
+        }
+
+        .dato-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.95rem;
+        }
+
+        .dato-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .dato-clave {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .dato-valor {
+            color: #212529;
+            text-align: right;
+        }
+
+        .dato-item:last-child .dato-valor {
+            text-align: left;
+            color: #495057;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+<main class="contenedor-detalle">
+    <h1>Detalle del Reporte</h1>
+
+    <div th:if="${mensaje != null}" class="alert-success">
+        <p th:text="${mensaje}"></p>
+    </div>
+
+    <section class="seccion-foto">
+        <h2>Foto adjunta</h2>
+        <img th:src="@{'/imagenes/' + ${imagen.originalFilename}}" alt="Foto de la mascota" />
+    </section>
+
+    <div class="lista-datos">
+        <div class="dato-item">
+            <span class="dato-clave">Tipo de reporte</span>
+            <span class="dato-valor" th:text="${tipoDeReporte}"></span>
+        </div>
+        <div class="dato-item">
+            <span class="dato-clave">Nombre</span>
+            <span class="dato-valor" th:text="${nombre}"></span>
+        </div>
+        <div class="dato-item">
+            <span class="dato-clave">Raza</span>
+            <span class="dato-valor" th:text="${raza}"></span>
+        </div>
+        <div class="dato-item">
+            <span class="dato-clave">Color</span>
+            <span class="dato-valor" th:text="${color}"></span>
+        </div>
+        <div class="dato-item">
+            <span class="dato-clave">Especie</span>
+            <span class="dato-valor" th:text="${especie}"></span>
+        </div>
+        <div class="dato-item">
+            <span class="dato-clave">Tamaño</span>
+            <span class="dato-valor" th:text="${tamano}"></span>
+        </div>
+        <div class="dato-item">
+            <span class="dato-clave">Fecha</span>
+            <span class="dato-valor" th:text="${fecha}"></span>
+        </div>
+        <div class="dato-item">
+            <span class="dato-clave">Ubicación</span>
+            <span class="dato-valor" th:text="${ubicacion}"></span>
+        </div>
+        <div class="dato-item">
+            <span class="dato-clave">Descripción</span>
+            <span class="dato-valor" th:text="${descripcion}"></span>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
