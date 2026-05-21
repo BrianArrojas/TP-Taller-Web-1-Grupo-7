@@ -1,0 +1,190 @@
+[
+  {
+    "tipo": "Gato",
+    "fecha": "2023-01-15",
+    "estado": "Encontrado",
+    "imagen": "img/0.jpg"
+  },
+  {
+    "nombre": "Luna",
+    "tipo": "Gato",
+    "fecha": "2023-02-20",
+    "estado": "Perdido",
+    "imagen": "img/1.jpg"
+  },
+  {
+    "tipo": "Gato",
+    "fecha": "2023-03-10",
+    "estado": "Encontrado",
+    "imagen": "img/2.jpg"
+  },
+  {
+    "nombre": "Simba",
+    "tipo": "Gato",
+    "fecha": "2023-04-01",
+    "estado": "Perdido",
+    "imagen": "img/3.jpg"
+  },
+  {
+    "tipo": "Gato",
+    "fecha": "2023-05-12",
+    "estado": "Encontrado",
+    "imagen": "img/4.jpg"
+  },
+  {
+    "nombre": "Nala",
+    "tipo": "Gato",
+    "fecha": "2023-06-22",
+    "estado": "Perdido",
+    "imagen": "img/5.jpg"
+  },
+  {
+    "tipo": "Gato",
+    "fecha": "2023-07-19",
+    "estado": "Encontrado",
+    "imagen": "img/7.jpg"
+  },
+  {
+    "nombre": "Milo",
+    "tipo": "Gato",
+    "fecha": "2023-08-05",
+    "estado": "Perdido",
+    "imagen": "img/8.jpg"
+  },
+  {
+    "tipo": "Gato",
+    "fecha": "2023-09-14",
+    "estado": "Encontrado",
+    "imagen": "img/9.jpg"
+  },
+  {
+    "nombre": "Leo",
+    "tipo": "Gato",
+    "fecha": "2023-10-02",
+    "estado": "Perdido",
+    "imagen": "img/10.jpg"
+  },
+  {
+    "tipo": "Gato",
+    "fecha": "2023-11-25",
+    "estado": "Encontrado",
+    "imagen": "img/11.jpg"
+  },
+  {
+    "nombre": "Cleo",
+    "tipo": "Gato",
+    "fecha": "2023-12-30",
+    "estado": "Perdido",
+    "imagen": "img/12.jpg"
+  },
+  {
+    "tipo": "Gato",
+    "fecha": "2024-01-08",
+    "estado": "Encontrado",
+    "imagen": "img/13.jpg"
+  },
+  {
+    "nombre": "Tom",
+    "tipo": "Gato",
+    "fecha": "2024-02-16",
+    "estado": "Perdido",
+    "imagen": "img/14.jpg"
+  },
+  {
+    "tipo": "Perro",
+    "fecha": "2024-03-21",
+    "estado": "Encontrado",
+    "imagen": "img/111.jpg"
+  },
+  {
+    "nombre": "Max",
+    "tipo": "Perro",
+    "fecha": "2024-04-03",
+    "estado": "Perdido",
+    "imagen": "img/112.jpg"
+  },
+  {
+    "tipo": "Perro",
+    "fecha": "2024-05-09",
+    "estado": "Encontrado",
+    "imagen": "img/113.jpg"
+  },
+  {
+    "nombre": "Rocky",
+    "tipo": "Perro",
+    "fecha": "2024-06-11",
+    "estado": "Perdido",
+    "imagen": "img/114.jpg"
+  },
+  {
+    "tipo": "Perro",
+    "fecha": "2024-07-15",
+    "estado": "Encontrado",
+    "imagen": "img/115.jpg"
+  },
+  {
+    "nombre": "Coco",
+    "tipo": "Perro",
+    "fecha": "2024-08-20",
+    "estado": "Perdido",
+    "imagen": "img/116.jpg"
+  },
+  {
+    "tipo": "Perro",
+    "fecha": "2024-09-28",
+    "estado": "Encontrado",
+    "imagen": "img/117.jpg"
+  },
+  {
+    "nombre": "Toby",
+    "tipo": "Perro",
+    "fecha": "2024-10-31",
+    "estado": "Perdido",
+    "imagen": "img/118.jpg"
+  },
+  {
+    "tipo": "Perro",
+    "fecha": "2024-11-05",
+    "estado": "Encontrado",
+    "imagen": "img/119.jpg"
+  },
+  {
+    "nombre": "Loki",
+    "tipo": "Perro",
+    "fecha": "2024-12-10",
+    "estado": "Perdido",
+    "imagen": "img/120.jpg"
+  },
+  {
+    "tipo": "Perro",
+    "fecha": "2025-01-15",
+    "estado": "Encontrado",
+    "imagen": "img/121.jpg"
+  },
+  {
+    "nombre": "Zeus",
+    "tipo": "Perro",
+    "fecha": "2025-02-20",
+    "estado": "Perdido",
+    "imagen": "img/122.jpg"
+  },
+  {
+    "tipo": "Perro",
+    "fecha": "2025-03-25",
+    "estado": "Encontrado",
+    "imagen": "img/123.jpg"
+  },
+  {
+    "nombre": "Apolo",
+    "tipo": "Perro",
+    "fecha": "2025-04-30",
+    "estado": "Perdido",
+    "imagen": "img/124.jpg"
+  },
+  {
+    "tipo": "Perro",
+    "fecha": "2025-05-05",
+    "estado": "Encontrado",
+    "imagen": "img/125.jpg"
+  }
+]
