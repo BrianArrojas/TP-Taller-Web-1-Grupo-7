@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportar Mascota Perdida</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .contenedor-formulario {
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #1a1d20;
+        }
+
+        .alert-danger {
+            background-color: #fff5f5;
+            border: 1px solid #ffe3e3;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .alert-danger p {
+            margin: 0;
+            color: #e03131;
+            font-size: 0.9rem;
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .campo-completo {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select {
+            font-family: inherit;
+            font-size: 0.95rem;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            background-color: #ffffff;
+            color: #212529;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            border-color: #228be6;
+        }
+
+        input[type="file"] {
+            font-family: inherit;
+            font-size: 0.9rem;
+            padding: 4px 0;
+        }
+
+        button[type="submit"] {
+            grid-column: span 2;
+            font-family: inherit;
+            background-color: #228be6;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+            margin-top: 8px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1c7ed6;
+        }
+    </style>
+</head>
+<body>
+
+<main class="contenedor-formulario">
+    <h1>Ingrese los datos de la mascota</h1>
+
+    <div th:if="${mensaje != null}" class="alert alert-danger">
+        <p th:text="${mensaje}"></p>
+    </div>
+
+    <form th:action="@{/procesando-reporte}" method="POST" th:object="${datosReporte}" enctype="multipart/form-data">
+        <fieldset>
+            <div class="campo-grupo">
+                <label for="tipoDeReporte">Tipo de Reporte</label>
+                <select th:field="*{tipoDeReporte}" id="tipoDeReporte">
+                    <option value="">Seleccione opción</option>
+                    <option value="perdido">Perdido</option>
+                    <option value="encontrado">Encontrado</option>
+                </select>
+            </div>
+
+            <div class="campo-grupo">
+                <label for="nombre">Nombre</label>
+                <input type="text" th:field="*{nombre}" id="nombre" placeholder="Nombre de la mascota">
+            </div>
+
+            <div class="campo-grupo">
+                <label for="raza">Raza</label>
+                <input type="text" th:field="*{raza}" id="raza" placeholder="Raza">
+            </div>
+
+            <div class="campo-grupo">
+                <label for="color">Color</label>
+                <input type="text" th:field="*{color}" id="color" placeholder="Color">
+            </div>
+
+            <div class="campo-grupo">
+                <label for="ubicacion">Ubicación</label>
+                <input type="text" th:field="*{ubicacion}" id="ubicacion" placeholder="Ubicación o zona">
+            </div>
+
+            <div class="campo-grupo">
+                <label for="fecha">Fecha</label>
+                <input type="date" th:field="*{fecha}" id="fecha">
+            </div>
+
+            <div class="campo-grupo">
+                <label for="especie">Especie</label>
+                <select th:field="*{especie}" id="especie">
+                    <option value="">Seleccione especie</option>
+                    <option value="gato">Gato</option>
+                    <option value="perro">Perro</option>
+                    <option value="otro">Otro</option>
+                </select>
+            </div>
+
+            <div class="campo-grupo">
+                <label for="tamano">Tamaño</label>
+                <select th:field="*{tamano}" id="tamano">
+                    <option value="">Seleccione tamaño</option>
+                    <option value="pequeno">Pequeño</option>
+                    <option value="mediano">Mediano</option>
+                    <option value="grande">Grande</option>
+                </select>
+            </div>
+
+            <div class="campo-grupo campo-completo">
+                <label for="imagen">Foto de la mascota (Obligatoria)</label>
+                <input type="file" th:field="*{imagen}" id="imagen" accept="image/jpeg, image/png">
+            </div>
+
+            <div class="campo-grupo campo-completo">
+                <label for="descripcion">Descripción</label>
+                <input type="text" th:field="*{descripcion}" id="descripcion" placeholder="Detalles o señas particulares">
+            </div>
+
+            <button type="submit">Publicar reporte</button>
+        </fieldset>
+    </form>
+</main>
+
+</body>
+</html>
