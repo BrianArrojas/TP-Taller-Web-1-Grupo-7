@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.presentacion.dto;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

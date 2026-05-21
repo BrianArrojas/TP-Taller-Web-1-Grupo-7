@@ -2,7 +2,9 @@ package com.tallerwebi.dominio;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.tallerwebi.presentacion.DatosDetalleMascotaDTO;
+import com.tallerwebi.dominio.service.DetalleMascotaService;
+import com.tallerwebi.dominio.service.impl.DetalleMascotaServiceImpl;
+import com.tallerwebi.presentacion.dto.DatosDetalleMascotaDTO;
 import org.junit.jupiter.api.Test;
 
 public class DetalleMascotaServiceTest {

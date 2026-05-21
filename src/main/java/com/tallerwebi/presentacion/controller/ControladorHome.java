@@ -1,6 +1,6 @@
-package com.tallerwebi.presentacion;
+package com.tallerwebi.presentacion.controller;
 
-import com.tallerwebi.dominio.ServicioMascota;
+import com.tallerwebi.dominio.service.ServicioMascota;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

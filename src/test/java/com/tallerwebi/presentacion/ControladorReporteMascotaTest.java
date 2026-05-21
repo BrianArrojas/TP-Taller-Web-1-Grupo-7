@@ -6,7 +6,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.tallerwebi.dominio.ServicioReporteMascota;
+import com.tallerwebi.dominio.service.ServicioReporteMascota;
+import com.tallerwebi.presentacion.controller.ControladorReporteMascota;
+import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.servlet.ModelAndView;

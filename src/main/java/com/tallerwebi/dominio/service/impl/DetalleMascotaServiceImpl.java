@@ -1,6 +1,7 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.service.impl;
 
-import com.tallerwebi.presentacion.DatosDetalleMascotaDTO;
+import com.tallerwebi.dominio.service.DetalleMascotaService;
+import com.tallerwebi.presentacion.dto.DatosDetalleMascotaDTO;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Service;

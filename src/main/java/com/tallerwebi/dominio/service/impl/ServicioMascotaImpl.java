@@ -1,9 +1,13 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.service.impl;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+
+import com.tallerwebi.dominio.repository.RepositorioMascota;
+import com.tallerwebi.dominio.service.ServicioMascota;
+import com.tallerwebi.presentacion.dto.Mascota;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

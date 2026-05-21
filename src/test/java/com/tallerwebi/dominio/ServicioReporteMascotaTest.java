@@ -1,7 +1,8 @@
 package com.tallerwebi.dominio;
 
-import com.tallerwebi.presentacion.ControladorReporteMascota;
-import com.tallerwebi.presentacion.DatosReporteMascotaDTO;
+import com.tallerwebi.dominio.service.ServicioReporteMascota;
+import com.tallerwebi.presentacion.controller.ControladorReporteMascota;
+import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.servlet.ModelAndView;

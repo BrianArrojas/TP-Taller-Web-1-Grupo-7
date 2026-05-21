@@ -5,11 +5,14 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static org.mockito.Mockito.*;
 
-import com.tallerwebi.dominio.ServicioLogin;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.repository.ServicioLogin;
+import com.tallerwebi.presentacion.dto.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import com.tallerwebi.presentacion.controller.ControladorLogin;
+import com.tallerwebi.presentacion.dto.DatosLogin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;

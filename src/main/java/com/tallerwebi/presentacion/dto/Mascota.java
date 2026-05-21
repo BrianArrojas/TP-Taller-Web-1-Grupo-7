@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.presentacion.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;

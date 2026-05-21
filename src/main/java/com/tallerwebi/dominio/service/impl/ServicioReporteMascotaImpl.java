@@ -1,6 +1,7 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.service.impl;
 
-import com.tallerwebi.presentacion.DatosReporteMascotaDTO;
+import com.tallerwebi.dominio.service.ServicioReporteMascota;
+import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

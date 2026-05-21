@@ -1,9 +1,11 @@
-package com.tallerwebi.presentacion;
+package com.tallerwebi.presentacion.controller;
 
-import com.tallerwebi.dominio.ServicioLogin;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.repository.ServicioLogin;
+import com.tallerwebi.presentacion.dto.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import javax.servlet.http.HttpServletRequest;
+
+import com.tallerwebi.presentacion.dto.DatosLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

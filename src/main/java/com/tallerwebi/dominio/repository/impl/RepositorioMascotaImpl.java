@@ -1,9 +1,9 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.dominio.repository.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tallerwebi.dominio.Mascota;
-import com.tallerwebi.dominio.RepositorioMascota;
+import com.tallerwebi.presentacion.dto.Mascota;
+import com.tallerwebi.dominio.repository.RepositorioMascota;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;

@@ -1,7 +1,11 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.service.impl;
 
+import com.tallerwebi.presentacion.dto.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import javax.transaction.Transactional;
+
+import com.tallerwebi.dominio.repository.RepositorioUsuario;
+import com.tallerwebi.dominio.repository.ServicioLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
