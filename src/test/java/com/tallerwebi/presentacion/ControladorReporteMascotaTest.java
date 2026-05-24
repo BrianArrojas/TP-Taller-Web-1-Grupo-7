@@ -6,8 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.tallerwebi.dominio.FechaInvalidaException;
-import com.tallerwebi.dominio.FormatoImagenInvalidaException;
+import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
+import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
 import com.tallerwebi.dominio.ServicioReporteMascota;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;

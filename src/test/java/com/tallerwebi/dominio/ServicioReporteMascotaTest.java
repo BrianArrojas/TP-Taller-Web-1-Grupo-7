@@ -1,6 +1,11 @@
 package com.tallerwebi.dominio;
 
-import com.tallerwebi.presentacion.DatosReporteMascotaDTO;
+import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
+import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
+
+import com.tallerwebi.dominio.service.ServicioReporteMascota;
+import com.tallerwebi.dominio.service.impl.ServicioReporteMascotaImpl;
+import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import java.time.LocalDate;

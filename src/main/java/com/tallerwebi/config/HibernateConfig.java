@@ -30,7 +30,7 @@ public class HibernateConfig {
     if (dbPassword == null) dbPassword = "user";
 
     String url = String.format(
-      "jdbc:mysql://%s:%s/%s?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true",
+      "jdbc:mysql://%s:%s/%s?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8",
       dbHost,
       dbPort,
       dbName
@@ -47,7 +47,7 @@ public class HibernateConfig {
   public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
     LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
     sessionFactory.setDataSource(dataSource);
-    sessionFactory.setPackagesToScan("com.tallerwebi.dominio");
+    sessionFactory.setPackagesToScan("com.tallerwebi.dominio", "com.tallerwebi.presentacion.dto");
     sessionFactory.setHibernateProperties(hibernateProperties());
     return sessionFactory;
   }
@@ -62,10 +62,7 @@ public class HibernateConfig {
     properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
     properties.setProperty("hibernate.show_sql", "true");
     properties.setProperty("hibernate.format_sql", "true");
-    properties.setProperty("hibernate.hbm2ddl.auto", "create");
-    properties.setProperty("hibernate.connection.characterEncoding", "utf8");
-    properties.setProperty("hibernate.connection.CharSet", "utf8");
-    properties.setProperty("hibernate.connection.useUnicode", "true");
+    properties.setProperty("hibernate.hbm2ddl.auto", "update");
     return properties;
   }
 }

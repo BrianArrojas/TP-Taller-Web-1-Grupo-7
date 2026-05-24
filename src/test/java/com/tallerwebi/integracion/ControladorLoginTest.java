@@ -8,7 +8,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.presentacion.dto.Usuario;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
 import java.util.Objects;
@@ -70,7 +70,7 @@ public class ControladorLoginTest {
     assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
     assertThat(
       modelAndView.getModel().get("datosLogin").toString(),
-      containsString("com.tallerwebi.presentacion.DatosLogin")
+      containsString("com.tallerwebi.presentacion.dto.DatosLogin")
     );
   }
 }

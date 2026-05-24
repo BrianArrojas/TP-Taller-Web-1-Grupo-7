@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Mascota</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-4">
+    <h1>Detalle de la mascota</h1>
+    <div class="card mb-3">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <!-- Foto de la mascota, con imagen por defecto si no hay -->
+                <img th:src="@{${mascota.fotoPath} ?: '/img/default-pet.png'}" 
+                     class="img-fluid rounded-start" alt="Foto de la mascota">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${mascota.nombreMascota}">Nombre</h5>
+                    <p class="card-text">
+                        <strong>Especie:</strong> <span th:text="${mascota.especie}"></span><br>
+                        <strong>Raza:</strong> <span th:text="${mascota.raza}"></span><br>
+                    </p>
+                    <p class="card-text" th:text="${mascota.descripcion}"></p>
+                    <p class="card-text">
+                        <strong>Publicado por:</strong> <span th:text="${mascota.nombreDuenio}"></span>
+                    </p>
+                    <!-- Botón que lleva al formulario de contacto, sin exponer datos personales -->
+                    <a th:href="@{/contacto/{id}(id=${mascota.id})}" class="btn btn-primary">
+                        Contactar al dueño
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="/spring/home" class="btn btn-secondary">Volver al home</a>
+</body>
+</html>

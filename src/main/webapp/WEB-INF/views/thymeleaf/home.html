@@ -2,39 +2,88 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <title>Taller Web I</title>
+    <title>Mascotas perdidas y encontradas</title>
 
-  <!-- Boostrap core css -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!-- Boostrap core css -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 
-  <!-- custom style -->
-  <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <!-- custom style -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
 
 </head>
 
 <body>
 
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">UNLAM</a>
-  </nav>
-
-  <main role="main" class="container">
-    <div class="container">
-      <h1>Bienvenidos a Taller Web 1</h1>
-
-      <a href="login.html" class="btn btn-lg btn-primary btn-block">Volver</a>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Mascotas</a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/home}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/realizar-reporte}">Reportar Mascota</a>
+            </li>
+        </ul>
+        <form class="form-inline mt-2 mt-md-0 ml-auto" style="margin-left: auto;">
+            <a class="btn btn-outline-success my-2 my-sm-0" th:href="@{/login}">Logout</a>
+        </form>
     </div>
-  </main>
-  <!-- /.container -->
+</nav>
 
-  <!-- Boostrap core js -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-    crossorigin="anonymous"></script>
+<main role="main" class="container mt-5 pt-5">
+    <div class="container">
+        <h1 class="mb-4 text-center">Mascotas perdidas y encontradas</h1>
+
+        <!-- Formulario de Búsqueda -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <form th:action="@{/home}" method="get" class="d-flex">
+                    <input class="form-control me-2" type="search" name="busqueda"
+                           placeholder="Buscar por tipo o nombre" aria-label="Buscar">
+                    <button class="btn btn-outline-primary" type="submit">Buscar</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            <div class="col" th:each="mascota : ${mascotas}">
+                <a class="" th:href="@{/reporte/1}" style="text-decoration: none;">
+                    <div class="card h-100 card-hover">
+                        <!-- Si no hay imagen disponible, mostramos un placeholder -->
+                        <img th:src="@{${mascota.imagen}}" class="card-img-top" alt="Imagen de la mascota"
+                             style="height: 200px; object-fit: cover;"
+                             onerror="this.onerror=null;this.src='https://via.placeholder.com/200x200?text=Sin+Imagen'">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${mascota.nombre ?: 'Sin nombre'}">Nombre de la Mascota</h5>
+                            <p class="card-text">
+                                <strong>Tipo:</strong> <span th:text="${mascota.tipo}"></span><br>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                <strong>Fecha:</strong> <span
+                                    th:text="${#dates.format(mascota.fecha, 'dd/MM/yyyy')}"></span><br>
+                                <strong>Estado:</strong>
+                                <span th:class="${mascota.estado == 'Perdido' ? 'badge bg-danger' : 'badge bg-success'}"
+                                      th:text="${mascota.estado}"></span>
+                            </small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Boostrap core js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
 
 </body>
 

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -28,8 +29,15 @@ public class SpringWebConfig implements WebMvcConfigurer {
   @Override
   public void addResourceHandlers(final ResourceHandlerRegistry registry) {
     registry.addResourceHandler("/css/**").addResourceLocations("/resources/core/css/");
+    registry.addResourceHandler("/img/**").addResourceLocations("/img/");
     registry.addResourceHandler("/js/**").addResourceLocations("/resources/core/js/");
     registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
+  }
+
+  // Habilita el servlet por defecto para servir recursos estáticos.
+  @Override
+  public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+    configurer.enable();
   }
 
   // https://www.thymeleaf.org/doc/tutorials/3.0/thymeleafspring.html
@@ -47,6 +55,7 @@ public class SpringWebConfig implements WebMvcConfigurer {
     // Template cache is true by default. Set to false if you want
     // templates to be automatically updated when modified.
     templateResolver.setCacheable(true);
+    templateResolver.setCharacterEncoding("UTF-8");
     return templateResolver;
   }
 
@@ -72,6 +81,7 @@ public class SpringWebConfig implements WebMvcConfigurer {
   public ThymeleafViewResolver viewResolver() {
     ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
     viewResolver.setTemplateEngine(templateEngine());
+    viewResolver.setCharacterEncoding("UTF-8");
     return viewResolver;
   }
 

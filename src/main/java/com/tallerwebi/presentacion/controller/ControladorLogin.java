@@ -1,9 +1,11 @@
-package com.tallerwebi.presentacion;
+package com.tallerwebi.presentacion.controller;
 
-import com.tallerwebi.dominio.ServicioLogin;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.repository.ServicioLogin;
+import com.tallerwebi.presentacion.dto.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import javax.servlet.http.HttpServletRequest;
+
+import com.tallerwebi.presentacion.dto.DatosLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -71,10 +73,12 @@ public class ControladorLogin {
     return new ModelAndView("nuevo-usuario", model);
   }
 
+  /*
   @RequestMapping(path = "/home", method = RequestMethod.GET)
   public ModelAndView irAHome() {
     return new ModelAndView("home");
   }
+  */
 
   @RequestMapping(path = "/", method = RequestMethod.GET)
   public ModelAndView inicio() {

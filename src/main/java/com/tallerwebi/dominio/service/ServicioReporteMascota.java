@@ -1,6 +1,6 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.service;
 
-import com.tallerwebi.presentacion.DatosReporteMascotaDTO;
+import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 
 public interface ServicioReporteMascota {
 

@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.FechaInvalidaException;
-import com.tallerwebi.dominio.FormatoImagenInvalidaException;
+import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
+import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
 import com.tallerwebi.dominio.ServicioReporteMascota;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
