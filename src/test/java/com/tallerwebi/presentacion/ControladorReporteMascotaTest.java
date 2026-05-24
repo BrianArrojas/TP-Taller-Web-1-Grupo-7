@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.tallerwebi.dominio.FechaInvalidaException;
+import com.tallerwebi.dominio.FormatoImagenInvalidaException;
 import com.tallerwebi.dominio.ServicioReporteMascota;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
@@ -139,6 +141,60 @@ public class ControladorReporteMascotaTest {
   private void thenReporteFalla(ModelAndView mav, String mensaje) {
     assertThat(mav.getViewName(), equalToIgnoringCase("realizar-reporte"));
     assertThat(mav.getModel().get("mensaje").toString(), equalToIgnoringCase(mensaje));
+  }
+
+  @Test
+  public void siNoSeRespetoFormatoDeImagenElReporteFalla() {
+    // Given
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
+            "Brian",
+            "Dogo",
+            "Blanco",
+            "Esta Lastimado",
+            "San Justo"
+    );
+    datosReporteMascotaDTO.setTipoDeReporte("Perdido");
+    datosReporteMascotaDTO.setTamano("Grande");
+    datosReporteMascotaDTO.setEspecie("Perro");
+    datosReporteMascotaDTO.setFecha(LocalDate.now().minusDays(1));
+
+    // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
+    MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.pdf", "image/pdf", "bytes-de-pdf".getBytes());
+    datosReporteMascotaDTO.setImagen(fotoSimulada);
+      when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(org.mockito.Mockito.any())).thenThrow(new FormatoImagenInvalidaException());
+
+    // When
+    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO);
+    // Then
+    thenReporteFalla(mav,"El formato de la foto debe ser JPG o PNG");
+
+  }
+
+
+  @Test
+  public void siLaFechaDelReporteEsFuturaElMismoFalla(){
+    // Given
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
+            "Brian",
+            "Dogo",
+            "Blanco",
+            "Esta Lastimado",
+            "San Justo"
+    );
+    datosReporteMascotaDTO.setTipoDeReporte("Perdido");
+    datosReporteMascotaDTO.setTamano("Grande");
+    datosReporteMascotaDTO.setEspecie("Perro");
+    datosReporteMascotaDTO.setFecha(LocalDate.now().plusDays(2));
+
+    // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
+    MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-png".getBytes());
+    datosReporteMascotaDTO.setImagen(fotoSimulada);
+    //when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(org.mockito.Mockito.any())).thenThrow(new FechaInvalidaException());
+    when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO)).thenThrow(new FechaInvalidaException());
+    // When
+    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO);
+    // Then
+    thenReporteFalla(mav, "La fecha ingresada no puede ser futura al dia de hoy");
   }
 
 }

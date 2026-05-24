@@ -12,25 +12,21 @@ import java.time.LocalDate;
 public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
 
     public Boolean validarQueLaImagenCumplaConFormato(DatosReporteMascotaDTO datosReporteMascotaDTO) {
-        MultipartFile archivo = datosReporteMascotaDTO.getImagen();
-        String tipoArchivo = archivo.getContentType();
-        if (archivo == null) {
-            return false;
+        String tipo = datosReporteMascotaDTO.getImagen().getContentType();
+
+        if (!tipo.equals("image/png") && !tipo.equals("image/jpeg")) {
+            throw new FormatoImagenInvalidaException();
         }
 
-        if (tipoArchivo != null && (tipoArchivo.equals("image/jpeg") || tipoArchivo.equals("image/png"))) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public Boolean validarQueFechaDeReporteNoSeaFutura(DatosReporteMascotaDTO datosReporteMascotaDTO) {
         if (datosReporteMascotaDTO.getFecha() == null) {
-            return false;
+            throw new FechaInvalidaException();
         }
-        if (datosReporteMascotaDTO.getFecha().compareTo(LocalDate.now()) > 0) {
-            return false;
+        if (datosReporteMascotaDTO.getFecha().isAfter(LocalDate.now())) {
+            throw new FechaInvalidaException();
         }
 
         return true;

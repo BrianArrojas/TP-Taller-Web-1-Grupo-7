@@ -1,5 +1,7 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.FechaInvalidaException;
+import com.tallerwebi.dominio.FormatoImagenInvalidaException;
 import com.tallerwebi.dominio.ServicioReporteMascota;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ControladorReporteMascota {
 
-  private ServicioReporteMascota servicioReporteMascota;
+  private final ServicioReporteMascota servicioReporteMascota;
   @Autowired
   public ControladorReporteMascota(ServicioReporteMascota servicioReporteMascota) {
     this.servicioReporteMascota = servicioReporteMascota;
@@ -61,13 +63,19 @@ public class ControladorReporteMascota {
       modelo.put("mensaje","Debe adjuntar una imagen");
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
-    }else if (servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO) == false) {
+    }
+
+    try{
+      servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO);
+    }catch(FormatoImagenInvalidaException exception){
       modelo.put("mensaje", "El formato de la foto debe ser JPG o PNG");
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
     }
 
-    if(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO) == false){
+    try{
+      servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO);
+    }catch(FechaInvalidaException exception){
       modelo.put("mensaje", "La fecha ingresada no puede ser futura al dia de hoy");
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
