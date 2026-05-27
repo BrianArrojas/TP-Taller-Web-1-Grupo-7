@@ -7,4 +7,6 @@ public interface ServicioReporteMascota {
     public Boolean validarQueLaImagenCumplaConFormato(DatosReporteMascotaDTO datos);
 
     public Boolean validarQueFechaDeReporteNoSeaFutura(DatosReporteMascotaDTO datosReporteMascotaDTO);
+
+    public Boolean guardarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO);
 }
