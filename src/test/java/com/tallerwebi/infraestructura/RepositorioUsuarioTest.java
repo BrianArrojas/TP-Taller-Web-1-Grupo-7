@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.tallerwebi.dominio.repository.RepositorioUsuario;
-import com.tallerwebi.presentacion.dto.Usuario;
+import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.repository.impl.RepositorioUsuarioImpl;
 import com.tallerwebi.infraestructura.config.HibernateInfraestructuraTestConfig;
 import javax.persistence.Query;

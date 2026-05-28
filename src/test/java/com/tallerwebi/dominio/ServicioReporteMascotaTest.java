@@ -22,13 +22,12 @@ public class ServicioReporteMascotaTest {
   @Test
   public void siNoSeRespetoFormatoDeImagenElReporteFalla() {
     // Given
-    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
-            "Brian",
-            "Dogo",
-            "Blanco",
-            "Esta Lastimado",
-            "San Justo"
-    );
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setRaza("Dogo");
+    datosReporteMascotaDTO.setColor("Blanco");
+    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
+    datosReporteMascotaDTO.setUbicacion("San Justo");
     datosReporteMascotaDTO.setTipoDeReporte("Perdido");
     datosReporteMascotaDTO.setTamano("Grande");
     datosReporteMascotaDTO.setEspecie("Perro");
@@ -44,13 +43,12 @@ public class ServicioReporteMascotaTest {
   @Test
   public void siLaFechaDelReporteEsFuturaElMismoFalla(){
 
-    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
-            "Brian",
-            "Dogo",
-            "Blanco",
-            "Esta Lastimado",
-            "San Justo"
-    );
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setRaza("Dogo");
+    datosReporteMascotaDTO.setColor("Blanco");
+    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
+    datosReporteMascotaDTO.setUbicacion("San Justo");
     datosReporteMascotaDTO.setTipoDeReporte("Perdido");
     datosReporteMascotaDTO.setTamano("Grande");
     datosReporteMascotaDTO.setEspecie("Perro");

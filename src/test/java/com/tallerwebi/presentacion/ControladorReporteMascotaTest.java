@@ -24,13 +24,12 @@ public class ControladorReporteMascotaTest {
 
   @Test
   public void siGeneroUnReporteCorrectamenteSeMuestraLaVistaConLaInformacionDelMismo() {
-    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
-      "Brian",
-      "Dogo",
-      "Blanco",
-      "Esta Lastimado",
-      "San Justo"
-    );
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setRaza("Dogo");
+    datosReporteMascotaDTO.setColor("Blanco");
+    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
+    datosReporteMascotaDTO.setUbicacion("San Justo");
     datosReporteMascotaDTO.setTipoDeReporte("Perdido");
     datosReporteMascotaDTO.setTamano("Grande");
     datosReporteMascotaDTO.setEspecie("Perro");
@@ -60,8 +59,12 @@ public class ControladorReporteMascotaTest {
   @Test
   public void alEnviarUnReporteConCamposVaciosElMismoFalla() {
     givenReporteNoExiste();
-    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
-            "", "", "", "", "");
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("");
+    datosReporteMascotaDTO.setRaza("");
+    datosReporteMascotaDTO.setColor("");
+    datosReporteMascotaDTO.setDescripcion("");
+    datosReporteMascotaDTO.setUbicacion("");
     datosReporteMascotaDTO.setTipoDeReporte("Perdido");
     datosReporteMascotaDTO.setTamano("Grande");
     datosReporteMascotaDTO.setEspecie("Perro");
@@ -94,13 +97,12 @@ public class ControladorReporteMascotaTest {
   @Test
   public void siNoSeleccionoAlgunaDeLasOpcionesDesplegablesDelFormularioElMismoFalla() {
     givenReporteNoExiste();
-    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
-            "Brian",
-            "Dogo",
-            "Blanco",
-            "Esta Lastimado",
-            "San Justo"
-    );
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setRaza("Dogo");
+    datosReporteMascotaDTO.setColor("Blanco");
+    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
+    datosReporteMascotaDTO.setUbicacion("San Justo");
     ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO);
     thenReporteNoSeRealizaSiNoSeleccionoOpcionDeDesplegable(mav,datosReporteMascotaDTO,"Debe seleccionar una opcion de todos los desplegables");
 
@@ -120,13 +122,12 @@ public class ControladorReporteMascotaTest {
   @Test
   public void siNoSeAdjuntaUnaImagenElReporteFalla() {
     // Given
-    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
-            "Brian",
-            "Dogo",
-            "Blanco",
-            "Esta Lastimado",
-            "San Justo"
-    );
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setRaza("Dogo");
+    datosReporteMascotaDTO.setColor("Blanco");
+    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
+    datosReporteMascotaDTO.setUbicacion("San Justo");
     datosReporteMascotaDTO.setTipoDeReporte("Perdido");
     datosReporteMascotaDTO.setTamano("Grande");
     datosReporteMascotaDTO.setEspecie("Perro");
@@ -148,13 +149,12 @@ public class ControladorReporteMascotaTest {
   @Test
   public void siNoSeRespetoFormatoDeImagenElReporteFalla() {
     // Given
-    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
-            "Brian",
-            "Dogo",
-            "Blanco",
-            "Esta Lastimado",
-            "San Justo"
-    );
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setRaza("Dogo");
+    datosReporteMascotaDTO.setColor("Blanco");
+    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
+    datosReporteMascotaDTO.setUbicacion("San Justo");
     datosReporteMascotaDTO.setTipoDeReporte("Perdido");
     datosReporteMascotaDTO.setTamano("Grande");
     datosReporteMascotaDTO.setEspecie("Perro");
@@ -176,13 +176,12 @@ public class ControladorReporteMascotaTest {
   @Test
   public void siLaFechaDelReporteEsFuturaElMismoFalla(){
     // Given
-    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO(
-            "Brian",
-            "Dogo",
-            "Blanco",
-            "Esta Lastimado",
-            "San Justo"
-    );
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setRaza("Dogo");
+    datosReporteMascotaDTO.setColor("Blanco");
+    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
+    datosReporteMascotaDTO.setUbicacion("San Justo");
     datosReporteMascotaDTO.setTipoDeReporte("Perdido");
     datosReporteMascotaDTO.setTamano("Grande");
     datosReporteMascotaDTO.setEspecie("Perro");
@@ -200,5 +199,3 @@ public class ControladorReporteMascotaTest {
   }
 
 }
-
-

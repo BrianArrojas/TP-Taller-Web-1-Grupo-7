@@ -1,6 +1,6 @@
 package com.tallerwebi.dominio.service.impl;
 
-import com.tallerwebi.presentacion.dto.Usuario;
+import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import javax.transaction.Transactional;
 

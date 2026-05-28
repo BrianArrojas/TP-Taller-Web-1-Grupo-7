@@ -1,6 +1,6 @@
 package com.tallerwebi.dominio.repository;
 
-import com.tallerwebi.presentacion.dto.Usuario;
+import com.tallerwebi.dominio.model.Usuario;
 
 public interface RepositorioUsuario {
   Usuario buscarUsuario(String email, String password);

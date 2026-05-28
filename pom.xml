@@ -22,7 +22,9 @@
         <hsqldb.version>2.3.2</hsqldb.version>
         <checkstyle.version>3.2.1</checkstyle.version>
         <jackson.version>2.13.0</jackson.version>
-        <slf4j.version>1.7.32</slf4j.version>
+        <slf4j.version>1.7.32</slf4j.version> <!-- Corrected from slf44j.version -->
+        <lombok.version>1.18.20</lombok.version>
+        <postgresql.version>42.2.23</postgresql.version>
     </properties>
 
     <dependencies>
@@ -61,6 +63,13 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
+        </dependency>
+
+        <!-- PostgreSQL Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
 
         <dependency>
@@ -143,6 +152,14 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -155,6 +172,13 @@
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
