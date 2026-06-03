@@ -55,12 +55,12 @@
 
         <div class="row row-cols-1 row-cols-md-4 g-4">
             <div class="col" th:each="mascota : ${mascotas}">
-                <a class="" th:href="@{/reporte/1}" style="text-decoration: none;">
+                <a class="" th:href="@{/detalle/{id}(id=${mascota.id})}" style="text-decoration: none;">
                     <div class="card h-100 card-hover">
                         <!-- Si no hay imagen disponible, mostramos un placeholder -->
                         <img th:src="@{${mascota.imagen}}" class="card-img-top" alt="Imagen de la mascota"
-                             style="height: 200px; object-fit: cover;"
-                             onerror="this.onerror=null;this.src='https://via.placeholder.com/200x200?text=Sin+Imagen'">
+                        style="height: 200px; object-fit: cover;"
+                        th:attr="onerror='this.onerror=null;this.src=\'' + @{/img/default-pet.png} + '\';'">
                         <div class="card-body">
                             <h5 class="card-title" th:text="${mascota.nombre ?: 'Sin nombre'}">Nombre de la Mascota</h5>
                             <p class="card-text">

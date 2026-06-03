@@ -11,4 +11,6 @@ public interface RepositorioReporteMascota {
     public void guardarReporte(DatosReporteMascotaDTO datosReporteMascota, Usuario usuario);
 
     List<ReporteMascota> buscarPorUsuario(Usuario usuario);
+
+    ReporteMascota buscarPorId(Long id);
 }

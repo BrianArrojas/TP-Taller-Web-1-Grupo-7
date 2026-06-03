@@ -138,5 +138,55 @@ public class RepositorioMascotaTest {
     }
 
 
+    @Test
+    @Transactional
+    @Rollback
+    public void sePuedeBuscarUnReportePorIdExistente() {
+        // given
+        Usuario usuario = new Usuario();
+        usuario.setEmail("test@unlam.edu.ar");
+        usuario.setPassword("test");
+        sessionFactory.getCurrentSession().save(usuario);
+
+        DatosReporteMascotaDTO datos = new DatosReporteMascotaDTO();
+        datos.setNombre("Firulais");
+        datos.setRaza("Labrador");
+        datos.setColor("Negro");
+        datos.setDescripcion("Lleva collar rojo");
+        datos.setUbicacion("Parque Central");
+        datos.setTipoDeReporte("Perdida");
+        datos.setTamano("Grande");
+        datos.setEspecie("Perro");
+        datos.setFecha(LocalDate.now().minusDays(1));
+        MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "firulais.jpg", "image/jpeg", "bytes".getBytes());
+        datos.setImagen(fotoSimulada);
+
+        repositorioMascota.guardarReporte(datos, usuario);
+
+        ReporteMascota reporteGuardado = (ReporteMascota) sessionFactory.getCurrentSession()
+                .createCriteria(ReporteMascota.class)
+                .add(Restrictions.eq("nombre", "Firulais"))
+                .uniqueResult();
+
+        // when
+        ReporteMascota resultado = repositorioMascota.buscarPorId(reporteGuardado.getId());
+
+        // then
+        assertThat(resultado, notNullValue());
+        assertThat(resultado.getNombre(), equalTo("Firulais"));
+        assertThat(resultado.getRaza(), equalTo("Labrador"));
+        assertThat(resultado.getUsuario().getEmail(), equalTo("test@unlam.edu.ar"));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void buscarPorIdConIdInexistenteDevuelveNull() {
+        // when
+        ReporteMascota resultado = repositorioMascota.buscarPorId(999L);
+
+        // then
+        assertThat(resultado, equalTo(null));
+    }
 }
 

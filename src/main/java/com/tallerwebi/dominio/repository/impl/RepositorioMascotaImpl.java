@@ -1,47 +1,46 @@
 package com.tallerwebi.dominio.repository.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tallerwebi.presentacion.dto.Mascota;
+import com.tallerwebi.dominio.model.ReporteMascota;
 import com.tallerwebi.dominio.repository.RepositorioMascota;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.tallerwebi.presentacion.dto.Mascota;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository("repositorioMascota")
 public class RepositorioMascotaImpl implements RepositorioMascota {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RepositorioMascotaImpl.class);
-  private final ResourceLoader resourceLoader;
-  private final ObjectMapper objectMapper;
+    private SessionFactory sessionFactory;
 
-  @Autowired
-  public RepositorioMascotaImpl(ResourceLoader resourceLoader) {
-    this.resourceLoader = resourceLoader;
-    this.objectMapper = new ObjectMapper();
-  }
-
-  @Override
-  public List<Mascota> obtenerTodasLasMascotas() {
-    try {
-      Resource resource = resourceLoader.getResource("classpath:mascotas.json");
-      if (!resource.exists()) {
-        LOGGER.warn("El archivo mascotas.json no se encontró en el classpath.");
-        return Collections.emptyList();
-      }
-      try (InputStream inputStream = resource.getInputStream()) {
-        return objectMapper.readValue(inputStream, new TypeReference<List<Mascota>>() {});
-      }
-    } catch (IOException e) {
-      LOGGER.error("Error al leer el archivo JSON de mascotas", e);
-      return Collections.emptyList(); // Retorna una lista vacía en caso de error
+    @Autowired
+    public RepositorioMascotaImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
-  }
+
+    @Override
+    public List<Mascota> obtenerTodasLasMascotas() {
+        List<ReporteMascota> reportes = sessionFactory.getCurrentSession()
+                .createCriteria(ReporteMascota.class)
+                .add(Restrictions.eq("registroActivo", true))
+                .list();
+
+        List<Mascota> mascotas = new ArrayList<>();
+        for (ReporteMascota r : reportes) {
+            Mascota m = new Mascota();
+            m.setId(r.getId());
+            m.setNombre(r.getNombre());
+            m.setTipo(r.getTipoDeReporte());      
+            m.setFecha(java.sql.Date.valueOf(r.getFecha())); 
+            m.setEstado(r.getTipoDeReporte().equals("Perdida") ? "Perdido" : "Encontrado");
+            m.setImagen("/img/" + (r.getFotos() != null && !r.getFotos().isEmpty() ? r.getFotos().get(0).getImg() : "default-pet.png"));
+            mascotas.add(m);
+        }
+        return mascotas;
+    }
+
+    
 }

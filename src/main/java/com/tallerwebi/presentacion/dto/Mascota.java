@@ -12,6 +12,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class Mascota {
 
+  private Long id;
+
   private String nombre;
   private String tipo;
 

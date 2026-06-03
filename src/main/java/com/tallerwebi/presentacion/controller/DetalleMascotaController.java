@@ -12,18 +12,18 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class DetalleMascotaController {
 
-  private final DetalleMascotaService service;
+    private final DetalleMascotaService detalleMascotaService;
 
-  @Autowired
-  public DetalleMascotaController(DetalleMascotaService service) {
-    this.service = service;
-  }
+    @Autowired
+    public DetalleMascotaController(DetalleMascotaService detalleMascotaService) {
+        this.detalleMascotaService = detalleMascotaService;
+    }
 
-  @RequestMapping(path = "/reporte/{id}", method = RequestMethod.GET)
-  public ModelAndView verDetalle(@PathVariable Long id) {
-    DatosDetalleMascotaDTO dto = service.obtenerDetalle(id);
-    ModelAndView mav = new ModelAndView("detalle-mascota");
-    mav.addObject("mascota", dto);
-    return mav;
-  }
+    @RequestMapping(path = "/detalle/{id}", method = RequestMethod.GET)
+    public ModelAndView verDetalle(@PathVariable Long id) {
+        DatosDetalleMascotaDTO dto = detalleMascotaService.obtenerDetalle(id);
+        ModelAndView mav = new ModelAndView("detalle-mascota");
+        mav.addObject("mascota", dto);
+        return mav;
+    }
 }

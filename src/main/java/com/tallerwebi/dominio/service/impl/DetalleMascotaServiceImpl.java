@@ -1,50 +1,57 @@
 package com.tallerwebi.dominio.service.impl;
 
+import com.tallerwebi.dominio.model.ReporteMascota;
+import com.tallerwebi.dominio.repository.RepositorioReporteMascota;
 import com.tallerwebi.dominio.service.DetalleMascotaService;
 import com.tallerwebi.presentacion.dto.DatosDetalleMascotaDTO;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Service("detalleMascotaService")
+@Transactional
 public class DetalleMascotaServiceImpl implements DetalleMascotaService {
 
-  private final Map<Long, DatosDetalleMascotaDTO> reportesSimulados = new HashMap<>();
+    private final RepositorioReporteMascota repositorioReporteMascota;
 
-  public DetalleMascotaServiceImpl() {
-    // Cargamos dos reportes de ejemplo para la demo
-    reportesSimulados.put(
-      1L,
-      new DatosDetalleMascotaDTO(
-        1L,
-        "Firulais",
-        "Perro",
-        "Labrador",
-        "/img/default-pet.png",
-        "Se perdió en el parque central. Lleva collar rojo.",
-        "Dueño #1"
-      )
-    );
-    reportesSimulados.put(
-      2L,
-      new DatosDetalleMascotaDTO(
-        2L,
-        "Michi",
-        "Gato",
-        "Siamés",
-        "/img/default-pet.png",
-        "Encontrado cerca de la avenida. Es muy cariñoso.",
-        "Dueño #2"
-      )
-    );
-  }
-
-  @Override
-  public DatosDetalleMascotaDTO obtenerDetalle(Long id) {
-    DatosDetalleMascotaDTO dto = reportesSimulados.get(id);
-    if (dto == null) {
-      throw new RuntimeException("No se encontró el reporte con id: " + id);
+    @Autowired
+    public DetalleMascotaServiceImpl(RepositorioReporteMascota repositorioReporteMascota) {
+        this.repositorioReporteMascota = repositorioReporteMascota;
     }
-    return dto;
-  }
+
+    @Override
+    public DatosDetalleMascotaDTO obtenerDetalle(Long id) {
+        ReporteMascota reporte = repositorioReporteMascota.buscarPorId(id);
+        if (reporte == null) {
+            throw new RuntimeException("Reporte no encontrado");
+        }
+        return convertirADTO(reporte);
+    }
+
+    private DatosDetalleMascotaDTO convertirADTO(ReporteMascota reporte) {
+        DatosDetalleMascotaDTO dto = new DatosDetalleMascotaDTO();
+        dto.setId(reporte.getId());
+        dto.setNombre(reporte.getNombre());
+        dto.setEspecie(reporte.getEspecie());
+        dto.setRaza(reporte.getRaza());
+        dto.setColor(reporte.getColor());
+        dto.setTamano(reporte.getTamano());
+        dto.setFecha(reporte.getFecha());
+        dto.setUbicacion(reporte.getUbicacion());
+        dto.setDescripcion(reporte.getDescripcion());
+        dto.setTipoDeReporte(reporte.getTipoDeReporte());
+
+        if (reporte.getFotos() != null && !reporte.getFotos().isEmpty()) {
+            dto.setFotoUrl("/img/" + reporte.getFotos().get(0).getImg());
+        } else {
+            dto.setFotoUrl("/img/default-pet.png");
+        }
+
+        if (reporte.getUsuario() != null) {
+            dto.setNombreDuenio(reporte.getUsuario().getNombre() + " " + reporte.getUsuario().getApellido());
+        } else {
+            dto.setNombreDuenio("Desconocido");
+        }
+        return dto;
+    }
 }
