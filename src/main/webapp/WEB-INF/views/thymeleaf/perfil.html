@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .perfil-wrapper { margin-top: 70px; width: 100%; display: flex; justify-content: center; }
+
+        .contenedor-perfil {
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 90px; height: 90px; border-radius: 50%;
+            background-color: #228be6; color: #ffffff;
+            font-size: 2.5rem; font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px auto;
+        }
+
+        h1 { font-size: 1.5rem; font-weight: 600; margin-top: 0; margin-bottom: 5px; color: #1a1d20; }
+        .subtitulo { color: #6c757d; font-size: 0.95rem; margin-bottom: 30px; }
+
+        .info-grupo {
+            display: flex; flex-direction: column; text-align: left;
+            margin-bottom: 20px; border-bottom: 1px solid #f1f3f5; padding-bottom: 15px;
+        }
+        .info-grupo:last-of-type { border-bottom: none; margin-bottom: 30px; }
+
+        .info-label {
+            font-size: 0.85rem; font-weight: 600; color: #495057;
+            margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .info-valor { font-size: 1.1rem; color: #212529; margin: 0; }
+
+        .input-edicion {
+            font-family: inherit; font-size: 0.95rem; padding: 8px 12px;
+            border: 1px solid #ced4da; border-radius: 6px; width: 100%;
+            outline: none; transition: border-color 0.15s ease;
+        }
+        .input-edicion:focus { border-color: #228be6; }
+        .input-edicion[readonly] { background-color: #e9ecef; cursor: not-allowed; }
+
+        .btn-accion {
+            display: block; width: 100%; text-align: center; border: none; border-radius: 6px;
+            padding: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;
+            transition: background-color 0.15s ease; margin-top: 10px; color: #ffffff;
+        }
+        .btn-editar { background-color: #228be6; }
+        .btn-editar:hover { background-color: #1c7ed6; }
+        .btn-guardar { background-color: #28a745; }
+        .btn-guardar:hover { background-color: #218838; }
+        .btn-cancelar { background-color: #6c757d; }
+        .btn-cancelar:hover { background-color: #5a6268; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Mascotas</a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/realizar-reporte}">Reportar Mascota</a></li>
+            <li class="nav-item active"><a class="nav-link" th:href="@{/mi-perfil}">Perfil</a></li>
+        </ul>
+        <form class="form-inline mt-2 mt-md-0 ms-auto" style="margin-left: auto;">
+            <a class="btn btn-outline-success my-2 my-sm-0" th:href="@{/logout}">Logout</a>
+        </form>
+    </div>
+</nav>
+
+<div class="perfil-wrapper">
+    <main class="contenedor-perfil">
+        <form th:action="@{/actualizar-perfil}" method="POST" th:object="${usuario}">
+
+            <div class="avatar" th:text="${#strings.substring(usuario.nombre, 0, 1)}">U</div>
+            <h1>Mi Perfil</h1>
+            <p class="subtitulo">Mis Datos Personales</p>
+
+            <div class="info-grupo">
+                <span class="info-label">Nombre</span>
+                <p class="info-valor span-vista" th:text="${usuario.nombre}"></p>
+                <input type="text" class="input-edicion d-none" th:field="*{nombre}" required>
+            </div>
+
+            <div class="info-grupo">
+                <span class="info-label">Apellido</span>
+                <p class="info-valor span-vista" th:text="${usuario.apellido}"></p>
+                <input type="text" class="input-edicion d-none" th:field="*{apellido}" required>
+            </div>
+
+            <div class="info-grupo">
+                <span class="info-label">Correo Electrónico</span>
+                <p class="info-valor span-vista" th:text="${usuario.email}"></p>
+                <input type="email" class="input-edicion d-none" th:field="*{email}" readonly>
+            </div>
+
+            <div class="info-grupo">
+                <span class="info-label">Teléfono de Contacto</span>
+                <p class="info-valor span-vista" th:text="${usuario.telefono}"></p>
+                <input type="text" class="input-edicion d-none" th:field="*{telefono}" required>
+            </div>
+
+            <div class="info-grupo">
+                <span class="info-label">Contraseña</span>
+                <p class="info-valor span-vista">*********</p>
+                <input type="password" class="input-edicion d-none" th:field="*{password}" required>
+            </div>
+
+            <button type="button" id="btn-activar-edicion" class="btn-accion btn-editar">Editar Mis Datos</button>
+            <button type="submit" id="btn-guardar" class="btn-accion btn-guardar d-none">Guardar Cambios</button>
+            <button type="button" id="btn-cancelar" class="btn-accion btn-cancelar d-none">Cancelar</button>
+
+        </form>
+    </main>
+</div>
+
+<script>
+    const btnActivar = document.getElementById('btn-activar-edicion');
+    const btnGuardar = document.getElementById('btn-guardar');
+    const btnCancelar = document.getElementById('btn-cancelar');
+    const vistasTexto = document.querySelectorAll('.span-vista');
+    const inputsEdicion = document.querySelectorAll('.input-edicion');
+
+    btnActivar.addEventListener('click', function() {
+        vistasTexto.forEach(el => el.classList.add('d-none'));
+        inputsEdicion.forEach(el => el.classList.remove('d-none'));
+
+        btnActivar.classList.add('d-none');
+        btnGuardar.classList.remove('d-none');
+        btnCancelar.classList.remove('d-none');
+    });
+
+    btnCancelar.addEventListener('click', function() {
+        vistasTexto.forEach(el => el.classList.remove('d-none'));
+        inputsEdicion.forEach(el => el.classList.add('d-none'));
+
+        btnActivar.classList.remove('d-none');
+        btnGuardar.classList.add('d-none');
+        btnCancelar.classList.add('d-none');
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

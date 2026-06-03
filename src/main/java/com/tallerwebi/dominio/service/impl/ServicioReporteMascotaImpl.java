@@ -2,13 +2,18 @@ package com.tallerwebi.dominio.service.impl;
 
 import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
 import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
+import com.tallerwebi.dominio.excepcion.ImagenExcedeTamanoException;
+import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.repository.RepositorioReporteMascota;
+import com.tallerwebi.dominio.repository.RepositorioUsuario;
 import com.tallerwebi.dominio.service.ServicioReporteMascota;
 import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDate;
 
 @Service
@@ -16,9 +21,12 @@ import java.time.LocalDate;
 public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
 
     private  RepositorioReporteMascota repositorioReporteMascota;
+    private RepositorioUsuario repositorioUsuario;
+
     @Autowired
-    public ServicioReporteMascotaImpl(RepositorioReporteMascota repositorioReporteMascota) {
+    public ServicioReporteMascotaImpl(RepositorioReporteMascota repositorioReporteMascota,RepositorioUsuario repositorioUsuario) {
         this.repositorioReporteMascota = repositorioReporteMascota;
+        this.repositorioUsuario = repositorioUsuario;
     }
 
     public Boolean validarQueLaImagenCumplaConFormato(DatosReporteMascotaDTO datosReporteMascotaDTO) {
@@ -26,6 +34,12 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
 
         if (!tipo.equals("image/png") && !tipo.equals("image/jpeg")) {
             throw new FormatoImagenInvalidaException();
+        }
+
+        long limiteMaximo = 20 * 1024 * 1024;
+        long tamanoImagen = datosReporteMascotaDTO.getImagen().getSize();
+        if (tamanoImagen >= limiteMaximo) {
+            throw new ImagenExcedeTamanoException();
         }
 
         return true;
@@ -42,10 +56,16 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
         return true;
     }
 
-    public Boolean guardarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO) {
+    public Boolean guardarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO,String email) throws UsuarioExistente {
 
         if(datosReporteMascotaDTO.getFecha() != null) {
-            repositorioReporteMascota.guardarReporte(datosReporteMascotaDTO);
+
+            Usuario usuarioBuscado = repositorioUsuario.buscar(email);
+
+            if (usuarioBuscado == null) {
+                throw new UsuarioExistente();
+            }
+            repositorioReporteMascota.guardarReporte(datosReporteMascotaDTO,usuarioBuscado);
             return true;
         }
         return false;

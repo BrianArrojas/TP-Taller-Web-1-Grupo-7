@@ -23,7 +23,7 @@
         <checkstyle.version>3.2.1</checkstyle.version>
         <jackson.version>2.13.0</jackson.version>
         <slf4j.version>1.7.32</slf4j.version> <!-- Corrected from slf44j.version -->
-        <lombok.version>1.18.20</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
         <postgresql.version>42.2.23</postgresql.version>
     </properties>
 

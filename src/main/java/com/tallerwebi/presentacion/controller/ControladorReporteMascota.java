@@ -2,6 +2,8 @@ package com.tallerwebi.presentacion.controller;
 
 import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
 import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;;
+import com.tallerwebi.dominio.excepcion.ImagenExcedeTamanoException;
+import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.service.ServicioReporteMascota;
 import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class ControladorReporteMascota {
@@ -30,7 +34,7 @@ public class ControladorReporteMascota {
 
   @RequestMapping(path = "/procesando-reporte", method = RequestMethod.POST)
   public ModelAndView realizarReporte(
-    @ModelAttribute("datosReporte") DatosReporteMascotaDTO datosReporteMascotaDTO
+    @ModelAttribute("datosReporte") DatosReporteMascotaDTO datosReporteMascotaDTO, HttpServletRequest request
   ) {
     ModelMap modelo = new ModelMap();
 
@@ -72,8 +76,11 @@ public class ControladorReporteMascota {
       modelo.put("mensaje", "El formato de la foto debe ser JPG o PNG");
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
+    } catch (ImagenExcedeTamanoException exception) {
+      modelo.put("mensaje", "La foto es demasiado pesada. El tamaño máximo permitido es 20 MB");
+      modelo.put("datosReporte", datosReporteMascotaDTO);
+      return new ModelAndView("realizar-reporte", modelo);
     }
-
     try{
       servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO);
     }catch(FechaInvalidaException exception){
@@ -81,7 +88,14 @@ public class ControladorReporteMascota {
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
     }
-    servicioReporteMascota.guardarReporteMascota(datosReporteMascotaDTO);
+    Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuario");
+
+    if (usuarioLogueado == null) {
+      return new ModelAndView("redirect:/login", modelo);
+    }
+
+    String emailUsuario = usuarioLogueado.getEmail();
+    servicioReporteMascota.guardarReporteMascota(datosReporteMascotaDTO,emailUsuario);
     modelo.put("tipoDeReporte", datosReporteMascotaDTO.getTipoDeReporte());
     modelo.put("especie", datosReporteMascotaDTO.getEspecie());
     modelo.put("tamano", datosReporteMascotaDTO.getTamano());
