@@ -75,6 +75,21 @@
         .btn-guardar:hover { background-color: #218838; }
         .btn-cancelar { background-color: #6c757d; }
         .btn-cancelar:hover { background-color: #5a6268; }
+
+        .alert-danger {
+            background-color: #fff5f5;
+            border: 1px solid #ffe3e3;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .alert-danger p {
+            margin: 0;
+            color: #e03131;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -95,8 +110,11 @@
 
 <div class="perfil-wrapper">
     <main class="contenedor-perfil">
-        <form th:action="@{/actualizar-perfil}" method="POST" th:object="${usuario}">
-
+        <div th:if="${mensaje != null}" class="alert alert-danger">
+            <p th:text="${mensaje}"></p>
+        </div>
+        <form th:action="@{/actualizar-perfil}" method="POST" th:object="${usuario}" novalidate>
+            <input type="hidden" th:field="*{id}">
             <div class="avatar" th:text="${#strings.substring(usuario.nombre, 0, 1)}">U</div>
             <h1>Mi Perfil</h1>
             <p class="subtitulo">Mis Datos Personales</p>
@@ -116,7 +134,7 @@
             <div class="info-grupo">
                 <span class="info-label">Correo Electrónico</span>
                 <p class="info-valor span-vista" th:text="${usuario.email}"></p>
-                <input type="email" class="input-edicion d-none" th:field="*{email}" readonly>
+                <input type="email" class="input-edicion d-none" th:field="*{email}" >
             </div>
 
             <div class="info-grupo">

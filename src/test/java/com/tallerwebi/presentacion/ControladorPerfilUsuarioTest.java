@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.model.Usuario;
+import com.tallerwebi.dominio.service.ServicioPerfilUsuario;
 import com.tallerwebi.presentacion.controller.ControladorPerfilUsuario;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,15 +12,14 @@ import javax.servlet.http.HttpSession;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ControladorPerfilUsuarioTest {
 
-    ControladorPerfilUsuario controladorPerfil = new ControladorPerfilUsuario();
+    ServicioPerfilUsuario servicioMock = mock(ServicioPerfilUsuario.class);
+    ControladorPerfilUsuario controladorPerfil = new ControladorPerfilUsuario(servicioMock);
     HttpServletRequest requestMock = mock(HttpServletRequest.class);
     HttpSession sessionMock = mock(HttpSession.class);
-
 
     @Test
     public void siElUsuarioNoEstaLogueadoAlIntentarVerElPerfilDebeRedirigirAlLogin() {
@@ -55,5 +55,22 @@ public class ControladorPerfilUsuarioTest {
         assertThat(mav.getModel().get("usuario"), equalTo(usuarioFalso));
     }
 
-    }
+    @Test
+    public void siLosDatosSonValidosAlModificarlosCorrectamenteDebeRedirigirAlPerfil() {
+        // given
+        when(requestMock.getSession()).thenReturn(sessionMock);
+        Usuario usuario = new Usuario();
+        usuario.setEmail("test@unlam.com.ar");
+        usuario.setPassword("test");
+        usuario.setNombre("Brian");
+        usuario.setApellido("Arrojas");
+        usuario.setTelefono("1234567890");
 
+        when(sessionMock.getAttribute("usuario")).thenReturn(usuario);
+        // when
+        ModelAndView mav = controladorPerfil.actualizarPerfil(usuario, requestMock);
+
+        // then
+        assertThat(mav.getViewName(), equalTo("redirect:/mi-perfil"));
+    }
+}
