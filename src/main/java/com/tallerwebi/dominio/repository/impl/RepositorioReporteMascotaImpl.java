@@ -7,6 +7,9 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import org.hibernate.criterion.Restrictions;
+import java.util.List;
+
 @Repository
 public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota {
 
@@ -30,5 +33,29 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
         //FALTA LA IMAGEN
         sessionFactory.getCurrentSession().save(reporteMascota);
 
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ReporteMascota> obtenerTodosLosReportes() {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(ReporteMascota.class)
+                .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ReporteMascota> buscarReportes(String busqueda) {
+        if (busqueda == null || busqueda.trim().isEmpty()) {
+            return obtenerTodosLosReportes();
+        }
+        String wildcard = "%" + busqueda.toLowerCase().trim() + "%";
+        return sessionFactory.getCurrentSession()
+                .createCriteria(ReporteMascota.class)
+                .add(Restrictions.or(
+                        Restrictions.ilike("especie", wildcard),
+                        Restrictions.ilike("nombre", wildcard)
+                ))
+                .list();
     }
 }

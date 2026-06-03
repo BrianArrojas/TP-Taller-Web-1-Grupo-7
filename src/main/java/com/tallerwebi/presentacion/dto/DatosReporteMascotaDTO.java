@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
@@ -24,4 +25,12 @@ public class DatosReporteMascotaDTO {
   private String ubicacion;
   private String descripcion;
   private MultipartFile imagen;
+  private String rutaImagen;
+
+  public String getFechaFormateada() {
+    if (this.fecha == null) {
+      return "";
+    }
+    return this.fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+  }
 }

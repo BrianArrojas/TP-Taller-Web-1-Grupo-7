@@ -2,7 +2,7 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
 import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
-
+import com.tallerwebi.dominio.model.ReporteMascota;
 import com.tallerwebi.dominio.repository.RepositorioReporteMascota;
 import com.tallerwebi.dominio.service.ServicioReporteMascota;
 import com.tallerwebi.dominio.service.impl.ServicioReporteMascotaImpl;
@@ -10,9 +10,14 @@ import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
-
+import static org.mockito.Mockito.when;
 
 public class ServicioReporteMascotaTest {
 
@@ -57,6 +62,28 @@ public class ServicioReporteMascotaTest {
     datosReporteMascotaDTO.setImagen(fotoSimulada);
     assertThrows(FechaInvalidaException.class,()->servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO));
 
+  }
+
+  @Test
+  public void deberiaRetornarTodosLosReportesMapeadosADTOAlListarMascotas() {
+    // Given
+    List<ReporteMascota> reportesSimulados = new ArrayList<>();
+    ReporteMascota r1 = new ReporteMascota();
+    r1.setNombre("Milo");
+    r1.setEspecie("Gato");
+    r1.setTipoDeReporte("Perdido");
+    reportesSimulados.add(r1);
+
+    when(repositorioReporteMascota.buscarReportes(null)).thenReturn(reportesSimulados);
+
+    // When
+    List<DatosReporteMascotaDTO> result = servicioReporteMascota.listarMascotas(null);
+
+    // Then
+    assertThat(result, hasSize(1));
+    assertThat(result.get(0).getNombre(), equalTo("Milo"));
+    assertThat(result.get(0).getEspecie(), equalTo("Gato"));
+    assertThat(result.get(0).getTipoDeReporte(), equalTo("Perdido"));
   }
 
 }

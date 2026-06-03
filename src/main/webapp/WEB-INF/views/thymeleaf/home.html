@@ -55,22 +55,22 @@
                 <a class="" th:href="@{/reporte/1}" style="text-decoration: none;">
                     <div class="card h-100 card-hover">
                         <!-- Si no hay imagen disponible, mostramos un placeholder -->
-                        <img th:src="@{${mascota.imagen}}" class="card-img-top" alt="Imagen de la mascota"
+                        <img th:src="@{${mascota.rutaImagen}}" class="card-img-top" alt="Imagen de la mascota"
                              style="height: 200px; object-fit: cover;"
                              onerror="this.onerror=null;this.src='https://via.placeholder.com/200x200?text=Sin+Imagen'">
                         <div class="card-body">
                             <h5 class="card-title" th:text="${mascota.nombre ?: 'Sin nombre'}">Nombre de la Mascota</h5>
                             <p class="card-text">
-                                <strong>Tipo:</strong> <span th:text="${mascota.tipo}"></span><br>
+                                <strong>Tipo:</strong> <span th:text="${mascota.especie}"></span><br>
                             </p>
                         </div>
                         <div class="card-footer">
                             <small class="text-muted">
                                 <strong>Fecha:</strong> <span
-                                    th:text="${#dates.format(mascota.fecha, 'dd/MM/yyyy')}"></span><br>
+                                    th:text="${mascota.fechaFormateada}"></span><br>
                                 <strong>Estado:</strong>
-                                <span th:class="${mascota.estado == 'Perdido' ? 'badge bg-danger' : 'badge bg-success'}"
-                                      th:text="${mascota.estado}"></span>
+                                <span th:class="${mascota.tipoDeReporte == 'Perdido' ? 'badge bg-danger' : 'badge bg-primary'}"
+                                      th:text="${mascota.tipoDeReporte}"></span>
                             </small>
                         </div>
                     </div>
