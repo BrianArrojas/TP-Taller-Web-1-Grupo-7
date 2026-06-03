@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
 import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
+import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.service.ServicioReporteMascota;
 import com.tallerwebi.presentacion.controller.ControladorReporteMascota;
 import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
@@ -15,12 +16,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 
 public class ControladorReporteMascotaTest {
 
   ServicioReporteMascota servicioReporteMascota = mock(ServicioReporteMascota.class);
   ControladorReporteMascota controladorReporteMascota = new ControladorReporteMascota(servicioReporteMascota);
+
+  HttpServletRequest request = mock(HttpServletRequest.class);
+  HttpSession session = mock(HttpSession.class);
 
   @Test
   public void siGeneroUnReporteCorrectamenteSeMuestraLaVistaConLaInformacionDelMismo() {
@@ -36,10 +42,18 @@ public class ControladorReporteMascotaTest {
     datosReporteMascotaDTO.setFecha(LocalDate.now().minusDays(1));
     MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-imagen".getBytes());
     datosReporteMascotaDTO.setImagen(fotoSimulada);
+
+    Usuario usuarioSimulado = new Usuario();
+    usuarioSimulado.setEmail("brian@test.com");
+
+    when(request.getSession()).thenReturn(session);
+    when(session.getAttribute("usuario")).thenReturn(usuarioSimulado);
+
+
     when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO)).thenReturn(true);
     when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(any(DatosReporteMascotaDTO.class))).thenReturn(true);
 
-    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO);
+    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO,request);
 
     thenReporteExitoso(mav, "El reporte se realizo correctamente");
   }
@@ -49,8 +63,8 @@ public class ControladorReporteMascotaTest {
     assertThat(mav.getModel().get("mensaje").toString(), equalToIgnoringCase(mensaje));
   }
 
-  private ModelAndView whenRealizarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO) {
-    ModelAndView mav = controladorReporteMascota.realizarReporte(datosReporteMascotaDTO);
+  private ModelAndView whenRealizarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO,HttpServletRequest request) {
+    ModelAndView mav = controladorReporteMascota.realizarReporte(datosReporteMascotaDTO,request);
     return mav;
   }
 
@@ -71,7 +85,19 @@ public class ControladorReporteMascotaTest {
     datosReporteMascotaDTO.setFecha(LocalDate.of(2025, 4, 25));
     MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-imagen".getBytes());
     datosReporteMascotaDTO.setImagen(fotoSimulada);
-    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO);
+
+
+    Usuario usuarioSimulado = new Usuario();
+    usuarioSimulado.setEmail("brian@test.com");
+
+    when(request.getSession()).thenReturn(session);
+    when(session.getAttribute("usuario")).thenReturn(usuarioSimulado);
+
+
+    when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO)).thenReturn(true);
+    when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(any(DatosReporteMascotaDTO.class))).thenReturn(true);
+
+    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO,request);
     thenReporteNoSeRealiza(
       mav,
       datosReporteMascotaDTO,
@@ -103,7 +129,18 @@ public class ControladorReporteMascotaTest {
     datosReporteMascotaDTO.setColor("Blanco");
     datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
     datosReporteMascotaDTO.setUbicacion("San Justo");
-    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO);
+
+    Usuario usuarioSimulado = new Usuario();
+    usuarioSimulado.setEmail("brian@test.com");
+
+    when(request.getSession()).thenReturn(session);
+    when(session.getAttribute("usuario")).thenReturn(usuarioSimulado);
+
+
+    when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO)).thenReturn(true);
+    when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(any(DatosReporteMascotaDTO.class))).thenReturn(true);
+
+    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO,request);
     thenReporteNoSeRealizaSiNoSeleccionoOpcionDeDesplegable(mav,datosReporteMascotaDTO,"Debe seleccionar una opcion de todos los desplegables");
 
   }
@@ -135,7 +172,18 @@ public class ControladorReporteMascotaTest {
 
     when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO)).thenReturn(true);
     // When
-    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO);
+
+    Usuario usuarioSimulado = new Usuario();
+    usuarioSimulado.setEmail("brian@test.com");
+
+    when(request.getSession()).thenReturn(session);
+    when(session.getAttribute("usuario")).thenReturn(usuarioSimulado);
+
+
+    when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO)).thenReturn(true);
+    when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(any(DatosReporteMascotaDTO.class))).thenReturn(true);
+
+    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO,request);
     // Then
     thenReporteFalla(mav,"Debe adjuntar una imagen");
 
@@ -166,7 +214,16 @@ public class ControladorReporteMascotaTest {
       when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(org.mockito.Mockito.any())).thenThrow(new FormatoImagenInvalidaException());
 
     // When
-    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO);
+
+    Usuario usuarioSimulado = new Usuario();
+    usuarioSimulado.setEmail("brian@test.com");
+
+    when(request.getSession()).thenReturn(session);
+    when(session.getAttribute("usuario")).thenReturn(usuarioSimulado);
+
+    when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(any(DatosReporteMascotaDTO.class))).thenReturn(true);
+
+    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO,request);
     // Then
     thenReporteFalla(mav,"El formato de la foto debe ser JPG o PNG");
 
@@ -190,10 +247,21 @@ public class ControladorReporteMascotaTest {
     // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
     MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-png".getBytes());
     datosReporteMascotaDTO.setImagen(fotoSimulada);
-    //when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(org.mockito.Mockito.any())).thenThrow(new FechaInvalidaException());
+    when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO)).thenReturn(true);
     when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO)).thenThrow(new FechaInvalidaException());
     // When
-    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO);
+
+    Usuario usuarioSimulado = new Usuario();
+    usuarioSimulado.setEmail("brian@test.com");
+
+    when(request.getSession()).thenReturn(session);
+    when(session.getAttribute("usuario")).thenReturn(usuarioSimulado);
+
+
+
+
+
+    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO,request);
     // Then
     thenReporteFalla(mav, "La fecha ingresada no puede ser futura al dia de hoy");
   }

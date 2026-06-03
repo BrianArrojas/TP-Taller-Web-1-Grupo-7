@@ -1,6 +1,8 @@
 package com.tallerwebi.dominio.service;
 
 import com.tallerwebi.dominio.model.ReporteMascota;
+import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import java.util.List;
 
@@ -10,9 +12,8 @@ public interface ServicioReporteMascota {
 
     public Boolean validarQueFechaDeReporteNoSeaFutura(DatosReporteMascotaDTO datosReporteMascotaDTO);
 
-    public Boolean guardarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO);
-
     List<ReporteMascota> obtenerTodosLosReportes();
 
     List<DatosReporteMascotaDTO> listarMascotas(String busqueda);
+    public Boolean guardarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO, String email) throws UsuarioExistente;
 }

@@ -90,7 +90,7 @@ public class SpringWebConfig implements WebMvcConfigurer {
   @Bean
   public CommonsMultipartResolver multipartResolver() {
     CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-    multipartResolver.setMaxUploadSize(20971520); // Establece el límite máximo en 5MB
+    multipartResolver.setMaxUploadSize(52428800); // Establece el límite máximo en 50MB
     return multipartResolver;
   }
 }

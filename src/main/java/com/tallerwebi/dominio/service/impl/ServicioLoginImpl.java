@@ -1,11 +1,13 @@
 package com.tallerwebi.dominio.service.impl;
 
+import com.tallerwebi.dominio.excepcion.PasswordInvalidaException;
 import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import javax.transaction.Transactional;
 
 import com.tallerwebi.dominio.repository.RepositorioUsuario;
 import com.tallerwebi.dominio.repository.ServicioLogin;
+import com.tallerwebi.presentacion.dto.DatosRegistroDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import org.slf4j.LoggerFactory;
 @Service("servicioLogin")
 @Transactional
 public class ServicioLoginImpl implements ServicioLogin {
+
+  private static final int CANTIDAD_MAXIMA_CARACTERES = 6;
 
   private static final Logger logger = LoggerFactory.getLogger(ServicioLoginImpl.class);
 
@@ -37,18 +41,52 @@ public class ServicioLoginImpl implements ServicioLogin {
     return usuario;
   }
 
+//  @Override
+//  public void registrar(Usuario usuario) throws UsuarioExistente {
+//    logger.info("Intentando registrar usuario con el email: {}", usuario.getEmail());
+//    Usuario usuarioEncontrado = repositorioUsuario.buscarUsuario(
+//      usuario.getEmail(),
+//      usuario.getPassword()
+//    );
+//    if (usuarioEncontrado != null) {
+//      logger.warn("El usuario con el email {} ya existe", usuario.getEmail());
+//      throw new UsuarioExistente();
+//    }
+//    repositorioUsuario.guardar(usuario);
+//    logger.info("Usuario registrado exitosamente con el email: {}", usuario.getEmail());
+//  }
+
   @Override
-  public void registrar(Usuario usuario) throws UsuarioExistente {
-    logger.info("Intentando registrar usuario con el email: {}", usuario.getEmail());
-    Usuario usuarioEncontrado = repositorioUsuario.buscarUsuario(
-      usuario.getEmail(),
-      usuario.getPassword()
+  public Usuario registrar(DatosRegistroDTO datosRegistroDTO) throws UsuarioExistente {
+
+    if (datosRegistroDTO.getPassword().length() < CANTIDAD_MAXIMA_CARACTERES) {
+      throw new PasswordInvalidaException("La password debe tener al menos 6 caracteres");
+    }
+
+    logger.info("Intentando registrar usuario con el email: {}", datosRegistroDTO.getMail());
+
+    Usuario usuarioEncontrado = repositorioUsuario.buscar(
+            datosRegistroDTO.getMail()
     );
+
     if (usuarioEncontrado != null) {
-      logger.warn("El usuario con el email {} ya existe", usuario.getEmail());
+      logger.warn("El usuario con el email {} ya existe", datosRegistroDTO.getMail());
       throw new UsuarioExistente();
     }
-    repositorioUsuario.guardar(usuario);
-    logger.info("Usuario registrado exitosamente con el email: {}", usuario.getEmail());
+
+    Usuario nuevoUsuario = new Usuario();
+    nuevoUsuario.setEmail(datosRegistroDTO.getMail());
+    nuevoUsuario.setPassword(datosRegistroDTO.getPassword());
+    nuevoUsuario.setNombre(datosRegistroDTO.getNombre());
+    nuevoUsuario.setApellido(datosRegistroDTO.getApellido());
+    nuevoUsuario.setTelefono(datosRegistroDTO.getTelefono());
+    nuevoUsuario.setRol("USUARIO");
+    nuevoUsuario.activar();
+
+    repositorioUsuario.guardar(nuevoUsuario);
+
+    logger.info("Usuario registrado exitosamente con el email: {}", nuevoUsuario.getEmail());
+
+    return nuevoUsuario;
   }
 }

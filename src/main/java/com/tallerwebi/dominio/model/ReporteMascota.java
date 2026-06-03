@@ -36,7 +36,7 @@ public class ReporteMascota {
     private List<Foto> fotos = new ArrayList<>();
 
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 

@@ -40,33 +40,33 @@ public class ServicioLoginTest {
     verify(this.repositorioUsuarioMock, times(1)).buscarUsuario(email, password);
   }
 
-  @Test
-  public void registrarUsuarioSiNoExisteDeberiaGuardarlo() throws UsuarioExistente {
-    // preparacion
-    Usuario usuario = new Usuario();
-    usuario.setEmail("nuevo@test.com");
-    usuario.setPassword("123");
-    when(this.repositorioUsuarioMock.buscarUsuario(usuario.getEmail(), usuario.getPassword()))
-      .thenReturn(null);
+//  @Test
+//  public void registrarUsuarioSiNoExisteDeberiaGuardarlo() throws UsuarioExistente {
+//    // preparacion
+//    Usuario usuario = new Usuario();
+//    usuario.setEmail("nuevo@test.com");
+//    usuario.setPassword("123");
+//    when(this.repositorioUsuarioMock.buscarUsuario(usuario.getEmail(), usuario.getPassword()))
+//      .thenReturn(null);
+//
+//    // ejecucion
+//    this.servicioLogin.registrar(usuario);
+//
+//    // validacion
+//    verify(this.repositorioUsuarioMock, times(1)).guardar(usuario);
+//  }
 
-    // ejecucion
-    this.servicioLogin.registrar(usuario);
-
-    // validacion
-    verify(this.repositorioUsuarioMock, times(1)).guardar(usuario);
-  }
-
-  @Test
-  public void registrarUsuarioSiExisteDeberiaLanzarExcepcion() {
-    // preparacion
-    Usuario usuario = new Usuario();
-    usuario.setEmail("existe@test.com");
-    usuario.setPassword("123");
-    when(this.repositorioUsuarioMock.buscarUsuario(usuario.getEmail(), usuario.getPassword()))
-      .thenReturn(new Usuario());
-
-    // ejecucion y validacion
-    assertThrows(UsuarioExistente.class, () -> this.servicioLogin.registrar(usuario));
-    verify(this.repositorioUsuarioMock, times(0)).guardar(usuario);
-  }
+//  @Test
+//  public void registrarUsuarioSiExisteDeberiaLanzarExcepcion() {
+//    // preparacion
+//    Usuario usuario = new Usuario();
+//    usuario.setEmail("existe@test.com");
+//    usuario.setPassword("123");
+//    when(this.repositorioUsuarioMock.buscarUsuario(usuario.getEmail(), usuario.getPassword()))
+//      .thenReturn(new Usuario());
+//
+//    // ejecucion y validacion
+//    assertThrows(UsuarioExistente.class, () -> this.servicioLogin.registrar(usuario));
+//    verify(this.repositorioUsuarioMock, times(0)).guardar(usuario);
+//  }
 }

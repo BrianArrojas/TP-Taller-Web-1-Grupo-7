@@ -3,7 +3,10 @@ package com.tallerwebi.dominio;
 import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
 import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
 import com.tallerwebi.dominio.model.ReporteMascota;
+
+import com.tallerwebi.dominio.excepcion.ImagenExcedeTamanoException;
 import com.tallerwebi.dominio.repository.RepositorioReporteMascota;
+import com.tallerwebi.dominio.repository.RepositorioUsuario;
 import com.tallerwebi.dominio.service.ServicioReporteMascota;
 import com.tallerwebi.dominio.service.impl.ServicioReporteMascotaImpl;
 import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
@@ -22,7 +25,9 @@ import static org.mockito.Mockito.when;
 public class ServicioReporteMascotaTest {
 
   RepositorioReporteMascota repositorioReporteMascota = mock(RepositorioReporteMascota.class);
-  ServicioReporteMascota servicioReporteMascota = new ServicioReporteMascotaImpl(repositorioReporteMascota);
+  RepositorioUsuario repositorioUsuario = mock(RepositorioUsuario.class);
+
+  ServicioReporteMascota servicioReporteMascota = new ServicioReporteMascotaImpl(repositorioReporteMascota,repositorioUsuario);
 
   @Test
   public void siNoSeRespetoFormatoDeImagenElReporteFalla() {
@@ -61,6 +66,27 @@ public class ServicioReporteMascotaTest {
     MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-imagen".getBytes());
     datosReporteMascotaDTO.setImagen(fotoSimulada);
     assertThrows(FechaInvalidaException.class,()->servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO));
+
+  }
+
+  @Test
+  public void siLaImagenDelReporteSuperaPesoMaximoElMismoFalla(){
+
+    // Given
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setRaza("Dogo");
+    datosReporteMascotaDTO.setColor("Blanco");
+    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
+    datosReporteMascotaDTO.setUbicacion("San Justo");
+    datosReporteMascotaDTO.setTipoDeReporte("Perdido");
+    datosReporteMascotaDTO.setTamano("Grande");
+    datosReporteMascotaDTO.setEspecie("Perro");
+    datosReporteMascotaDTO.setFecha(LocalDate.now().minusDays(1));
+    MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", new byte[20 * 1024 * 1024]);
+    datosReporteMascotaDTO.setImagen(fotoSimulada);
+    assertThrows(ImagenExcedeTamanoException.class,()->servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO));
+
 
   }
 
