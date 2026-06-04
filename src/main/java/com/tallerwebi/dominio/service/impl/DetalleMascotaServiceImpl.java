@@ -42,7 +42,14 @@ public class DetalleMascotaServiceImpl implements DetalleMascotaService {
         dto.setTipoDeReporte(reporte.getTipoDeReporte());
 
         if (reporte.getFotos() != null && !reporte.getFotos().isEmpty()) {
-            dto.setFotoUrl("/img/" + reporte.getFotos().get(0).getImg());
+            String imgPath = reporte.getFotos().get(0).getImg();
+            if (imgPath.startsWith("img/")) {
+                dto.setFotoUrl("/" + imgPath);
+            } else if (imgPath.startsWith("/img/")) {
+                dto.setFotoUrl(imgPath);
+            } else {
+                dto.setFotoUrl("/img/" + imgPath);
+            }
         } else {
             dto.setFotoUrl("/img/default-pet.png");
         }

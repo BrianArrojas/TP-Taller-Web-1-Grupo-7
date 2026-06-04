@@ -90,3 +90,6 @@ INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(28, 'img/124.jpg', 28);
 
 INSERT INTO reporte_mascota(id, tipo_de_reporte, nombre, especie, fecha, registro_activo, usuario_id) VALUES(29, 'Encontrado', NULL, 'Perro', '2025-05-05', true, NULL);
 INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(29, 'img/125.jpg', 29);
+
+SELECT setval(pg_get_serial_sequence('reporte_mascota', 'id'), 29);
+SELECT setval(pg_get_serial_sequence('foto', 'id'), 29);

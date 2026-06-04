@@ -84,6 +84,7 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
         return reportes.stream().map(reporte -> {
             DatosReporteMascotaDTO dto = new DatosReporteMascotaDTO();
             dto.setNombre(reporte.getNombre());
+            dto.setId(reporte.getId());
             dto.setEspecie(reporte.getEspecie());
             dto.setFecha(reporte.getFecha());
             dto.setTipoDeReporte(reporte.getTipoDeReporte());
@@ -93,7 +94,14 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
             dto.setUbicacion(reporte.getUbicacion());
             dto.setDescripcion(reporte.getDescripcion());
             if (reporte.getFotos() != null && !reporte.getFotos().isEmpty()) {
-                dto.setRutaImagen(reporte.getFotos().get(0).getImg());
+                String imgPath = reporte.getFotos().get(0).getImg();
+                if (imgPath.startsWith("img/")) {
+                    dto.setRutaImagen("/" + imgPath);
+                } else if (imgPath.startsWith("/img/")) {
+                    dto.setRutaImagen(imgPath);
+                } else {
+                    dto.setRutaImagen("/img/" + imgPath);
+                }
             }
             return dto;
         }).collect(java.util.stream.Collectors.toList());

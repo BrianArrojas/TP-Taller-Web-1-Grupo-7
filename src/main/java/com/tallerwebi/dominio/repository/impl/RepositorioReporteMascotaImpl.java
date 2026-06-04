@@ -22,6 +22,9 @@ import java.io.File;
 public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota {
 
 
+    @Autowired
+    private javax.servlet.ServletContext servletContext;
+
     private SessionFactory sessionFactory;
     private RepositorioUsuario repositorioUsuario;
     @Autowired
@@ -55,7 +58,7 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
     // Procesar la imagen
     if (datosReporteMascota.getImagen() != null && !datosReporteMascota.getImagen().isEmpty()) {
         try {
-            // Directorio donde se almacenarán las imágenes
+            // Directorio donde se almacenarán las imágenes en el código fuente
             String uploadDir = "src/main/webapp/img/";
             File dir = new File(uploadDir);
             if (!dir.exists()) {
@@ -70,9 +73,22 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
             }
             String nombreArchivo = UUID.randomUUID().toString() + extension;
 
-            // Guardar el archivo en el sistema de archivos
-            File file = new File(dir, nombreArchivo);
-            datosReporteMascota.getImagen().transferTo(file);
+            // Guardar el archivo en el sistema de archivos (src)
+            File fileSrc = new File(dir, nombreArchivo);
+            datosReporteMascota.getImagen().transferTo(fileSrc);
+
+            // Guardar también en el directorio real de ejecución del servidor para que se sirva inmediatamente
+            if (servletContext != null) {
+                String realPath = servletContext.getRealPath("/img/");
+                if (realPath != null) {
+                    File targetDir = new File(realPath);
+                    if (!targetDir.exists()) {
+                        targetDir.mkdirs();
+                    }
+                    File fileDest = new File(targetDir, nombreArchivo);
+                    java.nio.file.Files.copy(fileSrc.toPath(), fileDest.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
 
             // Crear la entidad Foto y persistirla
             Foto foto = new Foto();

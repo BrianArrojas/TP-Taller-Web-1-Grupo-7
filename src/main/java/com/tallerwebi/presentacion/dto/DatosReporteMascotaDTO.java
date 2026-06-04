@@ -16,6 +16,7 @@ public class DatosReporteMascotaDTO {
 
   private String tipoDeReporte;
   private String nombre;
+  private Long id;
   private String especie;
   private String raza;
   private String color;
