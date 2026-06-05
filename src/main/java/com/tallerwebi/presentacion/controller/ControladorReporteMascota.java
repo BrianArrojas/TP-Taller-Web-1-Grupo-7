@@ -91,7 +91,7 @@ public class ControladorReporteMascota {
     }
     try{
       servicioReporteMascota.validarQueLaImagenNoExcedaTamano(datosReporteMascotaDTO);
-    }catch(FechaInvalidaException exception){
+    }catch(ImagenExcedeTamanoException exception){
       modelo.put("mensaje", exception.getMessage());
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
@@ -104,6 +104,10 @@ public class ControladorReporteMascota {
 
     String emailUsuario = usuarioLogueado.getEmail();
     servicioReporteMascota.guardarReporteMascota(datosReporteMascotaDTO,emailUsuario);
+
+    String nombreImagenPublicada = datosReporteMascotaDTO.getNombreImagenPublicada();
+    String rutaOficialImagen = "/img/" + nombreImagenPublicada;
+
     modelo.put("tipoDeReporte", datosReporteMascotaDTO.getTipoDeReporte());
     modelo.put("especie", datosReporteMascotaDTO.getEspecie());
     modelo.put("tamano", datosReporteMascotaDTO.getTamano());
@@ -113,7 +117,8 @@ public class ControladorReporteMascota {
     modelo.put("descripcion", datosReporteMascotaDTO.getDescripcion());
     modelo.put("ubicacion", datosReporteMascotaDTO.getUbicacion());
     modelo.put("fecha",datosReporteMascotaDTO.getFecha());
-    modelo.put("imagen", datosReporteMascotaDTO.getImagen());
+    //modelo.put("imagen", datosReporteMascotaDTO.getImagen());
+    modelo.put("rutaImagen", rutaOficialImagen);
     modelo.put("mensaje", "El reporte se realizo correctamente");
     modelo.put("datosReporte", new DatosReporteMascotaDTO());
     return new ModelAndView("lista-de-reportes", modelo);
