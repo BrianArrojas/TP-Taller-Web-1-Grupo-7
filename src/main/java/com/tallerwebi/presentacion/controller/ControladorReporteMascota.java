@@ -74,7 +74,7 @@ public class ControladorReporteMascota {
     try{
       servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO);
     }catch(FormatoImagenInvalidaException exception){
-      modelo.put("mensaje", "El formato de la foto debe ser JPG o PNG");
+      modelo.put("mensaje", exception.getMessage());
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
     } catch (ImagenExcedeTamanoException exception) {
@@ -85,7 +85,14 @@ public class ControladorReporteMascota {
     try{
       servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO);
     }catch(FechaInvalidaException exception){
-      modelo.put("mensaje", "La fecha ingresada no puede ser futura al dia de hoy");
+      modelo.put("mensaje", exception.getMessage());
+      modelo.put("datosReporte", datosReporteMascotaDTO);
+      return new ModelAndView("realizar-reporte", modelo);
+    }
+    try{
+      servicioReporteMascota.validarQueLaImagenNoExcedaTamano(datosReporteMascotaDTO);
+    }catch(FechaInvalidaException exception){
+      modelo.put("mensaje", exception.getMessage());
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
     }

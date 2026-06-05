@@ -35,24 +35,20 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
         String tipo = datosReporteMascotaDTO.getImagen().getContentType();
 
         if (!tipo.equals("image/png") && !tipo.equals("image/jpeg")) {
-            throw new FormatoImagenInvalidaException();
+            throw new FormatoImagenInvalidaException("El formato de la imagen debe ser PNG o JPG.");
         }
 
-        long limiteMaximo = 20 * 1024 * 1024;
-        long tamanoImagen = datosReporteMascotaDTO.getImagen().getSize();
-        if (tamanoImagen >= limiteMaximo) {
-            throw new ImagenExcedeTamanoException();
-        }
+
 
         return true;
     }
 
     public Boolean validarQueFechaDeReporteNoSeaFutura(DatosReporteMascotaDTO datosReporteMascotaDTO) {
         if (datosReporteMascotaDTO.getFecha() == null) {
-            throw new FechaInvalidaException();
+            throw new FechaInvalidaException("La fecha ingresada no puede ser futura al dia de hoy.");
         }
         if (datosReporteMascotaDTO.getFecha().isAfter(LocalDate.now())) {
-            throw new FechaInvalidaException();
+            throw new FechaInvalidaException("La fecha ingresada no puede ser futura al dia de hoy.");
         }
 
         return true;
@@ -71,6 +67,19 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Boolean validarQueLaImagenNoExcedaTamano(DatosReporteMascotaDTO datosReporteMascotaDTO) {
+        String tipo = datosReporteMascotaDTO.getImagen().getContentType();
+
+        long limiteMaximo = 20 * 1024 * 1024;
+        long tamanoImagen = datosReporteMascotaDTO.getImagen().getSize();
+        if (tamanoImagen >= limiteMaximo) {
+            throw new ImagenExcedeTamanoException("La foto es demasiado pesada. El tamaño máximo permitido es 20 MB");
+        }
+
+        return true;
     }
 
     @Override
