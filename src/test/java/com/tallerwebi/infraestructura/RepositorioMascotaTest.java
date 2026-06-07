@@ -124,19 +124,16 @@ public class RepositorioMascotaTest {
         // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
         MockMultipartFile fotoSimulada2 = new MockMultipartFile("foto", "perrito2.png", "image/png", "bytes-de-png".getBytes());
         datosReporteMascota.setImagen(fotoSimulada2);
-        repositorioMascota.guardarReporte(datosReporteMascota2,usuario);
-
+        repositorioMascota.guardarReporte(datosReporteMascota2,usuario2);
 
         //when
         List<ReporteMascota> reportesDelPrimerUsuario = repositorioMascota.buscarPorUsuario(usuario);
 
-
         //then
         assertThat(datosReporteMascota, notNullValue());
-        assertThat(reportesDelPrimerUsuario.size(), equalTo(2));
+        assertThat(reportesDelPrimerUsuario.size(), equalTo(1));
 
     }
-
 
     @Test
     @Transactional
