@@ -2,6 +2,7 @@ package com.tallerwebi.dominio.repository.impl;
 
 import com.tallerwebi.dominio.repository.RepositorioUsuario;
 import com.tallerwebi.dominio.model.Usuario;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,11 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
   @Override
   public void modificar(Usuario usuario) {
     logger.debug("Modificando usuario en BD: {}", usuario.getEmail());
-    sessionFactory.getCurrentSession().update(usuario);
+    Session session = sessionFactory.getCurrentSession();
+    Usuario usuarioExistente = session.get(Usuario.class, usuario.getId());
+//    sessionFactory.getCurrentSession().update(usuario);
+    if (usuarioExistente!= null) {
+      session.merge(usuario);
+    }
   }
 }

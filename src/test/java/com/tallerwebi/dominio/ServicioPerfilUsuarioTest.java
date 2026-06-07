@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class ServicioPerfilUsuarioTest {
 
@@ -19,7 +19,7 @@ public class ServicioPerfilUsuarioTest {
 
 
     @Test
-    public void siLosDatosSonCorrectosDebeActualizarSinLanzarExcepcion() {
+    public void siLosDatosSonCorrectosDebeActualizarLosDatosDelUsuarioConExito() {
         // given
         Usuario usuarioValido = new Usuario();
         usuarioValido.setNombre("Brian");
@@ -28,22 +28,29 @@ public class ServicioPerfilUsuarioTest {
         usuarioValido.setTelefono("1234567890");
         usuarioValido.setPassword("123456");
 
-        servicio.actualizarPerfil(usuarioValido);
+        when(repositorioUsuario.buscar("brian@test.com.ar")).thenReturn(usuarioValido);
 
-        assertThat(usuarioValido.getNombre(), equalTo("Brian"));
+        Usuario usuarioDelFront = new Usuario();
+        usuarioDelFront.setEmail("brian@test.com.ar");// Obligatorio para identificarlo
+        usuarioDelFront.setNombre("Arian");
+
+        servicio.actualizarPerfil(usuarioDelFront);
+
+        verify(repositorioUsuario, times(1)).modificar(usuarioValido);
+
+        assertThat(usuarioValido.getNombre(), equalTo("Arian"));
+        assertThat(usuarioValido.getApellido(), equalTo("Arrojas"));
     }
     @Test
     public void siElTelefonoNoTieneDiezCaracteresDebeLanzarExcepcion() {
         // given
-        RepositorioUsuario repositorioMock = mock(RepositorioUsuario.class);
-        ServicioPerfilUsuario servicio = new ServicioPerfilUsuarioImpl(repositorioMock);
+        Usuario usuarioOriginal = new Usuario();
+        usuarioOriginal.setEmail("brian@test.com.ar");
+        when(repositorioUsuario.buscar("brian@test.com.ar")).thenReturn(usuarioOriginal);
 
         Usuario usuarioInvalido = new Usuario();
-        usuarioInvalido.setNombre("Brian");
-        usuarioInvalido.setApellido("Arrojas");
-        usuarioInvalido.setTelefono("12345");
-        usuarioInvalido.setEmail("test@unlam.com.ar");
-        usuarioInvalido.setPassword("1234567");
+        usuarioInvalido.setEmail("brian@test.com.ar");
+        usuarioInvalido.setTelefono("123"); // Menos de 10 caracteres
 
         // when
         DatosInvalidosException excepcion = assertThrows(DatosInvalidosException.class, () -> {
@@ -56,8 +63,10 @@ public class ServicioPerfilUsuarioTest {
     @Test
     public void siElEmailNoTerminaComoCorrespondeDebeLanzarExcepcion() {
         // given
-        RepositorioUsuario repositorioMock = mock(RepositorioUsuario.class);
-        ServicioPerfilUsuario servicio = new ServicioPerfilUsuarioImpl(repositorioMock);
+        Usuario usuarioOriginal = new Usuario();
+        usuarioOriginal.setEmail("test@gmail.com");
+
+        when(repositorioUsuario.buscar("test@gmail.com")).thenReturn(usuarioOriginal);
 
         Usuario usuarioInvalido = new Usuario();
         usuarioInvalido.setNombre("Brian");
@@ -78,8 +87,10 @@ public class ServicioPerfilUsuarioTest {
     @Test
     public void siElNombreEstaVacioDebeLanzarExcepcion() {
         // given
-        RepositorioUsuario repositorioMock = mock(RepositorioUsuario.class);
-        ServicioPerfilUsuario servicio = new ServicioPerfilUsuarioImpl(repositorioMock);
+        Usuario usuarioOriginal = new Usuario();
+        usuarioOriginal.setEmail("test@unlam.com.ar");
+
+        when(repositorioUsuario.buscar("test@unlam.com.ar")).thenReturn(usuarioOriginal);
 
         Usuario usuarioInvalido = new Usuario();
         usuarioInvalido.setNombre("");
@@ -99,8 +110,9 @@ public class ServicioPerfilUsuarioTest {
     @Test
     public void siLaPasswordTieneMenosDeSeisDebeLanzarExcepcion() {
         // given
-        RepositorioUsuario repositorioMock = mock(RepositorioUsuario.class);
-        ServicioPerfilUsuario servicio = new ServicioPerfilUsuarioImpl(repositorioMock);
+        Usuario usuarioOriginal = new Usuario();
+        usuarioOriginal.setEmail("test@unlam.com.ar");
+        when(repositorioUsuario.buscar("test@unlam.com.ar")).thenReturn(usuarioOriginal);
 
         Usuario usuarioInvalido = new Usuario();
         usuarioInvalido.setNombre("Brian");

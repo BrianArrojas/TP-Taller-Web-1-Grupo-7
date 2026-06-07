@@ -3,10 +3,8 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.repository.RepositorioUsuario;
-import com.tallerwebi.dominio.repository.impl.RepositorioUsuarioImpl;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +18,7 @@ import javax.transaction.Transactional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.mock;
+import static org.hamcrest.Matchers.nullValue;
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
@@ -38,27 +36,59 @@ public class RepositorioPerfilUsuarioTest {
     @Rollback
     public void alModificarUnUsuarioLosCambiosDebenReflejarseEnElMismoRegistro() {
         // given
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Brian");
-        usuario.setApellido("Arrojas");
-        usuario.setTelefono("1234567890");
-        usuario.setEmail("test@unlam.com.ar");
-        usuario.setPassword("123456");
+        Usuario usuarioOriginal = new Usuario();
+        usuarioOriginal.setNombre("Brian");
+        usuarioOriginal.setApellido("Arrojas");
+        usuarioOriginal.setTelefono("2211334455");
+        usuarioOriginal.setEmail("test@unlam.edu.ar");
+        usuarioOriginal.setPassword("test");
 
+        sessionFactory.getCurrentSession().save(usuarioOriginal);
 
-        sessionFactory.getCurrentSession().save(usuario);
+        Long idOriginal = usuarioOriginal.getId();
 
-        Long idOriginal = usuario.getId();
+        sessionFactory.getCurrentSession().clear();
+
+        Usuario usuarioDelFront = new Usuario();
+
+        usuarioDelFront.setId(idOriginal);
+
+        usuarioDelFront.setNombre("Arian");// le realizo varios cambios
+        usuarioDelFront.setApellido("Arrojas");
+        usuarioDelFront.setTelefono("1234567890");
+        usuarioDelFront.setEmail("brian@gmail.com.ar");
+        usuarioDelFront.setPassword("123456");
 
         // when
-        usuario.setNombre("Arian");
-        repositorioUsuario.modificar(usuario);
+        repositorioUsuario.modificar(usuarioDelFront);
 
         // then
         Usuario usuarioModificado = sessionFactory.getCurrentSession().get(Usuario.class, idOriginal);
 
         assertThat(usuarioModificado.getId(), equalTo(idOriginal));
         assertThat(usuarioModificado.getNombre(), equalTo("Arian"));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void modificarUsuarioInexistenteNoDeberiaLanzarErrorPeroTampocoPersistir() {
+        // given
+        Usuario usuarioInexistente = new Usuario();
+        usuarioInexistente.setId(999L); // un id que no existe
+        usuarioInexistente.setNombre("Brian");
+        usuarioInexistente.setApellido("Arrojas");
+        usuarioInexistente.setTelefono("1234567890");
+        usuarioInexistente.setEmail("brian@unlam.edu.ar");
+        usuarioInexistente.setPassword("123456");
+
+        // when
+        repositorioUsuario.modificar(usuarioInexistente);
+
+        // then
+        Usuario usuarioBuscado = sessionFactory.getCurrentSession().get(Usuario.class, 999L);
+
+        assertThat(usuarioBuscado, nullValue());
     }
 
 
