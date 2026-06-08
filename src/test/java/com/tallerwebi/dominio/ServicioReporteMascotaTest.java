@@ -19,8 +19,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ServicioReporteMascotaTest {
 
@@ -110,6 +109,23 @@ public class ServicioReporteMascotaTest {
     assertThat(result.get(0).getNombre(), equalTo("Milo"));
     assertThat(result.get(0).getEspecie(), equalTo("Gato"));
     assertThat(result.get(0).getTipoDeReporte(), equalTo("Perdido"));
+  }
+
+  @Test
+  public void alCancelarReporteDebeCambiarEstadoAFalse() {
+    // given
+    Long id = 1L;
+    ReporteMascota reporte = new ReporteMascota();
+    reporte.setRegistroActivo(true);
+
+    when(repositorioReporteMascota.buscarPorId(id)).thenReturn(reporte);
+
+    // when
+    servicioReporteMascota.cancelarReporte(id);
+
+    // then
+    assertThat(reporte.getRegistroActivo(), is(false));
+    verify(repositorioReporteMascota, times(1)).buscarPorId(id);
   }
 
 }

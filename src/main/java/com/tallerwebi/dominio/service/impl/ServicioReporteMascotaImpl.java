@@ -74,8 +74,21 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
     }
 
     @Override
+    public void cancelarReporte(Long id) {
+        ReporteMascota reporte = repositorioReporteMascota.buscarPorId(id);
+        if (reporte != null) {
+            reporte.setRegistroActivo(false);
+        }
+    }
+
+    @Override
     public List<ReporteMascota> obtenerTodosLosReportes() {
         return repositorioReporteMascota.obtenerTodosLosReportes();
+    }
+
+    @Override
+    public List<ReporteMascota> buscarPorUsuario(Usuario usuario) {
+        return repositorioReporteMascota.buscarPorUsuario(usuario);
     }
 
     @Override

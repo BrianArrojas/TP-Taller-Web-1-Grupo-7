@@ -14,6 +14,10 @@ public interface ServicioReporteMascota {
 
     List<ReporteMascota> obtenerTodosLosReportes();
 
+    List<ReporteMascota> buscarPorUsuario(Usuario usuario);
+
     List<DatosReporteMascotaDTO> listarMascotas(String busqueda);
     public Boolean guardarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO, String email) throws UsuarioExistente;
+
+    void cancelarReporte(Long id);
 }
