@@ -11,12 +11,8 @@
             background-color: #f8f9fa;
             color: #212529;
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
+            padding-top: 80px;
+            padding-bottom: 20px;
         }
 
         .contenedor-detalle {
@@ -25,9 +21,8 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             padding: 30px;
-            max-width: 500px;
-            width: 100%;
-            box-sizing: border-box;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         h1 {
@@ -197,6 +192,9 @@
             <span class="dato-clave">Descripción</span>
             <span class="dato-valor" th:text="${descripcion}"></span>
         </div>
+    </div>
+    <div class="mt-4 text-center">
+        <a th:href="@{/mis-reportes}" class="btn btn-secondary btn-lg">← Ir a Mis Reportes</a>
     </div>
 </main>
 
