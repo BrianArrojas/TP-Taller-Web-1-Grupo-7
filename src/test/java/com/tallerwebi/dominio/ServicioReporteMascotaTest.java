@@ -128,4 +128,42 @@ public class ServicioReporteMascotaTest {
     verify(repositorioReporteMascota, times(1)).buscarPorId(id);
   }
 
+  @Test
+  public void alActualizarReporteConDatosValidosElMismoSeGuarda() {
+    // Given
+    Long idReporte = 1L;
+    DatosReporteMascotaDTO datosDTO = new DatosReporteMascotaDTO();
+    datosDTO.setId(idReporte);
+    datosDTO.setNombre("Nombre modificado");
+    datosDTO.setDescripcion("Descripción editada");
+
+    ReporteMascota reporteExistente = new ReporteMascota();
+    reporteExistente.setId(idReporte);
+    reporteExistente.setNombre("Nombre Original");
+
+    when(repositorioReporteMascota.buscarPorId(idReporte)).thenReturn(reporteExistente);
+
+    // When
+    servicioReporteMascota.actualizarReporte(datosDTO);
+
+    // Then
+    assertThat(reporteExistente.getNombre(), equalTo("Nombre modificado"));
+    verify(repositorioReporteMascota, times(1)).actualizarReporte(reporteExistente);
+  }
+
+  @Test
+  public void alCancelarReporteElEstadoCambiaAInactivo() {
+    // Given
+    Long idReporte = 1L;
+    ReporteMascota reporte = new ReporteMascota();
+    reporte.setRegistroActivo(true);
+    when(repositorioReporteMascota.buscarPorId(idReporte)).thenReturn(reporte);
+
+    // When
+    servicioReporteMascota.cancelarReporte(idReporte);
+
+    // Then
+    assertThat(reporte.getRegistroActivo(), equalTo(false));
+  }
+
 }

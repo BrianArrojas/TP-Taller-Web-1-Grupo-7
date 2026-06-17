@@ -266,4 +266,17 @@ public class ControladorReporteMascotaTest {
     thenReporteFalla(mav, "La fecha ingresada no puede ser futura al dia de hoy");
   }
 
+  @Test
+  public void siElUsuarioNoEstaLogueadoSeRedirigeAlLogin() {
+    HttpServletRequest requestMock = mock(HttpServletRequest.class);
+    HttpSession sessionMock = mock(HttpSession.class);
+    when(requestMock.getSession()).thenReturn(sessionMock);
+    when(sessionMock.getAttribute("usuario")).thenReturn(null);
+
+    ModelAndView mav = controladorReporteMascota.mostrarFormularioReporteMascota(requestMock);
+
+    assertThat(mav.getViewName(), equalTo("redirect:/login"));
+  }
+
+
 }

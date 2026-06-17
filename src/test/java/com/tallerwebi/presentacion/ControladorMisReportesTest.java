@@ -16,8 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ControladorMisReportesTest {
 
@@ -42,6 +41,18 @@ public class ControladorMisReportesTest {
         // then
         assertThat(mav.getViewName(), equalTo("mis-reportes"));
         assertThat(mav.getModel().get("reportes"), is(notNullValue()));
+    }
+
+    @Test
+    public void alCancelarReporteCorrectamenteSeRedirigeAMisReportes() {
+        // Given
+        Long idReporte = 1L;
+
+        // When
+        ModelAndView mav = controladorMisReportes.cancelarReporte(idReporte);
+
+        // Then
+        assertThat(mav.getViewName(), equalTo("redirect:/mis-reportes"));
     }
 }
 

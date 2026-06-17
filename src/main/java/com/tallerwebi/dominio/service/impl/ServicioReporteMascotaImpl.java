@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -82,6 +83,32 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
     }
 
     @Override
+    public ReporteMascota buscarReporte(Long id) {
+        return repositorioReporteMascota.buscarPorId(id);
+    }
+
+    @Override
+    public void actualizarReporte(DatosReporteMascotaDTO datosReporteMascotaDTO) {
+
+        ReporteMascota reporteExistente = repositorioReporteMascota.buscarPorId(datosReporteMascotaDTO.getId());
+
+        if (reporteExistente != null) {
+
+            reporteExistente.setNombre(datosReporteMascotaDTO.getNombre());
+            reporteExistente.setDescripcion(datosReporteMascotaDTO.getDescripcion());
+            reporteExistente.setUbicacion(datosReporteMascotaDTO.getUbicacion());
+            reporteExistente.setRaza(datosReporteMascotaDTO.getRaza());
+            reporteExistente.setColor(datosReporteMascotaDTO.getColor());
+            reporteExistente.setTamano(datosReporteMascotaDTO.getTamano());
+            reporteExistente.setEspecie(datosReporteMascotaDTO.getEspecie());
+            reporteExistente.setTipoDeReporte(datosReporteMascotaDTO.getTipoDeReporte());
+            reporteExistente.setFecha(datosReporteMascotaDTO.getFecha());
+
+            repositorioReporteMascota.actualizarReporte(reporteExistente);
+
+        }
+    }
+    @Override
     public List<ReporteMascota> obtenerTodosLosReportes() {
         return repositorioReporteMascota.obtenerTodosLosReportes();
     }
@@ -117,7 +144,7 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
                 }
             }
             return dto;
-        }).collect(java.util.stream.Collectors.toList());
+        }).collect(Collectors.toList());
     }
 
 }

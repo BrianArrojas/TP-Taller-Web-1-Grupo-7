@@ -20,4 +20,6 @@ public interface ServicioReporteMascota {
     public Boolean guardarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO, String email) throws UsuarioExistente;
 
     void cancelarReporte(Long id);
+    ReporteMascota buscarReporte(Long id);
+    void actualizarReporte(DatosReporteMascotaDTO datosReporteMascotaDTO);
 }

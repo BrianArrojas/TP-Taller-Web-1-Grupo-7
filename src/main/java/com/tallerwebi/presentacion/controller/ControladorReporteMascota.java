@@ -3,6 +3,7 @@ package com.tallerwebi.presentacion.controller;
 import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
 import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
 import com.tallerwebi.dominio.excepcion.ImagenExcedeTamanoException;
+import com.tallerwebi.dominio.model.ReporteMascota;
 import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
 import com.tallerwebi.dominio.service.ServicioReporteMascota;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,8 +29,14 @@ public class ControladorReporteMascota {
   }
 
   @RequestMapping("/realizar-reporte")
-  public ModelAndView mostrarFormularioReporteMascota() {
+  public ModelAndView mostrarFormularioReporteMascota(HttpServletRequest request) {
     ModelMap modelo = new ModelMap();
+    Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuario");
+
+    if (usuarioLogueado == null) {
+      return new ModelAndView("redirect:/login");
+    }
+
     modelo.put("datosReporte", new DatosReporteMascotaDTO());
     return new ModelAndView("realizar-reporte", modelo);
   }
@@ -111,4 +119,22 @@ public class ControladorReporteMascota {
     modelo.put("datosReporte", new DatosReporteMascotaDTO());
     return new ModelAndView("lista-de-reportes", modelo);
   }
+
+
+  @RequestMapping(path = "/modificar-reporte", method = RequestMethod.POST)
+  public ModelAndView modificarReporte(@ModelAttribute("datosReporte") DatosReporteMascotaDTO datosReporteMascotaDTO) {
+
+    ReporteMascota reporteOriginal = servicioReporteMascota.buscarReporte(datosReporteMascotaDTO.getId());
+
+    if (datosReporteMascotaDTO.getNombre() != null && !datosReporteMascotaDTO.getNombre().isEmpty()) {
+      reporteOriginal.setNombre(datosReporteMascotaDTO.getNombre());
+    }
+    if (datosReporteMascotaDTO.getDescripcion() != null && !datosReporteMascotaDTO.getDescripcion().isEmpty()) {
+      reporteOriginal.setDescripcion(datosReporteMascotaDTO.getDescripcion());
+    }
+    servicioReporteMascota.actualizarReporte(datosReporteMascotaDTO);
+
+    return new ModelAndView("redirect:/mis-reportes");
+  }
+
 }

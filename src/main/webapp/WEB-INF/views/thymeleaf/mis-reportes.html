@@ -48,7 +48,6 @@
 
     <div th:each="reporte : ${reportes}" class="reporte-item shadow-sm">
         <div class="row align-items-center">
-
             <div class="col-md-2">
                 <a th:href="@{'/detalle/' + ${reporte.id}}">
                     <img th:src="@{'/img/' + ${reporte.fotos[0].img}}" class="img-listado" alt="Mascota">
@@ -64,16 +63,91 @@
                       th:text="${reporte.registroActivo ? 'Activo' : 'Inactivo'}"></span>
             </div>
 
-            <div class="col-md-3 text-md-end">
-                <form th:if="${reporte.registroActivo}" th:action="@{/cancelar-reporte}" method="POST">
-                    <input type="hidden" name="id" th:value="${reporte.id}">
-                    <button type="submit" class="btn btn-outline-danger btn-sm">Cancelar</button>
-                </form>
+            <div class="col-md-3 d-flex flex-column align-items-end">
+                <div th:if="${reporte.registroActivo}" class="d-flex flex-column gap-2 w-100">
+                    <button type="button" class="btn btn-outline-warning btn-sm w-100"
+                            data-bs-toggle="modal" th:data-bs-target="'#modalEditar' + ${reporte.id}">
+                        Editar
+                    </button>
+                    <form th:action="@{/cancelar-reporte}" method="POST" class="w-100">
+                        <input type="hidden" name="id" th:value="${reporte.id}">
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">Cancelar</button>
+                    </form>
+                </div>
                 <span th:unless="${reporte.registroActivo}" class="text-muted">Finalizado</span>
             </div>
+
+            <div class="modal fade" th:id="'modalEditar' + ${reporte.id}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <form th:action="@{/modificar-reporte}" method="POST">
+                            <input type="hidden" name="id" th:value="${reporte.id}" />
+                            <div class="modal-header">
+                                <h5 class="modal-title">Editar: <span th:text="${reporte.nombre}"></span></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="padding: 20px;">
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Nombre:</label></div>
+                                    <div class="col-md-8"><input type="text" name="nombre" th:value="${reporte.nombre}" class="form-control" required /></div>
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Descripción:</label></div>
+                                    <div class="col-md-8"><input type="text" name="descripcion" th:value="${reporte.descripcion}" class="form-control" /></div>
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Ubicación:</label></div>
+                                    <div class="col-md-8"><input type="text" name="ubicacion" th:value="${reporte.ubicacion}" class="form-control" /></div>
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Raza:</label></div>
+                                    <div class="col-md-8"><input type="text" name="raza" th:value="${reporte.raza}" class="form-control" /></div>
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Color:</label></div>
+                                    <div class="col-md-8"><input type="text" name="color" th:value="${reporte.color}" class="form-control" /></div>
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Tipo:</label></div>
+                                    <div class="col-md-8">
+                                        <select name="tipoDeReporte" class="form-select">
+                                            <option value="perdido" th:selected="${reporte.tipoDeReporte == 'perdido'}">Perdido</option>
+                                            <option value="encontrado" th:selected="${reporte.tipoDeReporte == 'encontrado'}">Encontrado</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Especie:</label></div>
+                                    <div class="col-md-8">
+                                        <select name="especie" class="form-select">
+                                            <option value="perro" th:selected="${reporte.especie == 'perro'}">Perro</option>
+                                            <option value="gato" th:selected="${reporte.especie == 'gato'}">Gato</option>
+                                            <option value="otro" th:selected="${reporte.especie == 'otro'}">Otro</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Tamaño:</label></div>
+                                    <div class="col-md-8">
+                                        <select name="tamano" class="form-select">
+                                            <option value="pequeno" th:selected="${reporte.tamano == 'pequeno'}">Pequeño</option>
+                                            <option value="mediano" th:selected="${reporte.tamano == 'mediano'}">Mediano</option>
+                                            <option value="grande" th:selected="${reporte.tamano == 'grande'}">Grande</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
-
     <p th:if="${reportes.isEmpty()}" class="text-center mt-5">No tenés reportes activos.</p>
 </main>
 
