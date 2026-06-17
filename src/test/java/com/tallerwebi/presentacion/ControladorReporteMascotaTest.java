@@ -302,4 +302,17 @@ public class ControladorReporteMascotaTest {
     thenReporteFalla(mav, "La foto es demasiado pesada. El tamaño máximo permitido es 20 MB");
   }
 
+  @Test
+  public void siElUsuarioNoEstaLogueadoSeRedirigeAlLogin() {
+    HttpServletRequest requestMock = mock(HttpServletRequest.class);
+    HttpSession sessionMock = mock(HttpSession.class);
+    when(requestMock.getSession()).thenReturn(sessionMock);
+    when(sessionMock.getAttribute("usuario")).thenReturn(null);
+
+    ModelAndView mav = controladorReporteMascota.mostrarFormularioReporteMascota(requestMock);
+
+    assertThat(mav.getViewName(), equalTo("redirect:/login"));
+  }
+
+
 }

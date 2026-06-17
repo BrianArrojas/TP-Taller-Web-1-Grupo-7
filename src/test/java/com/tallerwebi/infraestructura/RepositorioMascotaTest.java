@@ -185,5 +185,48 @@ public class RepositorioMascotaTest {
         // then
         assertThat(resultado, equalTo(null));
     }
+
+
+    @Test
+    @Transactional
+    @Rollback
+    public void sePuedeModificarUnReporteExistente() {
+        // given
+        Usuario usuario = new Usuario();
+        usuario.setEmail("test@unlam.edu.ar");
+        usuario.setPassword("test");
+        sessionFactory.getCurrentSession().save(usuario);
+
+        DatosReporteMascotaDTO datos = new DatosReporteMascotaDTO();
+        datos.setNombre("Brian");
+        datos.setRaza("Labrador");
+        datos.setColor("Negro");
+        datos.setDescripcion("Esta lastimado");
+        datos.setUbicacion("San Justo");
+        datos.setTipoDeReporte("Perdido");
+        datos.setTamano("Grande");
+        datos.setEspecie("Perro");
+        datos.setFecha(LocalDate.now());
+        datos.setImagen(new MockMultipartFile("foto", "test.png", "image/png", "bytes".getBytes()));
+
+        repositorioMascota.guardarReporte(datos, usuario);
+
+        ReporteMascota reporteGuardado = (ReporteMascota) sessionFactory.getCurrentSession()
+                .createCriteria(ReporteMascota.class)
+                .add(Restrictions.eq("nombre", "Brian"))
+                .uniqueResult();
+
+        // when
+        reporteGuardado.setNombre("Nombre Actualizado");
+        reporteGuardado.setDescripcion("Descripción editada");
+        repositorioMascota.actualizarReporte(reporteGuardado);
+
+        ReporteMascota reporteModificado = repositorioMascota.buscarPorId(reporteGuardado.getId());
+
+        // then
+        assertThat(reporteModificado.getNombre(), equalTo("Nombre Actualizado"));
+        assertThat(reporteModificado.getDescripcion(), equalTo("Descripción editada"));
+    }
+
 }
 

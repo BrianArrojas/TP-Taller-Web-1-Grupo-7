@@ -138,4 +138,9 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
     public ReporteMascota buscarPorId(Long id) {
         return sessionFactory.getCurrentSession().get(ReporteMascota.class, id);
     }
+
+    @Override
+    public void actualizarReporte(ReporteMascota reporteMascota) {
+        sessionFactory.getCurrentSession().update(reporteMascota);
+    }
 }
