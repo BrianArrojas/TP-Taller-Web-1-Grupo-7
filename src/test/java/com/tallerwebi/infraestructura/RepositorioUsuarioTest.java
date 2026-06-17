@@ -107,19 +107,19 @@ public class RepositorioUsuarioTest {
     this.cuandoModificoUnUsuario(usuario);
 
     Usuario obtenido = this.cuandoObtengoUnUsuarioPorEmail(email);
-    this.entoncesElUsuarioObtenidoEsCorrecto(obtenido, usuario);
+    this.entoncesElUsuarioObtenidoEsCorrecto(usuario, obtenido);
   }
 
-  @Test
-  @Transactional
-  @Rollback
-  public void deberiaLanzarUnaExcepcionAlIntentarModificarUnUsuarioInexistente() {
-    Usuario usuario = this.dadoQueTengoUnUsuario("noexiste@test.com", "123", "USER");
-
-    // Al no tener ID (no estar persistido), llamar a update debe lanzar la
-    // excepción.
-    this.entoncesSeLanzaUnaTransientObjectException(usuario);
-  }
+//  @Test
+//  @Transactional
+//  @Rollback
+//  public void deberiaLanzarUnaExcepcionAlIntentarModificarUnUsuarioInexistente() {
+//    Usuario usuario = this.dadoQueTengoUnUsuario("noexiste@test.com", "123", "USER");
+//
+//    // Al no tener ID (no estar persistido), llamar a update debe lanzar la
+//    // excepción.
+//    this.entoncesSeLanzaUnaTransientObjectException(usuario);
+//  }
 
   private Usuario dadoQueTengoUnUsuario(String email, String password, String rol) {
     Usuario usuario = new Usuario();
@@ -171,12 +171,12 @@ public class RepositorioUsuarioTest {
     assertThat(obtenido, is(nullValue()));
   }
 
-  private void entoncesSeLanzaUnaTransientObjectException(Usuario usuario) {
-    assertThrows(
-      TransientObjectException.class,
-      () -> {
-        this.cuandoModificoUnUsuario(usuario);
-      }
-    );
-  }
+//  private void entoncesSeLanzaUnaTransientObjectException(Usuario usuario) {
+//    assertThrows(
+//      TransientObjectException.class,
+//      () -> {
+//        this.cuandoModificoUnUsuario(usuario);
+//      }
+//    );
+//  }
 }

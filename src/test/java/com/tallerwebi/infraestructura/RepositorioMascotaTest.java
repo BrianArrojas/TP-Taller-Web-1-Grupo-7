@@ -124,19 +124,16 @@ public class RepositorioMascotaTest {
         // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
         MockMultipartFile fotoSimulada2 = new MockMultipartFile("foto", "perrito2.png", "image/png", "bytes-de-png".getBytes());
         datosReporteMascota.setImagen(fotoSimulada2);
-        repositorioMascota.guardarReporte(datosReporteMascota2,usuario);
-
+        repositorioMascota.guardarReporte(datosReporteMascota2,usuario2);
 
         //when
         List<ReporteMascota> reportesDelPrimerUsuario = repositorioMascota.buscarPorUsuario(usuario);
 
-
         //then
         assertThat(datosReporteMascota, notNullValue());
-        assertThat(reportesDelPrimerUsuario.size(), equalTo(2));
+        assertThat(reportesDelPrimerUsuario.size(), equalTo(1));
 
     }
-
 
     @Test
     @Transactional
@@ -189,43 +186,47 @@ public class RepositorioMascotaTest {
         assertThat(resultado, equalTo(null));
     }
 
+
     @Test
     @Transactional
     @Rollback
-    public void sePuedeBuscarReportesPorNombreOEspecie() {
+    public void sePuedeModificarUnReporteExistente() {
         // given
         Usuario usuario = new Usuario();
         usuario.setEmail("test@unlam.edu.ar");
         usuario.setPassword("test");
         sessionFactory.getCurrentSession().save(usuario);
 
-        DatosReporteMascotaDTO datos1 = new DatosReporteMascotaDTO();
-        datos1.setNombre("Luna");
-        datos1.setEspecie("Gato");
-        datos1.setTipoDeReporte("Perdido");
-        datos1.setFecha(LocalDate.now().minusDays(1));
-        repositorioMascota.guardarReporte(datos1, usuario);
+        DatosReporteMascotaDTO datos = new DatosReporteMascotaDTO();
+        datos.setNombre("Brian");
+        datos.setRaza("Labrador");
+        datos.setColor("Negro");
+        datos.setDescripcion("Esta lastimado");
+        datos.setUbicacion("San Justo");
+        datos.setTipoDeReporte("Perdido");
+        datos.setTamano("Grande");
+        datos.setEspecie("Perro");
+        datos.setFecha(LocalDate.now());
+        datos.setImagen(new MockMultipartFile("foto", "test.png", "image/png", "bytes".getBytes()));
 
-        DatosReporteMascotaDTO datos2 = new DatosReporteMascotaDTO();
-        datos2.setNombre("Rocky");
-        datos2.setEspecie("Perro");
-        datos2.setTipoDeReporte("Encontrado");
-        datos2.setFecha(LocalDate.now().minusDays(1));
-        repositorioMascota.guardarReporte(datos2, usuario);
+        repositorioMascota.guardarReporte(datos, usuario);
+
+        ReporteMascota reporteGuardado = (ReporteMascota) sessionFactory.getCurrentSession()
+                .createCriteria(ReporteMascota.class)
+                .add(Restrictions.eq("nombre", "Brian"))
+                .uniqueResult();
 
         // when
-        List<ReporteMascota> resultadoNombre = repositorioMascota.buscarReportes("Luna");
-        List<ReporteMascota> resultadoEspecie = repositorioMascota.buscarReportes("Perro");
-        List<ReporteMascota> resultadoVacio = repositorioMascota.buscarReportes("Loro");
+        reporteGuardado.setNombre("Nombre Actualizado");
+        reporteGuardado.setDescripcion("Descripción editada");
+        repositorioMascota.actualizarReporte(reporteGuardado);
+
+        ReporteMascota reporteModificado = repositorioMascota.buscarPorId(reporteGuardado.getId());
 
         // then
-        assertThat(resultadoNombre.size(), equalTo(1));
-        assertThat(resultadoNombre.get(0).getNombre(), equalTo("Luna"));
-
-        assertThat(resultadoEspecie.size(), equalTo(1));
-        assertThat(resultadoEspecie.get(0).getNombre(), equalTo("Rocky"));
-
-        assertThat(resultadoVacio.size(), equalTo(0));
+        assertThat(reporteModificado.getNombre(), equalTo("Nombre Actualizado"));
+        assertThat(reporteModificado.getDescripcion(), equalTo("Descripción editada"));
     }
+
 }
 

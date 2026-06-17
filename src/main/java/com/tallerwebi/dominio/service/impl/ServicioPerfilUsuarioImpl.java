@@ -22,28 +22,45 @@ public class ServicioPerfilUsuarioImpl implements ServicioPerfilUsuario {
     @Override
     public void actualizarPerfil(Usuario usuario) {
 
-        if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty()) {
-            throw new DatosInvalidosException("El nombre no puede estar vacío.");
-        }
-
-        if (usuario.getApellido() == null || usuario.getApellido().trim().isEmpty()) {
-            throw new DatosInvalidosException("El apellido no puede estar vacío.");
-        }
-
-        if(usuario.getTelefono() == null || usuario.getTelefono().trim().isEmpty() || usuario.getTelefono().length() < 10 ) {
-            throw new DatosInvalidosException("El telefono debe tener 10 caracteres.");
-        }
-
-        String email = usuario.getEmail();
-        if (email == null || !email.contains("@") || !email.endsWith(".com.ar")) {
+        if (usuario.getEmail() == null || !usuario.getEmail().contains("@") || !usuario.getEmail().endsWith(".com.ar")) {
             throw new DatosInvalidosException("El correo electrónico debe contener un '@' y terminar con '.com.ar'.");
         }
 
-        if (usuario.getPassword() == null || usuario.getPassword().length() < 6) {
-            throw new DatosInvalidosException("La contraseña debe tener 6 caracteres.");
+        Usuario usuarioOriginal = repositorioUsuario.buscar(usuario.getEmail());
+
+        if (usuarioOriginal == null) {
+            throw new DatosInvalidosException("El usuario que se intenta modificar no existe.");
         }
 
-        repositorioUsuario.modificar(usuario);
+        if (usuario.getNombre() != null) {
+            if (usuario.getNombre().trim().isEmpty()) {
+                throw new DatosInvalidosException("El nombre no puede estar vacío.");
+            }
+            usuarioOriginal.setNombre(usuario.getNombre());
+        }
+
+        if (usuario.getApellido() != null) {
+            if (usuario.getApellido().trim().isEmpty()) {
+                throw new DatosInvalidosException("El apellido no puede estar vacío.");
+            }
+            usuarioOriginal.setApellido(usuario.getApellido());
+        }
+
+        if (usuario.getTelefono() != null) {
+            if (usuario.getTelefono().trim().isEmpty() || usuario.getTelefono().length() < 10) {
+                throw new DatosInvalidosException("El telefono debe tener 10 caracteres.");
+            }
+            usuarioOriginal.setTelefono(usuario.getTelefono());
+        }
+
+        if (usuario.getPassword() != null) {
+            if (usuario.getPassword().trim().isEmpty() || usuario.getPassword().length() < 6) {
+                throw new DatosInvalidosException("La contraseña debe tener 6 caracteres.");
+            }
+            usuarioOriginal.setPassword(usuario.getPassword());
+        }
+
+        repositorioUsuario.modificar(usuarioOriginal);
     }
 
 

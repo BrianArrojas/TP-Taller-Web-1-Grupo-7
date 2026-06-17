@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
 import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
+import com.tallerwebi.dominio.excepcion.ImagenExcedeTamanoException;
 import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.service.ServicioReporteMascota;
 import com.tallerwebi.presentacion.controller.ControladorReporteMascota;
@@ -211,7 +212,7 @@ public class ControladorReporteMascotaTest {
     // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
     MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.pdf", "image/pdf", "bytes-de-pdf".getBytes());
     datosReporteMascotaDTO.setImagen(fotoSimulada);
-      when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(org.mockito.Mockito.any())).thenThrow(new FormatoImagenInvalidaException());
+      when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(org.mockito.Mockito.any())).thenThrow(new FormatoImagenInvalidaException("El formato de la imagen debe ser PNG o JPG."));
 
     // When
 
@@ -225,7 +226,7 @@ public class ControladorReporteMascotaTest {
 
     ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO,request);
     // Then
-    thenReporteFalla(mav,"El formato de la foto debe ser JPG o PNG");
+    thenReporteFalla(mav,"El formato de la imagen debe ser PNG o JPG.");
 
   }
 
@@ -248,7 +249,7 @@ public class ControladorReporteMascotaTest {
     MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-png".getBytes());
     datosReporteMascotaDTO.setImagen(fotoSimulada);
     when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO)).thenReturn(true);
-    when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO)).thenThrow(new FechaInvalidaException());
+    when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO)).thenThrow(new FechaInvalidaException("La fecha ingresada no puede ser futura al dia de hoy."));
     // When
 
     Usuario usuarioSimulado = new Usuario();
@@ -263,7 +264,55 @@ public class ControladorReporteMascotaTest {
 
     ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO,request);
     // Then
-    thenReporteFalla(mav, "La fecha ingresada no puede ser futura al dia de hoy");
+    thenReporteFalla(mav, "La fecha ingresada no puede ser futura al dia de hoy.");
   }
+
+  @Test
+  public void siLaImagenDelReporteSuperaPesoMaximoElMismoFalla() {
+    // Given
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setRaza("Dogo");
+    datosReporteMascotaDTO.setColor("Blanco");
+    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
+    datosReporteMascotaDTO.setUbicacion("San Justo");
+    datosReporteMascotaDTO.setTipoDeReporte("Perdido");
+    datosReporteMascotaDTO.setTamano("Grande");
+    datosReporteMascotaDTO.setEspecie("Perro");
+    datosReporteMascotaDTO.setFecha(LocalDate.now().minusDays(1));
+
+    MockMultipartFile fotoPesada = new MockMultipartFile("foto", "perrito.png", "image/png", new byte[20 * 1024 * 1024]);
+    datosReporteMascotaDTO.setImagen(fotoPesada);
+
+    when(servicioReporteMascota.validarQueLaImagenCumplaConFormato(org.mockito.Mockito.any()))
+            .thenThrow(new ImagenExcedeTamanoException("La foto es demasiado pesada. El tamaño máximo permitido es 20 MB"));
+
+    Usuario usuarioSimulado = new Usuario();
+    usuarioSimulado.setEmail("brian@test.com");
+
+    when(request.getSession()).thenReturn(session);
+    when(session.getAttribute("usuario")).thenReturn(usuarioSimulado);
+
+    when(servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(any(DatosReporteMascotaDTO.class))).thenReturn(true);
+
+    // When
+    ModelAndView mav = whenRealizarReporteMascota(datosReporteMascotaDTO, request);
+
+    // Then
+    thenReporteFalla(mav, "La foto es demasiado pesada. El tamaño máximo permitido es 20 MB");
+  }
+
+  @Test
+  public void siElUsuarioNoEstaLogueadoSeRedirigeAlLogin() {
+    HttpServletRequest requestMock = mock(HttpServletRequest.class);
+    HttpSession sessionMock = mock(HttpSession.class);
+    when(requestMock.getSession()).thenReturn(sessionMock);
+    when(sessionMock.getAttribute("usuario")).thenReturn(null);
+
+    ModelAndView mav = controladorReporteMascota.mostrarFormularioReporteMascota(requestMock);
+
+    assertThat(mav.getViewName(), equalTo("redirect:/login"));
+  }
+
 
 }

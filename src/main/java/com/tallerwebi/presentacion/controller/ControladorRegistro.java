@@ -69,6 +69,10 @@ public class ControladorRegistro {
             return "El teléfono es obligatorio";
         }
 
+        if (datosRegistroDTO.getTelefono().length() != 10) {
+            return "El teléfono debe tener 10 números";
+        }
+
         if (datosRegistroDTO.getMail() == null || datosRegistroDTO.getMail().isEmpty()) {
             return "El email es obligatorio";
         }

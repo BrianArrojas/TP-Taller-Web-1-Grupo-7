@@ -98,11 +98,20 @@
     <a class="navbar-brand" href="#">Mascotas</a>
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/realizar-reporte}">Reportar Mascota</a></li>
-            <li class="nav-item active"><a class="nav-link" th:href="@{/mi-perfil}">Perfil</a></li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/home}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/realizar-reporte}">Reportar Mascota</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/mi-perfil}">Perfil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/mis-reportes}">Mis Reportes</a>
+            </li>
         </ul>
-        <form class="form-inline mt-2 mt-md-0 ms-auto" style="margin-left: auto;">
+        <form class="form-inline mt-2 mt-md-0 ml-auto" style="margin-left: auto;">
             <a class="btn btn-outline-success my-2 my-sm-0" th:href="@{/logout}">Logout</a>
         </form>
     </div>
@@ -146,7 +155,7 @@
             <div class="info-grupo">
                 <span class="info-label">Contraseña</span>
                 <p class="info-valor span-vista">*********</p>
-                <input type="password" class="input-edicion d-none" th:field="*{password}" required>
+                <input type="text" class="input-edicion d-none" th:field="*{password}" required>
             </div>
 
             <button type="button" id="btn-activar-edicion" class="btn-accion btn-editar">Editar Mis Datos</button>
@@ -157,21 +166,23 @@
     </main>
 </div>
 
-<script>
+<script th:inline="javascript">
     const btnActivar = document.getElementById('btn-activar-edicion');
     const btnGuardar = document.getElementById('btn-guardar');
     const btnCancelar = document.getElementById('btn-cancelar');
     const vistasTexto = document.querySelectorAll('.span-vista');
     const inputsEdicion = document.querySelectorAll('.input-edicion');
 
-    btnActivar.addEventListener('click', function() {
+    function activarModoEdicion() {
         vistasTexto.forEach(el => el.classList.add('d-none'));
         inputsEdicion.forEach(el => el.classList.remove('d-none'));
 
         btnActivar.classList.add('d-none');
         btnGuardar.classList.remove('d-none');
         btnCancelar.classList.remove('d-none');
-    });
+    }
+
+    btnActivar.addEventListener('click', activarModoEdicion);
 
     btnCancelar.addEventListener('click', function() {
         vistasTexto.forEach(el => el.classList.remove('d-none'));
@@ -181,6 +192,12 @@
         btnGuardar.classList.add('d-none');
         btnCancelar.classList.add('d-none');
     });
+
+    const hayError = /*[[${mensaje != null}]]*/ false;
+
+    if (hayError) {
+        activarModoEdicion();
+    }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>

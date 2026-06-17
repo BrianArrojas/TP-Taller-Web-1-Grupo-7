@@ -15,4 +15,6 @@ public interface RepositorioReporteMascota {
     List<ReporteMascota> buscarPorUsuario(Usuario usuario);
 
     ReporteMascota buscarPorId(Long id);
+
+    void actualizarReporte(ReporteMascota reporteExistente);
 }

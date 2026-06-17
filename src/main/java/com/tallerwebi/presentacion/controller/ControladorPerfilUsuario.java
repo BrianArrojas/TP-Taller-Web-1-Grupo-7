@@ -48,8 +48,7 @@ public class ControladorPerfilUsuario {
             return new ModelAndView("redirect:/mi-perfil");
 
         } catch (DatosInvalidosException e) {
-            Usuario usuarioOriginal = (Usuario) request.getSession().getAttribute("usuario");
-            modelo.put("usuario", usuarioOriginal);
+            modelo.put("usuario", usuarioModificado);
             modelo.put("mensaje", e.getMessage());
             return new ModelAndView("perfil", modelo);
         }

@@ -72,7 +72,7 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
                 extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             }
             String nombreArchivo = UUID.randomUUID().toString() + extension;
-
+            datosReporteMascota.setNombreImagenPublicada(nombreArchivo);
             // Guardar el archivo en el sistema de archivos (src)
             File fileSrc = new File(dir, nombreArchivo);
             datosReporteMascota.getImagen().transferTo(fileSrc);
@@ -137,5 +137,10 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
     @Override
     public ReporteMascota buscarPorId(Long id) {
         return sessionFactory.getCurrentSession().get(ReporteMascota.class, id);
+    }
+
+    @Override
+    public void actualizarReporte(ReporteMascota reporteMascota) {
+        sessionFactory.getCurrentSession().update(reporteMascota);
     }
 }

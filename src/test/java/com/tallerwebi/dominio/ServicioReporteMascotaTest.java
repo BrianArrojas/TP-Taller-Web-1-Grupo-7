@@ -11,7 +11,9 @@ import com.tallerwebi.dominio.service.ServicioReporteMascota;
 import com.tallerwebi.dominio.service.impl.ServicioReporteMascotaImpl;
 import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,76 +21,80 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ServicioReporteMascotaTest {
 
   RepositorioReporteMascota repositorioReporteMascota = mock(RepositorioReporteMascota.class);
   RepositorioUsuario repositorioUsuario = mock(RepositorioUsuario.class);
 
-  ServicioReporteMascota servicioReporteMascota = new ServicioReporteMascotaImpl(repositorioReporteMascota,repositorioUsuario);
+  ServicioReporteMascota servicioReporteMascota = new ServicioReporteMascotaImpl(repositorioReporteMascota, repositorioUsuario);
 
   @Test
   public void siNoSeRespetoFormatoDeImagenElReporteFalla() {
     // Given
     DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
     datosReporteMascotaDTO.setNombre("Brian");
-    datosReporteMascotaDTO.setRaza("Dogo");
-    datosReporteMascotaDTO.setColor("Blanco");
-    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
-    datosReporteMascotaDTO.setUbicacion("San Justo");
-    datosReporteMascotaDTO.setTipoDeReporte("Perdido");
-    datosReporteMascotaDTO.setTamano("Grande");
-    datosReporteMascotaDTO.setEspecie("Perro");
     datosReporteMascotaDTO.setFecha(LocalDate.now().minusDays(1));
 
-    // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
-    MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.pdf", "image/pdf", "bytes-de-pdf".getBytes());
-    datosReporteMascotaDTO.setImagen(fotoSimulada);
-    assertThrows(FormatoImagenInvalidaException.class,()->servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO));
+    MultipartFile fotoSimuladaMock = mock(MultipartFile.class);
 
+    when(fotoSimuladaMock.getOriginalFilename()).thenReturn("perrito.pdf");
+    when(fotoSimuladaMock.getContentType()).thenReturn("application/pdf");
+
+    datosReporteMascotaDTO.setImagen(fotoSimuladaMock);
+
+    // When
+    FormatoImagenInvalidaException excepcion = assertThrows(FormatoImagenInvalidaException.class, () -> {
+      servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO);
+    });
+
+    //Then
+    assertThat(excepcion.getMessage(), equalTo("El formato de la imagen debe ser PNG o JPG."));
   }
 
   @Test
-  public void siLaFechaDelReporteEsFuturaElMismoFalla(){
-
-    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
-    datosReporteMascotaDTO.setNombre("Brian");
-    datosReporteMascotaDTO.setRaza("Dogo");
-    datosReporteMascotaDTO.setColor("Blanco");
-    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
-    datosReporteMascotaDTO.setUbicacion("San Justo");
-    datosReporteMascotaDTO.setTipoDeReporte("Perdido");
-    datosReporteMascotaDTO.setTamano("Grande");
-    datosReporteMascotaDTO.setEspecie("Perro");
-    datosReporteMascotaDTO.setFecha(LocalDate.now().plusDays(1));
-    MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-imagen".getBytes());
-    datosReporteMascotaDTO.setImagen(fotoSimulada);
-    assertThrows(FechaInvalidaException.class,()->servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO));
-
-  }
-
-  @Test
-  public void siLaImagenDelReporteSuperaPesoMaximoElMismoFalla(){
-
+  public void siLaFechaDelReporteEsFuturaElMismoFalla() {
     // Given
     DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
     datosReporteMascotaDTO.setNombre("Brian");
-    datosReporteMascotaDTO.setRaza("Dogo");
-    datosReporteMascotaDTO.setColor("Blanco");
-    datosReporteMascotaDTO.setDescripcion("Esta Lastimado");
-    datosReporteMascotaDTO.setUbicacion("San Justo");
-    datosReporteMascotaDTO.setTipoDeReporte("Perdido");
-    datosReporteMascotaDTO.setTamano("Grande");
-    datosReporteMascotaDTO.setEspecie("Perro");
-    datosReporteMascotaDTO.setFecha(LocalDate.now().minusDays(1));
-    MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", new byte[20 * 1024 * 1024]);
-    datosReporteMascotaDTO.setImagen(fotoSimulada);
-    assertThrows(ImagenExcedeTamanoException.class,()->servicioReporteMascota.validarQueLaImagenCumplaConFormato(datosReporteMascotaDTO));
+    datosReporteMascotaDTO.setFecha(LocalDate.now().plusDays(1)); // Fecha futura
 
+    MultipartFile fotoSimuladaMock = mock(MultipartFile.class);
+    when(fotoSimuladaMock.getOriginalFilename()).thenReturn("perrito.png");
+    datosReporteMascotaDTO.setImagen(fotoSimuladaMock);
 
+    // When
+    FechaInvalidaException excepcion = assertThrows(FechaInvalidaException.class, () -> {
+      servicioReporteMascota.validarQueFechaDeReporteNoSeaFutura(datosReporteMascotaDTO);
+    });
+    //Then
+    assertThat(excepcion.getMessage(), equalTo("La fecha ingresada no puede ser futura al dia de hoy."));
   }
+
+  @Test
+  public void siLaImagenDelReporteSuperaPesoMaximoElMismoFalla() {
+    // Given
+    DatosReporteMascotaDTO datosReporteMascotaDTO = new DatosReporteMascotaDTO();
+    datosReporteMascotaDTO.setNombre("Brian");
+    datosReporteMascotaDTO.setFecha(LocalDate.now().minusDays(1));
+
+    MultipartFile fotoSimuladaMock = mock(MultipartFile.class);
+    when(fotoSimuladaMock.getOriginalFilename()).thenReturn("perrito.png");
+
+    when(fotoSimuladaMock.getSize()).thenReturn(20L * 1024 * 1024);
+
+    datosReporteMascotaDTO.setImagen(fotoSimuladaMock);
+
+    // When
+    ImagenExcedeTamanoException excepcion = assertThrows(ImagenExcedeTamanoException.class, () -> {
+      servicioReporteMascota.validarQueLaImagenNoExcedaTamano(datosReporteMascotaDTO);
+    });
+
+    // Then
+    assertThat(excepcion.getMessage(), equalTo("La foto es demasiado pesada. El tamaño máximo permitido es 20 MB"));
+  }
+
 
   @Test
   public void deberiaRetornarTodosLosReportesMapeadosADTOAlListarMascotas() {
@@ -110,6 +116,61 @@ public class ServicioReporteMascotaTest {
     assertThat(result.get(0).getNombre(), equalTo("Milo"));
     assertThat(result.get(0).getEspecie(), equalTo("Gato"));
     assertThat(result.get(0).getTipoDeReporte(), equalTo("Perdido"));
+  }
+
+  @Test
+  public void alCancelarReporteDebeCambiarEstadoAFalse() {
+    // given
+    Long id = 1L;
+    ReporteMascota reporte = new ReporteMascota();
+    reporte.setRegistroActivo(true);
+
+    when(repositorioReporteMascota.buscarPorId(id)).thenReturn(reporte);
+
+    // when
+    servicioReporteMascota.cancelarReporte(id);
+
+    // then
+    assertThat(reporte.getRegistroActivo(), is(false));
+    verify(repositorioReporteMascota, times(1)).buscarPorId(id);
+  }
+
+  @Test
+  public void alActualizarReporteConDatosValidosElMismoSeGuarda() {
+    // Given
+    Long idReporte = 1L;
+    DatosReporteMascotaDTO datosDTO = new DatosReporteMascotaDTO();
+    datosDTO.setId(idReporte);
+    datosDTO.setNombre("Nombre modificado");
+    datosDTO.setDescripcion("Descripción editada");
+
+    ReporteMascota reporteExistente = new ReporteMascota();
+    reporteExistente.setId(idReporte);
+    reporteExistente.setNombre("Nombre Original");
+
+    when(repositorioReporteMascota.buscarPorId(idReporte)).thenReturn(reporteExistente);
+
+    // When
+    servicioReporteMascota.actualizarReporte(datosDTO);
+
+    // Then
+    assertThat(reporteExistente.getNombre(), equalTo("Nombre modificado"));
+    verify(repositorioReporteMascota, times(1)).actualizarReporte(reporteExistente);
+  }
+
+  @Test
+  public void alCancelarReporteElEstadoCambiaAInactivo() {
+    // Given
+    Long idReporte = 1L;
+    ReporteMascota reporte = new ReporteMascota();
+    reporte.setRegistroActivo(true);
+    when(repositorioReporteMascota.buscarPorId(idReporte)).thenReturn(reporte);
+
+    // When
+    servicioReporteMascota.cancelarReporte(idReporte);
+
+    // Then
+    assertThat(reporte.getRegistroActivo(), equalTo(false));
   }
 
 }
