@@ -16,4 +16,6 @@ public interface ServicioReporteMascota {
 
     List<DatosReporteMascotaDTO> listarMascotas(String busqueda);
     public Boolean guardarReporteMascota(DatosReporteMascotaDTO datosReporteMascotaDTO, String email) throws UsuarioExistente;
+
+    public Boolean validarQueLaImagenNoExcedaTamano(DatosReporteMascotaDTO datosReporteMascotaDTO);
 }
