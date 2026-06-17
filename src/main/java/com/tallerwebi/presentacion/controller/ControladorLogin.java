@@ -41,6 +41,11 @@ public class ControladorLogin {
       datosLogin.getPassword()
     );
     if (usuarioBuscado != null) {
+      if (usuarioBuscado.getActivo() != null && !usuarioBuscado.getActivo()) {
+        ModelMap model = new ModelMap();
+        model.put("error", "Su usuario se encuentra inactivo. Comuniquese con el administrador.");
+        return new ModelAndView("login", model);
+      }
       request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
       request.getSession().setAttribute("usuario", usuarioBuscado);
       return new ModelAndView("redirect:/home");

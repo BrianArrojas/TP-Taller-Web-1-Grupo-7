@@ -36,6 +36,9 @@
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/mis-reportes}">Mis Reportes</a>
             </li>
+            <li class="nav-item" th:if="${session.ROL == 'ADMIN'}">
+                <a class="nav-link text-warning fw-bold" th:href="@{/admin}">Panel Admin</a>
+            </li>
         </ul>
         <form class="form-inline mt-2 mt-md-0 ml-auto" style="margin-left: auto;">
             <a class="btn btn-outline-success my-2 my-sm-0" th:href="@{/logout}">Logout</a>

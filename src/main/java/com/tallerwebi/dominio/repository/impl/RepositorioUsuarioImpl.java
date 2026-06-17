@@ -61,4 +61,29 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
       session.merge(usuario);
     }
   }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public java.util.List<Usuario> obtenerTodos() {
+    logger.debug("Obteniendo todos los usuarios de la BD");
+    return sessionFactory.getCurrentSession()
+      .createCriteria(Usuario.class)
+      .list();
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public java.util.List<Usuario> buscarPorEmail(String email) {
+    logger.debug("Buscando usuarios por email similar a: {}", email);
+    return sessionFactory.getCurrentSession()
+      .createCriteria(Usuario.class)
+      .add(Restrictions.ilike("email", "%" + email + "%"))
+      .list();
+  }
+
+  @Override
+  public Usuario buscarPorId(Long id) {
+    logger.debug("Buscando usuario por ID: {}", id);
+    return sessionFactory.getCurrentSession().get(Usuario.class, id);
+  }
 }

@@ -17,4 +17,5 @@ public interface RepositorioReporteMascota {
     ReporteMascota buscarPorId(Long id);
 
     void actualizarReporte(ReporteMascota reporteExistente);
+    void eliminarReporte(ReporteMascota reporte);
 }

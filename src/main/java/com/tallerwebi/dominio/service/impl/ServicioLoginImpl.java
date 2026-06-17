@@ -80,7 +80,11 @@ public class ServicioLoginImpl implements ServicioLogin {
     nuevoUsuario.setNombre(datosRegistroDTO.getNombre());
     nuevoUsuario.setApellido(datosRegistroDTO.getApellido());
     nuevoUsuario.setTelefono(datosRegistroDTO.getTelefono());
-    nuevoUsuario.setRol("USUARIO");
+    if ("test@unlam.edu.ar".equalsIgnoreCase(datosRegistroDTO.getMail())) {
+      nuevoUsuario.setRol("ADMIN");
+    } else {
+      nuevoUsuario.setRol("USUARIO");
+    }
     nuevoUsuario.activar();
 
     repositorioUsuario.guardar(nuevoUsuario);

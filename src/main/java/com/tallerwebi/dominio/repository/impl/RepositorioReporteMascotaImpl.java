@@ -122,11 +122,15 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
     @SuppressWarnings("unchecked")
     public List<ReporteMascota> buscarReportes(String busqueda) {
         if (busqueda == null || busqueda.trim().isEmpty()) {
-            return obtenerTodosLosReportes();
+            return sessionFactory.getCurrentSession()
+                    .createCriteria(ReporteMascota.class)
+                    .add(Restrictions.eq("registroActivo", true))
+                    .list();
         }
         String wildcard = "%" + busqueda.toLowerCase().trim() + "%";
         return sessionFactory.getCurrentSession()
                 .createCriteria(ReporteMascota.class)
+                .add(Restrictions.eq("registroActivo", true))
                 .add(Restrictions.or(
                         Restrictions.ilike("especie", wildcard),
                         Restrictions.ilike("nombre", wildcard)
@@ -142,5 +146,10 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
     @Override
     public void actualizarReporte(ReporteMascota reporteMascota) {
         sessionFactory.getCurrentSession().update(reporteMascota);
+    }
+
+    @Override
+    public void eliminarReporte(ReporteMascota reporte) {
+        sessionFactory.getCurrentSession().delete(reporte);
     }
 }
