@@ -36,7 +36,7 @@ public class ControladorRegistroTest {
         datosRegistroDTO.setApellido("Arrojas");
         datosRegistroDTO.setPassword("123456");
         datosRegistroDTO.setConfirmarPassword("123456");
-        datosRegistroDTO.setTelefono("123456789");
+        datosRegistroDTO.setTelefono("1234567890");
         datosRegistroDTO.setMail("brian@gmail.com.ar");
         // ejecucion
         ModelAndView modelAndView = controladorRegistro.registrar(datosRegistroDTO);
@@ -59,7 +59,7 @@ public class ControladorRegistroTest {
       datosRegistroDTO.setApellido("Arrojas");
       datosRegistroDTO.setPassword("123456");
       datosRegistroDTO.setConfirmarPassword("123456");
-      datosRegistroDTO.setTelefono("123456789");
+      datosRegistroDTO.setTelefono("1234567890");
       datosRegistroDTO.setMail("brian@gmail.com.ar");
     doThrow(UsuarioExistente.class).when(servicioLoginMock).registrar(datosRegistroDTO);
 
@@ -83,7 +83,7 @@ public class ControladorRegistroTest {
         datosRegistroDTO.setApellido("Arrojas");
         datosRegistroDTO.setPassword("123456");
         datosRegistroDTO.setConfirmarPassword("123456");
-        datosRegistroDTO.setTelefono("123456789");
+        datosRegistroDTO.setTelefono("1234567890");
         datosRegistroDTO.setMail("brian@gmail.com");
 
         // ejecucion
@@ -107,7 +107,7 @@ public class ControladorRegistroTest {
       datosRegistroDTO.setApellido("Arrojas");
       datosRegistroDTO.setPassword("1234");
       datosRegistroDTO.setConfirmarPassword("1234");
-      datosRegistroDTO.setTelefono("123456789");
+      datosRegistroDTO.setTelefono("1234567890");
       datosRegistroDTO.setMail("brian@gmail.com.ar");
 
 
@@ -134,7 +134,7 @@ public class ControladorRegistroTest {
         datosRegistroDTO.setApellido("Arrojas");
         datosRegistroDTO.setPassword("123456");
         datosRegistroDTO.setConfirmarPassword("654321");
-        datosRegistroDTO.setTelefono("123456789");
+        datosRegistroDTO.setTelefono("1234567890");
         datosRegistroDTO.setMail("brian@gmail.com.ar");
 
 
