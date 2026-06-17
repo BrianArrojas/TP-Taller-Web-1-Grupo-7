@@ -188,5 +188,44 @@ public class RepositorioMascotaTest {
         // then
         assertThat(resultado, equalTo(null));
     }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void sePuedeBuscarReportesPorNombreOEspecie() {
+        // given
+        Usuario usuario = new Usuario();
+        usuario.setEmail("test@unlam.edu.ar");
+        usuario.setPassword("test");
+        sessionFactory.getCurrentSession().save(usuario);
+
+        DatosReporteMascotaDTO datos1 = new DatosReporteMascotaDTO();
+        datos1.setNombre("Luna");
+        datos1.setEspecie("Gato");
+        datos1.setTipoDeReporte("Perdido");
+        datos1.setFecha(LocalDate.now().minusDays(1));
+        repositorioMascota.guardarReporte(datos1, usuario);
+
+        DatosReporteMascotaDTO datos2 = new DatosReporteMascotaDTO();
+        datos2.setNombre("Rocky");
+        datos2.setEspecie("Perro");
+        datos2.setTipoDeReporte("Encontrado");
+        datos2.setFecha(LocalDate.now().minusDays(1));
+        repositorioMascota.guardarReporte(datos2, usuario);
+
+        // when
+        List<ReporteMascota> resultadoNombre = repositorioMascota.buscarReportes("Luna");
+        List<ReporteMascota> resultadoEspecie = repositorioMascota.buscarReportes("Perro");
+        List<ReporteMascota> resultadoVacio = repositorioMascota.buscarReportes("Loro");
+
+        // then
+        assertThat(resultadoNombre.size(), equalTo(1));
+        assertThat(resultadoNombre.get(0).getNombre(), equalTo("Luna"));
+
+        assertThat(resultadoEspecie.size(), equalTo(1));
+        assertThat(resultadoEspecie.get(0).getNombre(), equalTo("Rocky"));
+
+        assertThat(resultadoVacio.size(), equalTo(0));
+    }
 }
 
