@@ -68,6 +68,7 @@
 
             <div class="col-md-3 d-flex flex-column align-items-end">
                 <div th:if="${reporte.registroActivo}" class="d-flex flex-column gap-2 w-100">
+                    <a th:href="@{/reporte/{id}/conversaciones(id=${reporte.id})}" class="btn btn-outline-primary btn-sm w-100 mb-1">Conversaciones</a>
                     <button type="button" class="btn btn-outline-warning btn-sm w-100"
                             data-bs-toggle="modal" th:data-bs-target="'#modalEditar' + ${reporte.id}">
                         Editar

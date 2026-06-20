@@ -31,6 +31,7 @@
         </form>
     </div>
 </nav>
+
     <h1>Detalle de la mascota</h1>
     <div class="card mb-3">
         <div class="row g-0">
@@ -52,11 +53,37 @@
                     </p>
                     <p class="card-text" th:text="${mascota.descripcion}"></p>
                     <p class="card-text"><strong>Publicado por:</strong> <span th:text="${mascota.nombreDuenio}"></span></p>
-                    <a th:href="@{/contacto/{id}(id=${mascota.id})}" class="btn btn-primary">Contactar al dueño</a>
+                    <a th:href="@{/iniciar-chat/{id}(id=${mascota.id})}" 
+                        class="btn btn-primary"
+                        th:if="${session.usuario?.id != mascota.idDuenio}">
+                        Contactar al dueño
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="mt-5">
+        <h3>Comentarios públicos</h3>
+
+        <form th:action="@{/reporte/{id}/comentario(id=${mascota.id})}" method="post">
+            <div class="mb-3">
+                <textarea class="form-control" name="texto" rows="3" placeholder="Escribe un comentario..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Publicar comentario</button>
+        </form>
+
+        <div th:if="${not #lists.isEmpty(comentariosPublicos)}" class="mt-4">
+            <h5>Comentarios de la comunidad</h5>
+            <div th:each="comentario : ${comentariosPublicos}" class="border rounded p-3 mb-2">
+                <strong th:text="${comentario.nombreRemitente}"></strong>
+                <small class="text-muted" th:text="${comentario.fechaCreacion}"></small>
+                <p class="mt-2" th:text="${comentario.texto}"></p>
+            </div>
+        </div>
+
+    </div>
+
     <a th:href="@{/home}" class="btn btn-secondary">Volver al listado</a>
 </body>
 </html>

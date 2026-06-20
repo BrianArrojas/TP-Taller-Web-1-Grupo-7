@@ -7,14 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatDTO {
+public class MensajeDTO {
 
-    private Long idReporte;
+    private String nombreRemitente;
 
-    private String codigoChat;
-
-    private String remitente;
-
-    private String contenido;
-
+    private String texto;
+    
 }
