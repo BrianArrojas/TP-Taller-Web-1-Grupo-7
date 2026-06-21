@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 import java.util.List;
@@ -56,49 +58,30 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
     sessionFactory.getCurrentSession().save(reporteMascota);
 
     // Procesar la imagen
-    if (datosReporteMascota.getImagen() != null && !datosReporteMascota.getImagen().isEmpty()) {
-        try {
-            // Directorio donde se almacenarán las imágenes en el código fuente
-            String uploadDir = "src/main/webapp/img/";
-            File dir = new File(uploadDir);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
+        if (datosReporteMascota.getImagenes() != null && !datosReporteMascota.getImagenes().isEmpty()) {
+            try {
+                String uploadDir = "src/main/webapp/img/";
+                File dir = new File(uploadDir);
+                if (!dir.exists()) dir.mkdirs();
 
-            // Generar un nombre único para la imagen
-            String originalFilename = datosReporteMascota.getImagen().getOriginalFilename();
-            String extension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
-            String nombreArchivo = UUID.randomUUID().toString() + extension;
-            datosReporteMascota.setNombreImagenPublicada(nombreArchivo);
-            // Guardar el archivo en el sistema de archivos (src)
-            File fileSrc = new File(dir, nombreArchivo);
-            datosReporteMascota.getImagen().transferTo(fileSrc);
+                for (MultipartFile imagen : datosReporteMascota.getImagenes()) {
+                    if (!imagen.isEmpty()) {
+                        String nombreArchivo = UUID.randomUUID().toString() + ".png";
 
-            // Guardar también en el directorio real de ejecución del servidor para que se sirva inmediatamente
-            if (servletContext != null) {
-                String realPath = servletContext.getRealPath("/img/");
-                if (realPath != null) {
-                    File targetDir = new File(realPath);
-                    if (!targetDir.exists()) {
-                        targetDir.mkdirs();
+                        // Guardar físico
+                        File fileSrc = new File(dir, nombreArchivo);
+                        imagen.transferTo(fileSrc);
+
+                        // Crear entidad Foto por cada archivo
+                        Foto foto = new Foto();
+                        foto.setImg(nombreArchivo);
+                        foto.setReporteMascota(reporteMascota);
+                        sessionFactory.getCurrentSession().save(foto);
                     }
-                    File fileDest = new File(targetDir, nombreArchivo);
-                    java.nio.file.Files.copy(fileSrc.toPath(), fileDest.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 }
+            } catch (IOException e) {
+                throw new RuntimeException("Error al guardar las imágenes", e);
             }
-
-            // Crear la entidad Foto y persistirla
-            Foto foto = new Foto();
-            foto.setImg(nombreArchivo);  // almacenamos solo el nombre del archivo
-            foto.setReporteMascota(reporteMascota);
-            sessionFactory.getCurrentSession().save(foto);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Error al guardar la imagen", e);
-        }
     }
 }
 
@@ -107,15 +90,23 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
         return sessionFactory.getCurrentSession()
                 .createCriteria(ReporteMascota.class)
                 .add(org.hibernate.criterion.Restrictions.eq("usuario", usuario))
+                .setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY)
                 .list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<ReporteMascota> obtenerTodosLosReportes() {
-        return sessionFactory.getCurrentSession()
+        List<ReporteMascota> reportes = sessionFactory.getCurrentSession()
                 .createCriteria(ReporteMascota.class)
+                .setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY)
                 .list();
+        for (ReporteMascota r : reportes) {
+            if (r.getFotos() != null) {
+                r.getFotos().size();
+            }
+        }
+        return reportes;
     }
 
     @Override
@@ -125,6 +116,7 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
             return sessionFactory.getCurrentSession()
                     .createCriteria(ReporteMascota.class)
                     .add(Restrictions.eq("registroActivo", true))
+                    .setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY)
                     .list();
         }
         String wildcard = "%" + busqueda.toLowerCase().trim() + "%";
@@ -140,7 +132,12 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
 
     @Override
     public ReporteMascota buscarPorId(Long id) {
-        return sessionFactory.getCurrentSession().get(ReporteMascota.class, id);
+        ReporteMascota reporte = sessionFactory.getCurrentSession().get(ReporteMascota.class, id);
+
+        if (reporte != null && reporte.getFotos() != null) {
+            reporte.getFotos().size();
+        }
+        return reporte;
     }
 
     @Override

@@ -1,11 +1,8 @@
 package com.tallerwebi.presentacion.controller;
 
-import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
-import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
-import com.tallerwebi.dominio.excepcion.ImagenExcedeTamanoException;
+import com.tallerwebi.dominio.excepcion.*;
 import com.tallerwebi.dominio.model.ReporteMascota;
 import com.tallerwebi.dominio.model.Usuario;
-import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
 import com.tallerwebi.dominio.service.ServicioReporteMascota;
 import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +70,8 @@ public class ControladorReporteMascota {
 
     }
 
-    if (datosReporteMascotaDTO.getImagen() == null || datosReporteMascotaDTO.getImagen().isEmpty()) {
-      modelo.put("mensaje","Debe adjuntar una imagen");
+    if (datosReporteMascotaDTO.getImagenes() == null || datosReporteMascotaDTO.getImagenes().isEmpty()) {
+      modelo.put("mensaje", "Debe adjuntar al menos una imagen");
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
     }
@@ -104,6 +101,15 @@ public class ControladorReporteMascota {
       modelo.put("datosReporte", datosReporteMascotaDTO);
       return new ModelAndView("realizar-reporte", modelo);
     }
+
+    try{
+      servicioReporteMascota.validarCantidadDeFotos(datosReporteMascotaDTO);
+    }catch(CantidadFotosExcedidaException exception){
+      modelo.put("mensaje", exception.getMessage());
+      modelo.put("datosReporte", datosReporteMascotaDTO);
+      return new ModelAndView("realizar-reporte", modelo);
+    }
+
     Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuario");
 
     if (usuarioLogueado == null) {
@@ -144,6 +150,11 @@ public class ControladorReporteMascota {
     if (datosReporteMascotaDTO.getDescripcion() != null && !datosReporteMascotaDTO.getDescripcion().isEmpty()) {
       reporteOriginal.setDescripcion(datosReporteMascotaDTO.getDescripcion());
     }
+
+//    if (datosReporteMascotaDTO.getImagenes() != null && !datosReporteMascotaDTO.getImagenes().isEmpty()) {
+//      servicioReporteMascota.agregarFotosAlReporte(reporteOriginal, datosReporteMascotaDTO.getImagenes());
+//    }
+
     servicioReporteMascota.actualizarReporte(datosReporteMascotaDTO);
 
     return new ModelAndView("redirect:/mis-reportes");

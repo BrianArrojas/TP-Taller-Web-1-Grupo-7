@@ -33,7 +33,7 @@ public class ReporteMascota {
     private Boolean registroActivo;
 
     @OneToMany(mappedBy = "reporteMascota", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Foto> fotos = new ArrayList<>();
+    private List<Foto> fotos ;
 
 
     @ManyToOne(cascade = CascadeType.PERSIST)
@@ -44,5 +44,23 @@ public class ReporteMascota {
     public ReporteMascota() {
         this.fechaCreacionReporte = LocalDateTime.now();
         this.registroActivo = true;
+        this.fotos = new ArrayList<>();
+    }
+
+    public String getFechaFormateada() {
+        return (this.fecha != null) ? this.fecha.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
+    }
+    public String getPrimeraRutaImagen() {
+        if (this.fotos == null || this.fotos.isEmpty()) {
+            return "/img/default-pet.png";
+        }
+        String imgPath = this.fotos.get(0).getImg();
+        if (imgPath.startsWith("img/")) {
+            return "/" + imgPath;
+        } else if (imgPath.startsWith("/img/")) {
+            return imgPath;
+        } else {
+            return "/img/" + imgPath;
+        }
     }
 }

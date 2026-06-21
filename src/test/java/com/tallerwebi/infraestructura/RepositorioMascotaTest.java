@@ -1,5 +1,6 @@
 package com.tallerwebi.infraestructura;
 
+import com.tallerwebi.dominio.model.Foto;
 import com.tallerwebi.dominio.model.ReporteMascota;
 import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.repository.RepositorioReporteMascota;
@@ -57,7 +58,7 @@ public class RepositorioMascotaTest {
         datosReporteMascota.setFecha(LocalDate.now().minusDays(1));
         // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
         MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-png".getBytes());
-        datosReporteMascota.setImagen(fotoSimulada);
+        datosReporteMascota.setImagenes(List.of(fotoSimulada));
         //when
 
         repositorioMascota.guardarReporte(datosReporteMascota,usuario);
@@ -103,7 +104,7 @@ public class RepositorioMascotaTest {
         datosReporteMascota.setFecha(LocalDate.now().minusDays(1));
         // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
         MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-png".getBytes());
-        datosReporteMascota.setImagen(fotoSimulada);
+        datosReporteMascota.setImagenes(List.of(fotoSimulada));
         repositorioMascota.guardarReporte(datosReporteMascota,usuario);
 
         Usuario usuario2 = new Usuario();
@@ -123,7 +124,7 @@ public class RepositorioMascotaTest {
         datosReporteMascota.setFecha(LocalDate.now().minusDays(4));
         // Simulamos una foto real pasando: nombre del parámetro, nombre del archivo, tipo, y el contenido en bytes
         MockMultipartFile fotoSimulada2 = new MockMultipartFile("foto", "perrito2.png", "image/png", "bytes-de-png".getBytes());
-        datosReporteMascota.setImagen(fotoSimulada2);
+        datosReporteMascota.setImagenes(List.of(fotoSimulada2));
         repositorioMascota.guardarReporte(datosReporteMascota2,usuario2);
 
         //when
@@ -156,7 +157,7 @@ public class RepositorioMascotaTest {
         datos.setEspecie("Perro");
         datos.setFecha(LocalDate.now().minusDays(1));
         MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "firulais.jpg", "image/jpeg", "bytes".getBytes());
-        datos.setImagen(fotoSimulada);
+        datos.setImagenes(List.of(fotoSimulada));
 
         repositorioMascota.guardarReporte(datos, usuario);
 
@@ -207,7 +208,8 @@ public class RepositorioMascotaTest {
         datos.setTamano("Grande");
         datos.setEspecie("Perro");
         datos.setFecha(LocalDate.now());
-        datos.setImagen(new MockMultipartFile("foto", "test.png", "image/png", "bytes".getBytes()));
+        MockMultipartFile fotoSimulada = new MockMultipartFile("foto", "perrito.png", "image/png", "bytes-de-png".getBytes());
+        datos.setImagenes(List.of(fotoSimulada));
 
         repositorioMascota.guardarReporte(datos, usuario);
 
@@ -226,6 +228,74 @@ public class RepositorioMascotaTest {
         // then
         assertThat(reporteModificado.getNombre(), equalTo("Nombre Actualizado"));
         assertThat(reporteModificado.getDescripcion(), equalTo("Descripción editada"));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void alGuardarReporteConVariasFotosSePersistenTodasLasFotos() {
+        // Given
+        Usuario usuario = new Usuario();
+        usuario.setEmail("test@unlam.edu.ar");
+        sessionFactory.getCurrentSession().save(usuario);
+
+        DatosReporteMascotaDTO datos = new DatosReporteMascotaDTO();
+        datos.setNombre("Mascota con varias fotos");
+
+        MockMultipartFile f1 = new MockMultipartFile("f1", "1.png", "image/png", "b1".getBytes());
+        MockMultipartFile f2 = new MockMultipartFile("f2", "2.png", "image/png", "b2".getBytes());
+        datos.setImagenes(List.of(f1, f2));
+
+        // When
+        repositorioMascota.guardarReporte(datos, usuario);
+
+        // Then
+        ReporteMascota guardado = (ReporteMascota) sessionFactory.getCurrentSession()
+                .createCriteria(ReporteMascota.class)
+                .add(Restrictions.eq("nombre", "Mascota con varias fotos"))
+                .uniqueResult();
+
+        // Verificamos que tenga 2 fotos asociadas
+        List<Foto> fotos = sessionFactory.getCurrentSession()
+                .createCriteria(Foto.class)
+                .add(Restrictions.eq("reporteMascota", guardado))
+                .list();
+
+        assertThat(fotos.size(), equalTo(2));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void alRecuperarReporteLasFotosEstanPresentes() {
+        // Given
+        Usuario usuario = new Usuario();
+        usuario.setEmail("test@unlam.edu.ar");
+        sessionFactory.getCurrentSession().save(usuario);
+
+        DatosReporteMascotaDTO datos = new DatosReporteMascotaDTO();
+        datos.setNombre("Mascota con fotos");
+
+        MockMultipartFile f1 = new MockMultipartFile("foto1", "1.png", "image/png", "bytes1".getBytes());
+        MockMultipartFile f2 = new MockMultipartFile("foto2", "2.png", "image/png", "bytes2".getBytes());
+        datos.setImagenes(List.of(f1, f2));
+
+        repositorioMascota.guardarReporte(datos, usuario);
+
+        sessionFactory.getCurrentSession().flush();  // Envía los datos a la DB
+        sessionFactory.getCurrentSession().clear();  // Limpia la caché de Hibernate
+
+        ReporteMascota guardado = (ReporteMascota) sessionFactory.getCurrentSession()
+                .createCriteria(ReporteMascota.class)
+                .add(Restrictions.eq("nombre", "Mascota con fotos"))
+                .uniqueResult();
+
+        // When
+        ReporteMascota recuperado = repositorioMascota.buscarPorId(guardado.getId());
+
+        // Then
+        assertThat(recuperado.getFotos(), notNullValue());
+        assertThat(recuperado.getFotos().size(), equalTo(2));
     }
 
 }

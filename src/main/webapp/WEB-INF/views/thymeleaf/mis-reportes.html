@@ -52,8 +52,27 @@
     <div th:each="reporte : ${reportes}" class="reporte-item shadow-sm">
         <div class="row align-items-center">
             <div class="col-md-2">
-                <a th:href="@{'/detalle/' + ${reporte.id}}">
-                    <img th:src="@{'/img/' + ${reporte.fotos[0].img}}" class="img-listado" alt="Mascota">
+                <a th:href="@{'/detalle/' + ${reporte.id}}" style="text-decoration: none;">
+                    <div class="d-grid gap-1" style="grid-template-columns: repeat(2, 60px);">
+
+                        <th:block th:if="${reporte.fotos != null && !reporte.fotos.isEmpty()}">
+                            <div th:each="foto, iterStat : ${reporte.fotos}"
+                                 th:if="${iterStat.index < 4}"
+                                 class="overflow-hidden" style="width: 60px; height: 60px;">
+
+                                <img th:src="@{${foto.img.startsWith('img/') ? '/' + foto.img : '/img/' + foto.img}}"
+                                     class="img-fluid w-100 h-100"
+                                     style="object-fit: cover;"
+                                     alt="Foto">
+                            </div>
+                        </th:block>
+
+                        <div th:if="${reporte.fotos == null || reporte.fotos.isEmpty()}"
+                             class="overflow-hidden" style="width: 60px; height: 60px;">
+                            <img src="/img/default-pet.png" class="img-fluid w-100 h-100" style="object-fit: cover;" alt="Sin foto">
+                        </div>
+
+                    </div>
                 </a>
             </div>
 

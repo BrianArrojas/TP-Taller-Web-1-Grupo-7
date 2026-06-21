@@ -64,9 +64,10 @@
                 <a class="" th:href="@{/detalle/{id}(id=${mascota.id})}" style="text-decoration: none;">
                     <div class="card h-100 card-hover">
                         <!-- Si no hay imagen disponible, mostramos un placeholder -->
-                        <img th:src="@{${mascota.rutaImagen}}" class="card-img-top" alt="Imagen de la mascota"
-                        style="height: 200px; object-fit: cover;"
-                        th:attr="onerror='this.onerror=null;this.src=\'' + @{/img/default-pet.png} + '\';'">
+                        <img th:src="@{${mascota.primeraRutaImagen}}"
+                             class="card-img-top"
+                             alt="Imagen de la mascota"
+                             style="height: 200px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title" th:text="${mascota.nombre ?: 'Sin nombre'}">Nombre de la Mascota</h5>
                             <p class="card-text">

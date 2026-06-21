@@ -1,9 +1,6 @@
 package com.tallerwebi.dominio.service.impl;
 
-import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
-import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
-import com.tallerwebi.dominio.excepcion.ImagenExcedeTamanoException;
-import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.excepcion.*;
 import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.model.ReporteMascota;
 import com.tallerwebi.dominio.repository.RepositorioReporteMascota;
@@ -12,6 +9,7 @@ import com.tallerwebi.dominio.service.ServicioReporteMascota;
 import com.tallerwebi.presentacion.dto.DatosReporteMascotaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -23,24 +21,26 @@ import java.util.stream.Collectors;
 @Transactional
 public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
 
-    private  RepositorioReporteMascota repositorioReporteMascota;
+    private RepositorioReporteMascota repositorioReporteMascota;
     private RepositorioUsuario repositorioUsuario;
 
     @Autowired
-    public ServicioReporteMascotaImpl(RepositorioReporteMascota repositorioReporteMascota,RepositorioUsuario repositorioUsuario) {
+    public ServicioReporteMascotaImpl(RepositorioReporteMascota repositorioReporteMascota, RepositorioUsuario repositorioUsuario) {
         this.repositorioReporteMascota = repositorioReporteMascota;
         this.repositorioUsuario = repositorioUsuario;
     }
 
     public Boolean validarQueLaImagenCumplaConFormato(DatosReporteMascotaDTO datosReporteMascotaDTO) {
-        String tipo = datosReporteMascotaDTO.getImagen().getContentType();
-
-        if (!tipo.equals("image/png") && !tipo.equals("image/jpeg")) {
-            throw new FormatoImagenInvalidaException("El formato de la imagen debe ser PNG o JPG.");
+        if (datosReporteMascotaDTO.getImagenes() != null) {
+            for (MultipartFile imagen : datosReporteMascotaDTO.getImagenes()) {
+                if (!imagen.isEmpty()) {
+                    String tipo = imagen.getContentType();
+                    if (tipo == null || (!tipo.equals("image/png") && !tipo.equals("image/jpeg"))) {
+                        throw new FormatoImagenInvalidaException("Una de las imágenes tiene un formato inválido. Debe ser PNG o JPG.");
+                    }
+                }
+            }
         }
-
-
-
         return true;
     }
 
@@ -106,15 +106,30 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
     }
     @Override
     public Boolean validarQueLaImagenNoExcedaTamano(DatosReporteMascotaDTO datosReporteMascotaDTO) {
-        String tipo = datosReporteMascotaDTO.getImagen().getContentType();
-
-        long limiteMaximo = 20 * 1024 * 1024;
-        long tamanoImagen = datosReporteMascotaDTO.getImagen().getSize();
-        if (tamanoImagen >= limiteMaximo) {
-            throw new ImagenExcedeTamanoException("La foto es demasiado pesada. El tamaño máximo permitido es 20 MB");
+        if (datosReporteMascotaDTO.getImagenes() != null) {
+            long limiteMaximo = 20 * 1024 * 1024; // 20 MB
+            for (MultipartFile imagen : datosReporteMascotaDTO.getImagenes()) {
+                if (!imagen.isEmpty()) {
+                    if (imagen.getSize() >= limiteMaximo) {
+                        throw new ImagenExcedeTamanoException("Una de las fotos es demasiado pesada. El tamaño máximo es 20 MB.");
+                    }
+                }
+            }
         }
 
         return true;
+    }
+
+    @Override
+    public List<ReporteMascota> listarReportes(String busqueda) {
+        return repositorioReporteMascota.buscarReportes(busqueda);
+    }
+
+    @Override
+    public void validarCantidadDeFotos(DatosReporteMascotaDTO dto) {
+        if (dto.getImagenes() != null && dto.getImagenes().size() > 4) {
+            throw new CantidadFotosExcedidaException("No puedes subir más de 4 imágenes por reporte.");
+        }
     }
 
     @Override

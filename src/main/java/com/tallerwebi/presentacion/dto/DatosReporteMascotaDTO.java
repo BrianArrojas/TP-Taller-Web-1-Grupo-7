@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +26,7 @@ public class DatosReporteMascotaDTO {
   private LocalDate fecha;
   private String ubicacion;
   private String descripcion;
-  private MultipartFile imagen;
+  private List<MultipartFile> imagenes;
   private String rutaImagen;
   private String nombreImagenPublicada;
 

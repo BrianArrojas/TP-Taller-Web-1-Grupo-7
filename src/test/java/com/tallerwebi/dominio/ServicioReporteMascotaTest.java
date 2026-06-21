@@ -1,5 +1,6 @@
 package com.tallerwebi.dominio;
 
+import com.tallerwebi.dominio.excepcion.CantidadFotosExcedidaException;
 import com.tallerwebi.dominio.excepcion.FechaInvalidaException;
 import com.tallerwebi.dominio.excepcion.FormatoImagenInvalidaException;
 import com.tallerwebi.dominio.model.ReporteMascota;
@@ -42,7 +43,7 @@ public class ServicioReporteMascotaTest {
     when(fotoSimuladaMock.getOriginalFilename()).thenReturn("perrito.pdf");
     when(fotoSimuladaMock.getContentType()).thenReturn("application/pdf");
 
-    datosReporteMascotaDTO.setImagen(fotoSimuladaMock);
+    datosReporteMascotaDTO.setImagenes(List.of(fotoSimuladaMock));
 
     // When
     FormatoImagenInvalidaException excepcion = assertThrows(FormatoImagenInvalidaException.class, () -> {
@@ -50,7 +51,7 @@ public class ServicioReporteMascotaTest {
     });
 
     //Then
-    assertThat(excepcion.getMessage(), equalTo("El formato de la imagen debe ser PNG o JPG."));
+    assertThat(excepcion.getMessage(), equalTo("Una de las imágenes tiene un formato inválido. Debe ser PNG o JPG."));
   }
 
   @Test
@@ -62,7 +63,7 @@ public class ServicioReporteMascotaTest {
 
     MultipartFile fotoSimuladaMock = mock(MultipartFile.class);
     when(fotoSimuladaMock.getOriginalFilename()).thenReturn("perrito.png");
-    datosReporteMascotaDTO.setImagen(fotoSimuladaMock);
+    datosReporteMascotaDTO.setImagenes(List.of(fotoSimuladaMock));
 
     // When
     FechaInvalidaException excepcion = assertThrows(FechaInvalidaException.class, () -> {
@@ -84,7 +85,7 @@ public class ServicioReporteMascotaTest {
 
     when(fotoSimuladaMock.getSize()).thenReturn(20L * 1024 * 1024);
 
-    datosReporteMascotaDTO.setImagen(fotoSimuladaMock);
+    datosReporteMascotaDTO.setImagenes(List.of(fotoSimuladaMock));
 
     // When
     ImagenExcedeTamanoException excepcion = assertThrows(ImagenExcedeTamanoException.class, () -> {
@@ -92,7 +93,7 @@ public class ServicioReporteMascotaTest {
     });
 
     // Then
-    assertThat(excepcion.getMessage(), equalTo("La foto es demasiado pesada. El tamaño máximo permitido es 20 MB"));
+    assertThat(excepcion.getMessage(), equalTo("Una de las fotos es demasiado pesada. El tamaño máximo es 20 MB."));
   }
 
 
@@ -172,5 +173,43 @@ public class ServicioReporteMascotaTest {
     // Then
     assertThat(reporte.getRegistroActivo(), equalTo(false));
   }
+
+    @Test
+    public void siSeEnvianMasDe4FotosElReporteDebeFallar() {
+        DatosReporteMascotaDTO dto = new DatosReporteMascotaDTO();
+        List<MultipartFile> listaMuchasFotos = new ArrayList<>();
+
+        for(int i = 0; i < 5; i++) {
+            listaMuchasFotos.add(mock(MultipartFile.class));
+        }
+        dto.setImagenes(listaMuchasFotos);
+
+        assertThrows(CantidadFotosExcedidaException.class, () ->
+                servicioReporteMascota.validarCantidadDeFotos(dto));
+    }
+
+    @Test
+    public void siSeEnvianVariasFotosYUnaEsInvalidaElReporteDebeFallar() {
+        DatosReporteMascotaDTO dto = new DatosReporteMascotaDTO();
+        MultipartFile fotoValida = mock(MultipartFile.class);
+        MultipartFile fotoInvalida = mock(MultipartFile.class);
+
+        when(fotoInvalida.getContentType()).thenReturn("application/pdf");
+        dto.setImagenes(List.of(fotoValida, fotoInvalida));
+
+        assertThrows(FormatoImagenInvalidaException.class, () ->
+                servicioReporteMascota.validarQueLaImagenCumplaConFormato(dto));
+    }
+
+    @Test
+    public void siSeEnvianFotosValidasDentroDelLimiteElReporteNoDebeFallar() {
+        DatosReporteMascotaDTO dto = new DatosReporteMascotaDTO();
+        MultipartFile f1 = mock(MultipartFile.class);
+        MultipartFile f2 = mock(MultipartFile.class);
+
+        dto.setImagenes(List.of(f1, f2));
+
+        servicioReporteMascota.validarCantidadDeFotos(dto);
+    }
 
 }

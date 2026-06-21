@@ -24,4 +24,7 @@ public interface ServicioReporteMascota {
     void actualizarReporte(DatosReporteMascotaDTO datosReporteMascotaDTO);
 
     public Boolean validarQueLaImagenNoExcedaTamano(DatosReporteMascotaDTO datosReporteMascotaDTO);
+
+    public List<ReporteMascota> listarReportes(String busqueda);
+    public void validarCantidadDeFotos(DatosReporteMascotaDTO dto);
 }

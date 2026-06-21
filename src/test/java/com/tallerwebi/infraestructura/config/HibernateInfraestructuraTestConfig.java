@@ -5,9 +5,12 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import static org.mockito.Mockito.mock;
 
 @Configuration
 @EnableTransactionManagement
@@ -45,4 +48,9 @@ public class HibernateInfraestructuraTestConfig {
     properties.setProperty("hibernate.hbm2ddl.auto", "create");
     return properties;
   }
+  @Bean
+  public SimpMessagingTemplate simpMessagingTemplate() {
+    return mock(SimpMessagingTemplate.class);
+  }
+
 }
