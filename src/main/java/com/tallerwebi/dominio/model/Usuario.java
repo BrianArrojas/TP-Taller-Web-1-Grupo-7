@@ -1,5 +1,6 @@
 package com.tallerwebi.dominio.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,6 +26,7 @@ public class Usuario {
     private String rol;
     private Boolean activo = false;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReporteMascota> reportesMascotas = new ArrayList<>();
 

@@ -23,8 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
@@ -298,5 +297,27 @@ public class RepositorioMascotaTest {
         assertThat(recuperado.getFotos().size(), equalTo(2));
     }
 
+    @Test
+    @Transactional
+    @Rollback
+    public void deberiaTraerSoloReportesActivos() {
+        // given
+        ReporteMascota activo = new ReporteMascota();
+        activo.setRegistroActivo(true);
+
+        ReporteMascota inactivo = new ReporteMascota();
+        inactivo.setRegistroActivo(false);
+
+        sessionFactory.getCurrentSession().save(activo);
+        sessionFactory.getCurrentSession().save(inactivo);
+
+        // when
+        List<ReporteMascota> reportes = repositorioMascota.obtenerTodosLosReportesActivos();
+
+        // then
+        assertThat(reportes, hasSize(1));
+        assertThat(reportes, contains(activo));
+        assertThat(reportes, not(contains(inactivo)));
+    }
 }
 

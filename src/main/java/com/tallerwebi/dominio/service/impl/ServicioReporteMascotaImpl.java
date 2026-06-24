@@ -133,6 +133,15 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
     }
 
     @Override
+    public List<ReporteMascota> obtenerTodosLosReportesActivos() {
+        List<ReporteMascota> todosLosReportes = repositorioReporteMascota.obtenerTodosLosReportesActivos();
+
+        return todosLosReportes.stream()
+                .filter(r -> r.getRegistroActivo() != null && r.getRegistroActivo())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<ReporteMascota> obtenerTodosLosReportes() {
         return repositorioReporteMascota.obtenerTodosLosReportes();
     }

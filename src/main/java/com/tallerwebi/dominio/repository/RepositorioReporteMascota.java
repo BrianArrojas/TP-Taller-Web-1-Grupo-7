@@ -18,4 +18,5 @@ public interface RepositorioReporteMascota {
 
     void actualizarReporte(ReporteMascota reporteExistente);
     void eliminarReporte(ReporteMascota reporte);
+    List<ReporteMascota> obtenerTodosLosReportesActivos();
 }

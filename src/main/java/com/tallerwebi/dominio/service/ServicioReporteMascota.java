@@ -27,4 +27,5 @@ public interface ServicioReporteMascota {
 
     public List<ReporteMascota> listarReportes(String busqueda);
     public void validarCantidadDeFotos(DatosReporteMascotaDTO dto);
+    public List<ReporteMascota> obtenerTodosLosReportesActivos();
 }

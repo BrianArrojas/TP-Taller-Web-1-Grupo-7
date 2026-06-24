@@ -1,5 +1,8 @@
 package com.tallerwebi.dominio.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -24,14 +27,21 @@ public class ReporteMascota {
     private String raza;
     private String color;
     private String tamano;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate fecha; // Cuando se perdio/encontro
     private String ubicacion;
     private String descripcion;
     @Column(name = "fecha_creacion_reporte")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime fechaCreacionReporte;
     @Column(name = "registro_activo")
     private Boolean registroActivo;
+    @JsonProperty("latitud")
+    private Double latitud;
+    @JsonProperty("longitud")
+    private Double longitud;
 
+    @JsonIgnoreProperties("reporteMascota") // Evita el bucle infinito
     @OneToMany(mappedBy = "reporteMascota", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Foto> fotos ;
 

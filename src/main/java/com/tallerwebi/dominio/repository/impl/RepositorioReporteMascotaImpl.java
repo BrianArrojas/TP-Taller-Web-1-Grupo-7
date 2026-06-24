@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.List;
 import java.util.UUID;
 import java.io.File;
+import java.util.stream.Collectors;
 
 @Repository
 public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota {
@@ -54,6 +55,8 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
     reporteMascota.setTamano(datosReporteMascota.getTamano());
     reporteMascota.setUsuario(usuario);
     reporteMascota.setRegistroActivo(true);
+    reporteMascota.setLatitud(datosReporteMascota.getLatitud());
+    reporteMascota.setLongitud(datosReporteMascota.getLongitud());
 
     sessionFactory.getCurrentSession().save(reporteMascota);
 
@@ -149,4 +152,12 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
     public void eliminarReporte(ReporteMascota reporte) {
         sessionFactory.getCurrentSession().delete(reporte);
     }
+
+    @Override
+    public List<ReporteMascota> obtenerTodosLosReportesActivos() {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(ReporteMascota.class)
+                .add(Restrictions.eq("registroActivo", true)) // Filtra por el campo booleano
+                .list();
+        }
 }

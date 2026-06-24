@@ -16,30 +16,31 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <div class="container">
-        <a class="navbar-brand" href="#">Mascotas</a>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/home}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/realizar-reporte}">Reportar Mascota</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/mi-perfil}">Perfil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/mis-reportes}">Mis Reportes</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-white fw-bold" th:href="@{/admin}">Panel Admin</a>
-                </li>
-            </ul>
-            <form class="d-flex" style="margin-left: auto;">
-                <a class="btn btn-outline-success btn-sm" th:href="@{/logout}">Logout</a>
-            </form>
-        </div>
+    <a class="navbar-brand" href="#">Mascotas</a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/home}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/realizar-reporte}">Reportar Mascota</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/mi-perfil}">Perfil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/mis-reportes}">Mis Reportes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/mapa-reportes}">Mapa de Reportes</a>
+            </li>
+            <li class="nav-item" th:if="${session.ROL == 'ADMIN'}">
+                <a class="nav-link text-warning fw-bold" th:href="@{/admin}">Panel Admin</a>
+            </li>
+        </ul>
+        <form class="form-inline mt-2 mt-md-0 ml-auto" style="margin-left: auto;">
+            <a class="btn btn-outline-success my-2 my-sm-0" th:href="@{/logout}">Logout</a>
+        </form>
     </div>
 </nav>
 

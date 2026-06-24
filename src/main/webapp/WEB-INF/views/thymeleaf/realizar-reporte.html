@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <title>Reportar Mascota Perdida</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -144,6 +146,9 @@
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/mis-reportes}">Mis Reportes</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/mapa-reportes}">Mapa de Reportes</a>
+            </li>
             <li class="nav-item" th:if="${session.ROL == 'ADMIN'}">
                 <a class="nav-link text-warning fw-bold" th:href="@{/admin}">Panel Admin</a>
             </li>
@@ -163,6 +168,17 @@
 
     <form th:action="@{/procesando-reporte}" method="POST" th:object="${datosReporte}" enctype="multipart/form-data">
         <fieldset>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <input type="text" id="direccionInput" placeholder="Buscar dirección...">
+                <button type="button" onclick="obtenerCoordenadas(event)" style="padding: 5px 15px;">Buscar</button>
+            </div>
+            <div class="campo-grupo campo-completo">
+                <label>Seleccioná la ubicación en el mapa:</label>
+                <div id="map" style="height: 300px; width: 100%; border: 1px solid #ced4da; border-radius: 6px;"></div>
+            </div>
+
+            <input type="hidden" id="latitud" name="latitud" th:field="*{latitud}" />
+            <input type="hidden" id="longitud" name="longitud" th:field="*{longitud}" />
             <div class="campo-grupo">
                 <label for="tipoDeReporte">Tipo de Reporte</label>
                 <select th:field="*{tipoDeReporte}" id="tipoDeReporte">
@@ -231,6 +247,51 @@
         </fieldset>
     </form>
 </main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    //librería Leaflet
+    var map = L.map('map').setView([-34.7, -58.6], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
+    var marker;
+
+    function colocarMarcador(lat, lng) {
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lng]).addTo(map);
+        map.setView([lat, lng], 16);
+        document.getElementById('latitud').value = lat;
+        document.getElementById('longitud').value = lng;
+    }
+
+    map.on('click', function(e) {
+        colocarMarcador(e.latlng.lat, e.latlng.lng);
+    });
+
+    function obtenerCoordenadas(event) {
+        if (event) event.preventDefault();
+        const dir = document.getElementById("direccionInput").value;
+        if (!dir) return;
+
+        //API de Nominatim
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dir)}&limit=1`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.length > 0) {
+                    colocarMarcador(data[0].lat, data[0].lon);
+                } else {
+                    alert("Dirección no encontrada.");
+                }
+            });
+    }
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        var lat = document.getElementById('latitud').value;
+        var lon = document.getElementById('longitud').value;
+        if (!lat || !lon) {
+            event.preventDefault();
+            alert("¡Por favor, marcá la ubicación en el mapa!");
+        }
+    });
+</script>
 </body>
 </html>

@@ -211,5 +211,28 @@ public class ServicioReporteMascotaTest {
 
         servicioReporteMascota.validarCantidadDeFotos(dto);
     }
+  @Test
+  public void alObtenerReportesActivosDeberiaRetornarSoloLosQueTenganRegistroActivoEnTrue() {
+    // Given
+    ReporteMascota activo = new ReporteMascota();
+    activo.setRegistroActivo(true);
+    activo.setNombre("Mascota Activa");
+
+    ReporteMascota inactivo = new ReporteMascota();
+    inactivo.setRegistroActivo(false);
+    inactivo.setNombre("Mascota Inactiva");
+
+    when(repositorioReporteMascota.obtenerTodosLosReportesActivos()).thenReturn(List.of(activo, inactivo));
+
+    // When
+    List<ReporteMascota> resultado = servicioReporteMascota.obtenerTodosLosReportesActivos();
+
+    // Then
+    assertThat(resultado, hasSize(1));
+    assertThat(resultado, contains(activo));
+    assertThat(resultado, not(contains(inactivo)));
+
+    verify(repositorioReporteMascota, times(1)).obtenerTodosLosReportesActivos();
+  }
 
 }
