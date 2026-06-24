@@ -3,7 +3,7 @@ package com.tallerwebi.presentacion;
 import com.tallerwebi.dominio.model.ReporteMascota;
 import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.service.ServicioReporteMascota;
-import com.tallerwebi.presentacion.controller.ControladorMisReportes;;
+import com.tallerwebi.presentacion.controller.ControladorMisReportes;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 

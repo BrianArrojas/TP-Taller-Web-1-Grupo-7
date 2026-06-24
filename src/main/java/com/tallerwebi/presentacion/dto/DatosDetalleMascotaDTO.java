@@ -22,5 +22,5 @@ public class DatosDetalleMascotaDTO {
     private String fotoUrl;          
     private String nombreDuenio;     
     private String tipoDeReporte;    
-    
+    private Long idDuenio;
 }

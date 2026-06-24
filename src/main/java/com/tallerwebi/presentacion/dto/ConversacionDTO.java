@@ -1,5 +1,7 @@
 package com.tallerwebi.presentacion.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatDTO {
-
-    private Long idReporte;
+public class ConversacionDTO {
 
     private String codigoChat;
 
-    private String remitente;
+    private String nombreInteresado;
 
-    private String contenido;
+    private String ultimoMensaje;
 
+    private LocalDateTime fechaUltimoMensaje;
+    
 }

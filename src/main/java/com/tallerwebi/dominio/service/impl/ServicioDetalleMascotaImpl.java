@@ -1,22 +1,31 @@
 package com.tallerwebi.dominio.service.impl;
 
+import com.tallerwebi.dominio.model.Comentario;
 import com.tallerwebi.dominio.model.ReporteMascota;
+import com.tallerwebi.dominio.model.Usuario;
+import com.tallerwebi.dominio.repository.RepositorioComentario;
 import com.tallerwebi.dominio.repository.RepositorioReporteMascota;
-import com.tallerwebi.dominio.service.DetalleMascotaService;
+import com.tallerwebi.dominio.service.ServicioDetalleMascota;
 import com.tallerwebi.presentacion.dto.DatosDetalleMascotaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
 
 @Service("detalleMascotaService")
-@Transactional
-public class DetalleMascotaServiceImpl implements DetalleMascotaService {
+@Transactional  // Permite consultar la base de datos
+public class ServicioDetalleMascotaImpl implements ServicioDetalleMascota {
 
     private final RepositorioReporteMascota repositorioReporteMascota;
+    private final RepositorioComentario repositorioComentario;
 
     @Autowired
-    public DetalleMascotaServiceImpl(RepositorioReporteMascota repositorioReporteMascota) {
+    public ServicioDetalleMascotaImpl(RepositorioReporteMascota repositorioReporteMascota,
+                                      RepositorioComentario repositorioComentario) {
         this.repositorioReporteMascota = repositorioReporteMascota;
+        this.repositorioComentario = repositorioComentario;
     }
 
     @Override
@@ -26,6 +35,24 @@ public class DetalleMascotaServiceImpl implements DetalleMascotaService {
             throw new RuntimeException("Reporte no encontrado");
         }
         return convertirADTO(reporte);
+    }
+
+    @Override
+    public void publicarComentarioPublico(Long idReporte, String texto, Usuario usuario) {
+        ReporteMascota reporte = repositorioReporteMascota.buscarPorId(idReporte);
+        if (reporte == null) {
+            throw new RuntimeException("El reporte no existe");
+        }
+        Comentario comentario = new Comentario();
+        comentario.setReporteMascota(reporte);
+        comentario.setNombreRemitente(usuario.getNombre());
+        comentario.setTexto(texto);
+        repositorioComentario.guardar(comentario);
+    }
+
+    @Override
+    public List<Comentario> obtenerComentariosPublicos(Long idReporte) {
+        return repositorioComentario.obtenerTodosComentariosDelReporte(idReporte);
     }
 
     private DatosDetalleMascotaDTO convertirADTO(ReporteMascota reporte) {
@@ -56,6 +83,7 @@ public class DetalleMascotaServiceImpl implements DetalleMascotaService {
 
         if (reporte.getUsuario() != null) {
             dto.setNombreDuenio(reporte.getUsuario().getNombre() + " " + reporte.getUsuario().getApellido());
+            dto.setIdDuenio(reporte.getUsuario().getId());
         } else {
             dto.setNombreDuenio("Desconocido");
         }
