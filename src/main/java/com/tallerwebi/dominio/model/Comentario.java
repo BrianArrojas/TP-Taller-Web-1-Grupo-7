@@ -28,4 +28,9 @@ public class Comentario {
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     private String codigoChat;
+
+    public String getFechaCreacionFormateada() {
+        if (this.fechaCreacion == null) return "";
+        return this.fechaCreacion.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
 }

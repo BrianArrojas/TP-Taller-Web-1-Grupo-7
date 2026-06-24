@@ -23,9 +23,37 @@ public class ControladorHome {
   }
 
   @RequestMapping(path = "/home", method = RequestMethod.GET)
-  public ModelAndView irAHome(@RequestParam(value = "busqueda", required = false) String busqueda) {
+  public ModelAndView irAHome(
+      @RequestParam(value = "busqueda", required = false) String busqueda,
+      @RequestParam(value = "tipoDeReporte", required = false) String tipoDeReporte,
+      @RequestParam(value = "especie", required = false) String especie,
+      @RequestParam(value = "fechaDesde", required = false) String fechaDesde,
+      @RequestParam(value = "fechaHasta", required = false) String fechaHasta,
+      @RequestParam(value = "page", defaultValue = "1") int page
+  ) {
+    if (page < 1) page = 1;
+    int pageSize = 16;
+    
+    int totalReports = servicioReporteMascota.contarReportesFiltrados(
+        busqueda, tipoDeReporte, especie, fechaDesde, fechaHasta);
+    
+    int totalPages = (int) Math.ceil((double) totalReports / pageSize);
+    if (totalPages == 0) totalPages = 1;
+    if (page > totalPages) page = totalPages;
+    
+    List<ReporteMascota> paginated = servicioReporteMascota.buscarReportesFiltradosYPaginados(
+        busqueda, tipoDeReporte, especie, fechaDesde, fechaHasta, page, pageSize);
+    
     ModelMap modelo = new ModelMap();
-    modelo.put("mascotas", servicioReporteMascota.listarReportes(busqueda));
+    modelo.put("mascotas", paginated);
+    modelo.put("currentPage", page);
+    modelo.put("totalPages", totalPages);
+    modelo.put("busqueda", busqueda);
+    modelo.put("tipoDeReporte", tipoDeReporte);
+    modelo.put("especie", especie);
+    modelo.put("fechaDesde", fechaDesde);
+    modelo.put("fechaHasta", fechaHasta);
+    
     return new ModelAndView("home", modelo);
   }
 }

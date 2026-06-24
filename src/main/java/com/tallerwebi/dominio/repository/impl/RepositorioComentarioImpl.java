@@ -32,6 +32,7 @@ public class RepositorioComentarioImpl implements RepositorioComentario {
                 .add(Restrictions.eq("reporteMascota.id", reporteId))
                 .add(Restrictions.isNull("codigoChat"))
                 .addOrder(Order.asc("fechaCreacion"))
+                .setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY)
                 .list();
     }
 
@@ -41,6 +42,7 @@ public class RepositorioComentarioImpl implements RepositorioComentario {
                 .createCriteria(Comentario.class)
                 .add(Restrictions.eq("codigoChat", codigoChat))
                 .addOrder(Order.asc("fechaCreacion"))
+                .setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY)
                 .list();
     }
 
@@ -62,6 +64,7 @@ public class RepositorioComentarioImpl implements RepositorioComentario {
                 .add(Restrictions.eq("reporteMascota.id", reporteId))
                 .add(Restrictions.isNotNull("codigoChat"))
                 .addOrder(Order.asc("fechaCreacion"))
+                .setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY)
                 .list();
     }
 }
