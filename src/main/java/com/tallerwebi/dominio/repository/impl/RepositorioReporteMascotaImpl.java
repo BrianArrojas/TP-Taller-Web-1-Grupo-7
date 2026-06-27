@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.web.multipart.MultipartFile;
-
+import java.time.LocalDate;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -67,6 +67,7 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
                 File dir = new File(uploadDir);
                 if (!dir.exists()) dir.mkdirs();
 
+                boolean primera = true;
                 for (MultipartFile imagen : datosReporteMascota.getImagenes()) {
                     if (!imagen.isEmpty()) {
                         String nombreArchivo = UUID.randomUUID().toString() + ".png";
@@ -74,6 +75,11 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
                         // Guardar físico
                         File fileSrc = new File(dir, nombreArchivo);
                         imagen.transferTo(fileSrc);
+
+                        if (primera) {
+                            datosReporteMascota.setNombreImagenPublicada(nombreArchivo);
+                            primera = false;
+                        }
 
                         // Crear entidad Foto por cada archivo
                         Foto foto = new Foto();
@@ -130,6 +136,7 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
                         Restrictions.ilike("especie", wildcard),
                         Restrictions.ilike("nombre", wildcard)
                 ))
+                .setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY)
                 .list();
     }
 
@@ -154,10 +161,95 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ReporteMascota> obtenerTodosLosReportesActivos() {
         return sessionFactory.getCurrentSession()
                 .createCriteria(ReporteMascota.class)
                 .add(Restrictions.eq("registroActivo", true)) // Filtra por el campo booleano
+                .setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY)
                 .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ReporteMascota> buscarReportesFiltradosYPaginados(
+            String busqueda, String tipoDeReporte, String especie,
+            LocalDate fechaDesde, LocalDate fechaHasta, int page, int pageSize) {
+        
+        org.hibernate.Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReporteMascota.class);
+        criteria.add(Restrictions.eq("registroActivo", true));
+        
+        if (busqueda != null && !busqueda.trim().isEmpty()) {
+            String wildcard = "%" + busqueda.toLowerCase().trim() + "%";
+            criteria.add(Restrictions.or(
+                    Restrictions.ilike("especie", wildcard),
+                    Restrictions.ilike("nombre", wildcard)
+            ));
         }
+        
+        if (tipoDeReporte != null && !tipoDeReporte.trim().isEmpty() && !tipoDeReporte.equalsIgnoreCase("Todos")) {
+            criteria.add(Restrictions.ilike("tipoDeReporte", tipoDeReporte.trim()));
+        }
+        
+        if (especie != null && !especie.trim().isEmpty() && !especie.equalsIgnoreCase("Todas")) {
+            criteria.add(Restrictions.ilike("especie", especie.trim()));
+        }
+        
+        if (fechaDesde != null) {
+            criteria.add(Restrictions.ge("fecha", fechaDesde));
+        }
+        
+        if (fechaHasta != null) {
+            criteria.add(Restrictions.le("fecha", fechaHasta));
+        }
+        
+        criteria.addOrder(org.hibernate.criterion.Order.desc("fecha"));
+        criteria.addOrder(org.hibernate.criterion.Order.desc("fechaCreacionReporte"));
+        
+        int firstResult = (page - 1) * pageSize;
+        criteria.setFirstResult(firstResult);
+        criteria.setMaxResults(pageSize);
+        
+        criteria.setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        
+        return criteria.list();
+    }
+
+    @Override
+    public int contarReportesFiltrados(
+            String busqueda, String tipoDeReporte, String especie,
+            LocalDate fechaDesde, LocalDate fechaHasta) {
+        
+        org.hibernate.Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReporteMascota.class);
+        criteria.add(Restrictions.eq("registroActivo", true));
+        
+        if (busqueda != null && !busqueda.trim().isEmpty()) {
+            String wildcard = "%" + busqueda.toLowerCase().trim() + "%";
+            criteria.add(Restrictions.or(
+                    Restrictions.ilike("especie", wildcard),
+                    Restrictions.ilike("nombre", wildcard)
+            ));
+        }
+        
+        if (tipoDeReporte != null && !tipoDeReporte.trim().isEmpty() && !tipoDeReporte.equalsIgnoreCase("Todos")) {
+            criteria.add(Restrictions.ilike("tipoDeReporte", tipoDeReporte.trim()));
+        }
+        
+        if (especie != null && !especie.trim().isEmpty() && !especie.equalsIgnoreCase("Todas")) {
+            criteria.add(Restrictions.ilike("especie", especie.trim()));
+        }
+        
+        if (fechaDesde != null) {
+            criteria.add(Restrictions.ge("fecha", fechaDesde));
+        }
+        
+        if (fechaHasta != null) {
+            criteria.add(Restrictions.le("fecha", fechaHasta));
+        }
+        
+        criteria.setProjection(org.hibernate.criterion.Projections.countDistinct("id"));
+        
+        Long count = (Long) criteria.uniqueResult();
+        return count != null ? count.intValue() : 0;
+    }
 }

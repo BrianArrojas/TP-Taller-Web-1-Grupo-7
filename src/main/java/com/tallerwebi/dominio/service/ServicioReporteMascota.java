@@ -28,4 +28,12 @@ public interface ServicioReporteMascota {
     public List<ReporteMascota> listarReportes(String busqueda);
     public void validarCantidadDeFotos(DatosReporteMascotaDTO dto);
     public List<ReporteMascota> obtenerTodosLosReportesActivos();
+
+    List<ReporteMascota> buscarReportesFiltradosYPaginados(
+        String busqueda, String tipoDeReporte, String especie,
+        String fechaDesde, String fechaHasta, int page, int pageSize);
+
+    int contarReportesFiltrados(
+        String busqueda, String tipoDeReporte, String especie,
+        String fechaDesde, String fechaHasta);
 }

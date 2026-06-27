@@ -1,3 +1,8 @@
+/* Evitar el desplazamiento (shift) horizontal de elementos fijos como el navbar */
+html {
+    scrollbar-gutter: stable;
+}
+
 /* Estilos para el efecto hover en las tarjetas de mascota */
 .card-hover {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;

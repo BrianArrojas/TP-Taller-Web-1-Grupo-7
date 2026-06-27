@@ -180,4 +180,53 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public List<ReporteMascota> buscarReportesFiltradosYPaginados(
+            String busqueda, String tipoDeReporte, String especie,
+            String fechaDesde, String fechaHasta, int page, int pageSize) {
+        
+        LocalDate fDesde = null;
+        if (fechaDesde != null && !fechaDesde.trim().isEmpty()) {
+            try {
+                fDesde = LocalDate.parse(fechaDesde.trim());
+            } catch (Exception e) {
+            }
+        }
+        
+        LocalDate fHasta = null;
+        if (fechaHasta != null && !fechaHasta.trim().isEmpty()) {
+            try {
+                fHasta = LocalDate.parse(fechaHasta.trim());
+            } catch (Exception e) {
+            }
+        }
+        
+        return repositorioReporteMascota.buscarReportesFiltradosYPaginados(
+            busqueda, tipoDeReporte, especie, fDesde, fHasta, page, pageSize);
+    }
+
+    @Override
+    public int contarReportesFiltrados(
+            String busqueda, String tipoDeReporte, String especie,
+            String fechaDesde, String fechaHasta) {
+        
+        LocalDate fDesde = null;
+        if (fechaDesde != null && !fechaDesde.trim().isEmpty()) {
+            try {
+                fDesde = LocalDate.parse(fechaDesde.trim());
+            } catch (Exception e) {
+            }
+        }
+        
+        LocalDate fHasta = null;
+        if (fechaHasta != null && !fechaHasta.trim().isEmpty()) {
+            try {
+                fHasta = LocalDate.parse(fechaHasta.trim());
+            } catch (Exception e) {
+            }
+        }
+        
+        return repositorioReporteMascota.contarReportesFiltrados(
+            busqueda, tipoDeReporte, especie, fDesde, fHasta);
+    }
 }
