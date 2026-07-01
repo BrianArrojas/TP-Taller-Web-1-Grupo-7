@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -99,6 +100,47 @@ public class ServicioReporteMascotaImpl implements ServicioReporteMascota {
             reporteExistente.setEspecie(datosReporteMascotaDTO.getEspecie());
             reporteExistente.setTipoDeReporte(datosReporteMascotaDTO.getTipoDeReporte());
             reporteExistente.setFecha(datosReporteMascotaDTO.getFecha());
+
+            if (datosReporteMascotaDTO.getFotosAEliminar() != null && !datosReporteMascotaDTO.getFotosAEliminar().isEmpty()) {
+                reporteExistente.getFotos().removeIf(foto -> datosReporteMascotaDTO.getFotosAEliminar().contains(foto.getId()));
+            }
+
+            int fotosRestantes = reporteExistente.getFotos().size();
+            int fotosNuevas = 0;
+            if (datosReporteMascotaDTO.getNuevasImagenes() != null) {
+
+                fotosNuevas = (int) datosReporteMascotaDTO.getNuevasImagenes().stream().filter(img -> !img.isEmpty()).count();
+            }
+
+            if (fotosRestantes + fotosNuevas > 4) {
+                throw new CantidadFotosExcedidaException("No puedes tener más de 4 imágenes en total.");
+            }
+
+            if (fotosNuevas > 0) {
+                try {
+                    String uploadDir = "src/main/webapp/img/";
+                    File dir = new File(uploadDir);
+                    if (!dir.exists()) dir.mkdirs();
+
+                    for (MultipartFile archivoNuevo : datosReporteMascotaDTO.getNuevasImagenes()) {
+                        if (!archivoNuevo.isEmpty()) {
+
+                            String nombreArchivo = java.util.UUID.randomUUID().toString() + ".png";
+
+                            File fileSrc = new File(dir, nombreArchivo);
+                            archivoNuevo.transferTo(fileSrc);
+
+                            com.tallerwebi.dominio.model.Foto nuevaFoto = new com.tallerwebi.dominio.model.Foto();
+                            nuevaFoto.setImg(nombreArchivo);
+                            nuevaFoto.setReporteMascota(reporteExistente);
+
+                            reporteExistente.getFotos().add(nuevaFoto);
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException("Error al guardar las nuevas imágenes", e);
+                }
+            }
 
             repositorioReporteMascota.actualizarReporte(reporteExistente);
 

@@ -31,6 +31,8 @@ public class DatosReporteMascotaDTO {
   private String nombreImagenPublicada;
   private Double latitud;
   private Double longitud;
+  private List<Long> fotosAEliminar;
+  private List<MultipartFile> nuevasImagenes;
 
   public String getFechaFormateada() {
     if (this.fecha == null) {

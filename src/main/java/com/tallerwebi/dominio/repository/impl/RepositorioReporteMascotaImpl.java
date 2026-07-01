@@ -99,6 +99,7 @@ public class RepositorioReporteMascotaImpl implements RepositorioReporteMascota 
         return sessionFactory.getCurrentSession()
                 .createCriteria(ReporteMascota.class)
                 .add(org.hibernate.criterion.Restrictions.eq("usuario", usuario))
+                .addOrder(org.hibernate.criterion.Order.desc("fechaCreacionReporte"))
                 .setResultTransformer(org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY)
                 .list();
     }
