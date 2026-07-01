@@ -7,15 +7,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <style>
-        .reporte-item {
-            border: 1px solid #dee2e6;
-            padding: 15px;
-            margin-bottom: 15px;
-            background-color: white;
-            transition: background-color 0.3s ease;
-        }
+        .reporte-item { border: 1px solid #dee2e6; padding: 15px; margin-bottom: 15px; background-color: white; transition: background-color 0.3s ease; }
         .reporte-item:hover { background-color: #f8f9fa; }
-        .img-listado { width: 120px; height: 120px; object-fit: cover; border-radius: 4px; }
+
+        .foto-edit-container { position: relative; display: inline-block; width: 80px; height: 80px; margin-right: 10px; margin-bottom: 10px; }
+        .foto-edit-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid #ccc; transition: 0.3s; }
+        .btn-delete-foto { position: absolute; top: -5px; right: -5px; background: white; border: 1px solid #000055; color: #000055; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-add-foto { width: 80px; height: 80px; border: 2px dashed #000055; border-radius: 8px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; color: #000055; cursor: pointer; background: white; margin-bottom: 10px; }
+        .btn-add-foto:hover { background: #f0f4ff; }
     </style>
 </head>
 
@@ -29,21 +28,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/home}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/realizar-reporte}">Reportar Mascota</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/mi-perfil}">Perfil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/mis-reportes}">Mis Reportes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/mapa-reportes}">Mapa de Reportes</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/realizar-reporte}">Reportar Mascota</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/mi-perfil}">Perfil</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/mis-reportes}">Mis Reportes</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/mapa-reportes}">Mapa de Reportes</a></li>
                 <li class="nav-item" th:if="${session.ROL == 'ADMIN'}">
                     <a class="nav-link text-warning fw-bold" th:href="@{/admin}">Panel Admin</a>
                 </li>
@@ -58,29 +47,23 @@
 <main class="container mt-5 pt-5">
     <h1 class="mb-4 text-center">Mis Reportes</h1>
 
+    <div th:if="${param.exito}" class="alert alert-success text-center shadow-sm" style="max-width: 600px; margin: 0 auto 20px auto;">
+        <span th:text="${param.exito}"></span>
+    </div>
+
     <div th:each="reporte : ${reportes}" class="reporte-item shadow-sm">
         <div class="row align-items-center">
             <div class="col-md-2">
                 <a th:href="@{'/detalle/' + ${reporte.id}}" style="text-decoration: none;">
                     <div class="d-grid gap-1" style="grid-template-columns: repeat(2, 60px);">
-
                         <th:block th:if="${reporte.fotos != null && !reporte.fotos.isEmpty()}">
-                            <div th:each="foto, iterStat : ${reporte.fotos}"
-                                 th:if="${iterStat.index < 4}"
-                                 class="overflow-hidden" style="width: 60px; height: 60px;">
-
-                                <img th:src="@{${foto.img.startsWith('img/') ? '/' + foto.img : '/img/' + foto.img}}"
-                                     class="img-fluid w-100 h-100"
-                                     style="object-fit: cover;"
-                                     alt="Foto">
+                            <div th:each="foto, iterStat : ${reporte.fotos}" th:if="${iterStat.index < 4}" class="overflow-hidden" style="width: 60px; height: 60px;">
+                                <img th:src="@{${foto.img.startsWith('img/') ? '/' + foto.img : '/img/' + foto.img}}" class="img-fluid w-100 h-100" style="object-fit: cover;" alt="Foto">
                             </div>
                         </th:block>
-
-                        <div th:if="${reporte.fotos == null || reporte.fotos.isEmpty()}"
-                             class="overflow-hidden" style="width: 60px; height: 60px;">
+                        <div th:if="${reporte.fotos == null || reporte.fotos.isEmpty()}" class="overflow-hidden" style="width: 60px; height: 60px;">
                             <img src="/img/default-pet.png" class="img-fluid w-100 h-100" style="object-fit: cover;" alt="Sin foto">
                         </div>
-
                     </div>
                 </a>
             </div>
@@ -90,17 +73,13 @@
                     <h5 th:text="${reporte.nombre}">Nombre</h5>
                 </a>
                 <p class="mb-1"><strong>Tipo:</strong> <span th:text="${reporte.tipoDeReporte}"></span></p>
-                <span th:class="${reporte.registroActivo ? 'badge bg-primary' : 'badge bg-secondary'}"
-                      th:text="${reporte.registroActivo ? 'Activo' : 'Inactivo'}"></span>
+                <span th:class="${reporte.registroActivo ? 'badge bg-primary' : 'badge bg-secondary'}" th:text="${reporte.registroActivo ? 'Activo' : 'Inactivo'}"></span>
             </div>
 
             <div class="col-md-3 d-flex flex-column align-items-end">
                 <div th:if="${reporte.registroActivo}" class="d-flex flex-column gap-2 w-100">
                     <a th:href="@{/reporte/{id}/conversaciones(id=${reporte.id})}" class="btn btn-outline-primary btn-sm w-100 mb-1">Conversaciones</a>
-                    <button type="button" class="btn btn-outline-warning btn-sm w-100"
-                            data-bs-toggle="modal" th:data-bs-target="'#modalEditar' + ${reporte.id}">
-                        Editar
-                    </button>
+                    <button type="button" class="btn btn-outline-warning btn-sm w-100" data-bs-toggle="modal" th:data-bs-target="'#modalEditar' + ${reporte.id}">Editar</button>
                     <form th:action="@{/cancelar-reporte}" method="POST" class="w-100">
                         <input type="hidden" name="id" th:value="${reporte.id}">
                         <button type="submit" class="btn btn-outline-danger btn-sm w-100">Cancelar</button>
@@ -112,13 +91,51 @@
             <div class="modal fade" th:id="'modalEditar' + ${reporte.id}" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
-                        <form th:action="@{/modificar-reporte}" method="POST">
+                        <form th:action="@{/modificar-reporte}" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="id" th:value="${reporte.id}" />
+
                             <div class="modal-header">
                                 <h5 class="modal-title">Editar: <span th:text="${reporte.nombre}"></span></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
+
                             <div class="modal-body" style="padding: 20px;">
+
+                                <div th:if="${param.error != null and param.idModal != null and param.idModal[0] == reporte.id.toString()}" class="alert alert-danger text-center p-2 mb-3">
+                                    <span th:text="${param.error}"></span>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <label class="fw-bold mb-2" style="color: #000055;">Adjuntar fotos (Máx 4)</label><br>
+                                        <div class="d-flex flex-wrap align-items-center">
+
+                                            <div th:each="foto : ${reporte.fotos}" class="foto-edit-container" th:id="'container_foto_' + ${foto.id}">
+                                                <img th:src="@{${foto.img.startsWith('img/') ? '/' + foto.img : '/img/' + foto.img}}">
+
+                                                <input type="checkbox" name="fotosAEliminar" th:value="${foto.id}" class="d-none" th:id="'chk_eliminar_' + ${foto.id}">
+
+                                                <label th:for="'chk_eliminar_' + ${foto.id}" class="btn-delete-foto" th:onclick="'document.getElementById(\'container_foto_' + ${foto.id} + '\').style.display = \'none\'; previsualizarNuevasFotos(document.getElementById(\'input_nuevas_' + ${reporte.id} + '\'), ' + ${reporte.id} + ', ' + ${reporte.fotos.size()} + ');'">×</label>
+                                            </div>
+
+                                            <div th:id="'preview-nuevas-' + ${reporte.id}" style="display: inline-flex; flex-wrap: wrap; gap: 10px; margin-right: 10px;"></div>
+
+                                            <div class="btn-add-foto" th:onclick="'document.getElementById(\'input_nuevas_' + ${reporte.id} + '\').click()'">
+                                                <span class="fs-4">+</span>
+                                                <span style="font-size: 10px;">Agregar foto</span>
+                                            </div>
+
+                                            <input type="file" name="nuevasImagenes" th:id="'input_nuevas_' + ${reporte.id}" class="d-none" multiple accept="image/jpeg, image/png" th:onchange="'previsualizarNuevasFotos(this, ' + ${reporte.id} + ', ' + ${reporte.fotos.size()} + ')'">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Fecha:</label></div>
+                                    <div class="col-md-8"><input type="date" name="fecha" th:value="${reporte.fecha}" class="form-control" required /></div>
+                                </div>
                                 <div class="row mb-3 align-items-center">
                                     <div class="col-md-4"><label class="fw-bold">Nombre:</label></div>
                                     <div class="col-md-8"><input type="text" name="nombre" th:value="${reporte.nombre}" class="form-control" required /></div>
@@ -131,6 +148,7 @@
                                     <div class="col-md-4"><label class="fw-bold">Ubicación:</label></div>
                                     <div class="col-md-8"><input type="text" name="ubicacion" th:value="${reporte.ubicacion}" class="form-control" /></div>
                                 </div>
+
                                 <div class="row mb-3 align-items-center">
                                     <div class="col-md-4"><label class="fw-bold">Raza:</label></div>
                                     <div class="col-md-8"><input type="text" name="raza" th:value="${reporte.raza}" class="form-control" /></div>
@@ -138,15 +156,6 @@
                                 <div class="row mb-3 align-items-center">
                                     <div class="col-md-4"><label class="fw-bold">Color:</label></div>
                                     <div class="col-md-8"><input type="text" name="color" th:value="${reporte.color}" class="form-control" /></div>
-                                </div>
-                                <div class="row mb-3 align-items-center">
-                                    <div class="col-md-4"><label class="fw-bold">Tipo:</label></div>
-                                    <div class="col-md-8">
-                                        <select name="tipoDeReporte" class="form-select">
-                                            <option value="perdido" th:selected="${reporte.tipoDeReporte == 'perdido'}">Perdido</option>
-                                            <option value="encontrado" th:selected="${reporte.tipoDeReporte == 'encontrado'}">Encontrado</option>
-                                        </select>
-                                    </div>
                                 </div>
                                 <div class="row mb-3 align-items-center">
                                     <div class="col-md-4"><label class="fw-bold">Especie:</label></div>
@@ -168,6 +177,15 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-4"><label class="fw-bold">Tipo:</label></div>
+                                    <div class="col-md-8">
+                                        <select name="tipoDeReporte" class="form-select">
+                                            <option value="perdido" th:selected="${reporte.tipoDeReporte == 'perdido'}">Perdido</option>
+                                            <option value="encontrado" th:selected="${reporte.tipoDeReporte == 'encontrado'}">Encontrado</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -184,5 +202,51 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function previsualizarNuevasFotos(inputElement, idReporte, cantidadOriginal) {
+        const previewContainer = document.getElementById('preview-nuevas-' + idReporte);
+        previewContainer.innerHTML = '';
+
+        const inputsEliminar = document.querySelectorAll('#modalEditar' + idReporte + ' input[name="fotosAEliminar"]:checked');
+        const cantidadBorradas = inputsEliminar.length;
+        const fotosRestantes = cantidadOriginal - cantidadBorradas;
+        const totalFinal = fotosRestantes + (inputElement.files ? inputElement.files.length : 0);
+
+        if (totalFinal > 4) {
+            alert("El máximo es 4 fotos. Te quedan " + fotosRestantes + " e intentás subir " + inputElement.files.length + ".");
+            inputElement.value = '';
+            return;
+        }
+
+        if (inputElement.files) {
+            Array.from(inputElement.files).forEach(file => {
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imgHTML = `<div class="foto-edit-container" style="margin-right: 0;"><img src="${e.target.result}" style="border: 2px solid #28a745;"></div>`;
+                        previewContainer.insertAdjacentHTML('beforeend', imgHTML);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const idModal = urlParams.get('idModal');
+
+        if (idModal) {
+            const modalElement = document.getElementById('modalEditar' + idModal);
+            if (modalElement) {
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            }
+        }
+    });
+</script>
 </body>
 </html>

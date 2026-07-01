@@ -169,12 +169,8 @@
         <p th:text="${mensaje}"></p>
     </div>
 
-    <form th:action="@{/procesando-reporte}" method="POST" th:object="${datosReporte}" enctype="multipart/form-data">
+    <form id="formReporte" th:action="@{/procesando-reporte}" method="POST" th:object="${datosReporte}" enctype="multipart/form-data">
         <fieldset>
-            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-            <input type="text" id="direccionInput" placeholder="Buscar dirección...">
-                <button type="button" onclick="obtenerCoordenadas(event)" style="padding: 5px 15px;">Buscar</button>
-            </div>
             <div class="campo-grupo campo-completo">
                 <label>Seleccioná la ubicación en el mapa:</label>
                 <div id="map" style="height: 300px; width: 100%; border: 1px solid #ced4da; border-radius: 6px;"></div>
@@ -270,31 +266,14 @@
         colocarMarcador(e.latlng.lat, e.latlng.lng);
     });
 
-    function obtenerCoordenadas(event) {
-        if (event) event.preventDefault();
-        const dir = document.getElementById("direccionInput").value;
-        if (!dir) return;
-
-        //API de Nominatim
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dir)}&limit=1`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.length > 0) {
-                    colocarMarcador(data[0].lat, data[0].lon);
-                } else {
-                    alert("Dirección no encontrada.");
-                }
-            });
-    }
-
-    document.querySelector('form').addEventListener('submit', function(event) {
+  /*document.getElementById('formReporte').addEventListener('submit', function(event) {
         var lat = document.getElementById('latitud').value;
         var lon = document.getElementById('longitud').value;
-        if (!lat || !lon) {
+        if (!lat || !lon || lat === "0.0" || lon === "0.0") {
             event.preventDefault();
-            alert("¡Por favor, marcá la ubicación en el mapa!");
+            alert("¡Por favor, marcá la ubicación en el mapa haciendo clic sobre él!");
         }
-    });
+    });*/
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

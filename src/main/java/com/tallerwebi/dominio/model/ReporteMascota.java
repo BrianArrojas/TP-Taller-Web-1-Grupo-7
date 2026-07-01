@@ -41,7 +41,7 @@ public class ReporteMascota {
     @JsonProperty("longitud")
     private Double longitud;
 
-    @JsonIgnoreProperties("reporteMascota") // Evita el bucle infinito
+    @JsonIgnoreProperties("reporteMascota")
     @OneToMany(mappedBy = "reporteMascota", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Foto> fotos ;
 
