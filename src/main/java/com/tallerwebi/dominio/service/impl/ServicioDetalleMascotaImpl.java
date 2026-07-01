@@ -10,6 +10,7 @@ import com.tallerwebi.presentacion.dto.DatosDetalleMascotaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -68,6 +69,7 @@ public class ServicioDetalleMascotaImpl implements ServicioDetalleMascota {
         dto.setDescripcion(reporte.getDescripcion());
         dto.setTipoDeReporte(reporte.getTipoDeReporte());
 
+        List<String> urls = new ArrayList<>();
         if (reporte.getFotos() != null && !reporte.getFotos().isEmpty()) {
             String imgPath = reporte.getFotos().get(0).getImg();
             if (imgPath.startsWith("img/")) {
@@ -77,9 +79,22 @@ public class ServicioDetalleMascotaImpl implements ServicioDetalleMascota {
             } else {
                 dto.setFotoUrl("/img/" + imgPath);
             }
+
+            for (com.tallerwebi.dominio.model.Foto foto : reporte.getFotos()) {
+                String fPath = foto.getImg();
+                if (fPath.startsWith("img/")) {
+                    urls.add("/" + fPath);
+                } else if (fPath.startsWith("/img/")) {
+                    urls.add(fPath);
+                } else {
+                    urls.add("/img/" + fPath);
+                }
+            }
         } else {
             dto.setFotoUrl("/img/default-pet.png");
+            urls.add("/img/default-pet.png");
         }
+        dto.setFotosUrls(urls);
 
         if (reporte.getUsuario() != null) {
             dto.setNombreDuenio(reporte.getUsuario().getNombre() + " " + reporte.getUsuario().getApellido());

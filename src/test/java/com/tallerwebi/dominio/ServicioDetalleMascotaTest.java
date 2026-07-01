@@ -48,6 +48,34 @@ public class ServicioDetalleMascotaTest {
     }
 
     @Test
+    public void obtenerDetalleDebeRetornarDTOConMultiplesFotos() {
+        Long id = 1L;
+        ReporteMascota reporte = new ReporteMascota();
+        reporte.setId(id);
+        reporte.setNombre("Firulais");
+
+        com.tallerwebi.dominio.model.Foto foto1 = new com.tallerwebi.dominio.model.Foto();
+        foto1.setImg("img1.png");
+        foto1.setReporteMascota(reporte);
+
+        com.tallerwebi.dominio.model.Foto foto2 = new com.tallerwebi.dominio.model.Foto();
+        foto2.setImg("img2.png");
+        foto2.setReporteMascota(reporte);
+
+        reporte.getFotos().add(foto1);
+        reporte.getFotos().add(foto2);
+
+        when(repositorioReporteMascotaMock.buscarPorId(id)).thenReturn(reporte);
+
+        DatosDetalleMascotaDTO dto = servicio.obtenerDetalle(id);
+
+        assertThat(dto.getNombre(), equalTo("Firulais"));
+        assertThat(dto.getFotosUrls(), hasSize(2));
+        assertThat(dto.getFotosUrls(), contains("/img/img1.png", "/img/img2.png"));
+    }
+
+
+    @Test
     public void publicarComentarioPublicoDebeGuardarComentario() {
         Long idReporte = 1L;
         Usuario usuario = new Usuario();

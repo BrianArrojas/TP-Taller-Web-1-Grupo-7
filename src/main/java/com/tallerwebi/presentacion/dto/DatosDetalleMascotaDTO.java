@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class DatosDetalleMascotaDTO {
     private String ubicacion;
     private String descripcion;
     private String fotoUrl;          
+    private List<String> fotosUrls;
     private String nombreDuenio;     
     private String tipoDeReporte;    
     private Long idDuenio;

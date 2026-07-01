@@ -15,6 +15,8 @@ INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(1, 'img/0.jpg', 1);
 
 INSERT INTO reporte_mascota(id, tipo_de_reporte, nombre, especie, fecha, registro_activo, usuario_id, latitud, longitud) VALUES(2, 'Perdido', 'Luna', 'Gato', '2023-02-20', true, 3, -34.6000, -58.5110);
 INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(2, 'img/1.jpg', 2);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(30, 'img/2.jpg', 2);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(31, 'img/3.jpg', 2);
 
 INSERT INTO reporte_mascota(id, tipo_de_reporte, nombre, especie, fecha, registro_activo, usuario_id, latitud, longitud) VALUES(3, 'Encontrado', NULL, 'Gato', '2023-03-10', true, 3, -34.5997, -58.5113);
 INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(3, 'img/2.jpg', 3);
@@ -97,5 +99,89 @@ INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(28, 'img/124.jpg', 28);
 INSERT INTO reporte_mascota(id, tipo_de_reporte, nombre, especie, fecha, registro_activo, usuario_id, latitud, longitud) VALUES(29, 'Encontrado', NULL, 'Perro', '2025-05-05', true, 2, -34.5955, -58.5040);
 INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(29, 'img/125.jpg', 29);
 
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(32, 'img/1.jpg', 1);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(33, 'img/2.jpg', 1);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(34, 'img/3.jpg', 3);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(35, 'img/4.jpg', 3);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(36, 'img/4.jpg', 4);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(37, 'img/5.jpg', 4);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(38, 'img/5.jpg', 5);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(39, 'img/7.jpg', 5);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(40, 'img/7.jpg', 6);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(41, 'img/8.jpg', 6);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(42, 'img/8.jpg', 7);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(43, 'img/9.jpg', 7);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(44, 'img/9.jpg', 8);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(45, 'img/10.jpg', 8);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(46, 'img/10.jpg', 9);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(47, 'img/11.jpg', 9);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(48, 'img/11.jpg', 10);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(49, 'img/12.jpg', 10);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(50, 'img/12.jpg', 11);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(51, 'img/13.jpg', 11);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(52, 'img/13.jpg', 12);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(53, 'img/14.jpg', 12);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(54, 'img/14.jpg', 13);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(55, 'img/0.jpg', 13);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(56, 'img/0.jpg', 14);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(57, 'img/1.jpg', 14);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(58, 'img/112.jpg', 15);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(59, 'img/113.jpg', 15);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(60, 'img/113.jpg', 16);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(61, 'img/114.jpg', 16);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(62, 'img/114.jpg', 17);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(63, 'img/115.jpg', 17);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(64, 'img/115.jpg', 18);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(65, 'img/116.jpg', 18);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(66, 'img/116.jpg', 19);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(67, 'img/117.jpg', 19);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(68, 'img/117.jpg', 20);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(69, 'img/118.jpg', 20);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(70, 'img/118.jpg', 21);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(71, 'img/119.jpg', 21);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(72, 'img/119.jpg', 22);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(73, 'img/120.jpg', 22);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(74, 'img/120.jpg', 23);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(75, 'img/121.jpg', 23);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(76, 'img/121.jpg', 24);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(77, 'img/122.jpg', 24);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(78, 'img/122.jpg', 25);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(79, 'img/123.jpg', 25);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(80, 'img/123.jpg', 26);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(81, 'img/124.jpg', 26);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(82, 'img/124.jpg', 27);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(83, 'img/125.jpg', 27);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(84, 'img/125.jpg', 28);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(85, 'img/111.jpg', 28);
+
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(86, 'img/111.jpg', 29);
+INSERT INTO Foto(id, img, reporte_mascota_id) VALUES(87, 'img/112.jpg', 29);
+
 SELECT setval(pg_get_serial_sequence('reporte_mascota', 'id'), 29);
-SELECT setval(pg_get_serial_sequence('foto', 'id'), 29);
+SELECT setval(pg_get_serial_sequence('foto', 'id'), 87);

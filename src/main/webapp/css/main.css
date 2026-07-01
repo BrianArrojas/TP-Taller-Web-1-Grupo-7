@@ -1,3 +1,12 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: #f4f6f9;
+    color: #2d3748;
+}
+
 /* Evitar el desplazamiento (shift) horizontal de elementos fijos como el navbar */
 html {
     scrollbar-gutter: stable;
@@ -12,3 +21,199 @@ html {
     transform: scale(1.05);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
+/* Premium details container */
+.detail-container {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+/* Carousel and Thumbnail Styles */
+.carousel-container {
+    overflow: hidden;
+    border-radius: 15px;
+    background-color: #f1f3f5;
+    position: relative;
+}
+
+.carousel-item img {
+    object-fit: cover;
+    height: 480px;
+    width: 100%;
+}
+
+.thumbnail-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.thumbnail-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+    background: none;
+}
+
+.thumbnail-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumbnail-btn:hover, .thumbnail-btn.active-thumb {
+    border-color: #0d6efd;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+}
+
+/* Badge specific styling */
+.badge-perdido {
+    background-color: #dc3545;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.badge-encontrado {
+    background-color: #198754;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+/* Data list styles */
+.detail-item {
+    padding: 12px 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-icon {
+    width: 24px;
+    color: #0d6efd;
+    margin-right: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Comments forum section */
+.comment-bubble {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease;
+}
+
+.comment-bubble:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+}
+
+.comment-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.15rem;
+    border: 2px solid #bee3f8;
+}
+
+/* Button pulse animations & shadows */
+.btn-premium-contact {
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(13, 110, 253, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-premium-contact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
+}
+
+/* Profile Avatar in Navbar */
+.nav-profile-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #0d6efd;
+    color: #ffffff !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    border: 2px solid #ffffff;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.nav-profile-avatar:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
+    background-color: #0b5ed7;
+}
+
+/* Gradient brand text style */
+.text-primary-gradient {
+    color: #ffffff !important;
+    background: linear-gradient(45deg, #ffffff, #88b0ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px;
+}
+
+/* Hide caret on avatar dropdown */
+.nav-profile-avatar.dropdown-toggle::after {
+    display: none !important;
+}
+
+.dropdown-menu .dropdown-item {
+    font-size: 0.95rem;
+    color: #4a5568;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #f7fafc;
+    color: #0d6efd;
+}
+
+
+

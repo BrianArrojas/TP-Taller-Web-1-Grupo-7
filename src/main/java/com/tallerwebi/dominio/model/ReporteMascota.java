@@ -43,6 +43,7 @@ public class ReporteMascota {
 
     @JsonIgnoreProperties("reporteMascota") // Evita el bucle infinito
     @OneToMany(mappedBy = "reporteMascota", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
     private List<Foto> fotos ;
 
 

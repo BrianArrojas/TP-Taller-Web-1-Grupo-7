@@ -2,101 +2,451 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Mascota</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/main.css(v=2.1)}" />
+    <style>
+        /* Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        html {
+            overflow-y: scroll !important;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f4f6f9 !important;
+            color: #2d3748;
+        }
+
+        /* Premium details container */
+        .detail-container {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Carousel and Thumbnail Styles */
+        .carousel-container {
+            overflow: hidden;
+            border-radius: 15px;
+            background-color: #f1f3f5;
+            position: relative;
+        }
+
+        .carousel-item img {
+            object-fit: cover !important;
+            height: 480px !important; /* Fixed height for all images */
+            width: 100% !important;
+        }
+
+        .thumbnail-container {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 10px !important;
+            margin-top: 15px !important;
+            justify-content: flex-start !important;
+            flex-wrap: wrap !important;
+        }
+
+        .thumbnail-btn {
+            width: 70px !important;
+            height: 70px !important;
+            border-radius: 10px !important;
+            overflow: hidden !important;
+            border: 2px solid transparent !important;
+            cursor: pointer !important;
+            padding: 0 !important;
+            transition: all 0.2s ease !important;
+            background: none !important;
+            display: inline-block !important;
+        }
+
+        .thumbnail-btn img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+
+        .thumbnail-btn:hover, .thumbnail-btn.active-thumb {
+            border-color: #0d6efd !important;
+            transform: scale(1.05) !important;
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25) !important;
+        }
+
+        /* Badge specific styling */
+        .badge-perdido {
+            background-color: #dc3545;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .badge-encontrado {
+            background-color: #198754;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        /* Data list styles */
+        .detail-item {
+            padding: 12px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-icon {
+            width: 24px;
+            color: #0d6efd;
+            margin-right: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Comments forum section */
+        .comment-bubble {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #edf2f7;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease;
+        }
+
+        .comment-bubble:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .comment-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.15rem;
+            border: 2px solid #bee3f8;
+        }
+
+        /* Button pulse animations & shadows */
+        .btn-premium-contact {
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-premium-contact:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="#">Mascotas</a>
+        <a class="navbar-brand fw-bold text-primary-gradient" th:href="@{/home}"><i class="bi bi-radar me-1"></i>Rastropet</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/home}">Home</a>
+                    <a class="nav-link" th:href="@{/realizar-reporte}">Reportar</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/realizar-reporte}">Reportar Mascota</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/mi-perfil}">Perfil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/mis-reportes}">Mis Reportes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/mapa-reportes}">Mapa de Reportes</a>
+                    <a class="nav-link" th:href="@{/mapa-reportes}">Mapa</a>
                 </li>
                 <li class="nav-item" th:if="${session.ROL == 'ADMIN'}">
                     <a class="nav-link text-warning fw-bold" th:href="@{/admin}">Panel Admin</a>
                 </li>
             </ul>
-            <form class="d-flex mt-2 mt-md-0 ms-auto">
-                <a class="btn btn-outline-success my-2 my-sm-0" th:href="@{/logout}">Logout</a>
-            </form>
+            <div class="d-flex align-items-center ms-auto navbar-user-section">
+                <div class="dropdown">
+                    <a class="nav-profile-avatar" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                       style="width: 38px; height: 38px; border-radius: 50%; background-color: #228be6; color: #ffffff !important; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.2rem; text-decoration: none !important; text-transform: uppercase;"
+                       th:title="${session.usuario != null} ? 'Opciones de ' + ${session.usuario.nombre} : 'Usuario'"
+                       th:text="${session.usuario != null and not #strings.isEmpty(session.usuario.nombre) ? #strings.substring(session.usuario.nombre, 0, 1) : 'U'}">U</a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 160px;">
+                        <li>
+                            <a class="dropdown-item py-2 px-3 d-flex align-items-center gap-2" th:href="@{/mi-perfil}">
+                                <i class="bi bi-person-fill text-primary"></i>
+                                <span>Mi Perfil</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 px-3 d-flex align-items-center gap-2" th:href="@{/mis-reportes}">
+                                <i class="bi bi-file-earmark-text-fill text-success"></i>
+                                <span>Mis Reportes</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li>
+                            <a class="dropdown-item py-2 px-3 d-flex align-items-center gap-2 text-danger" th:href="@{/logout}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Cerrar Sesión</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 
-<main class="container mt-5 pt-5">
-    <h1>Detalle de la mascota</h1>
-    <div class="card mb-3">
-        <div class="row g-0">
-            <div class="col-md-4">
-                <img th:src="@{${mascota.fotoUrl}}" class="img-fluid rounded-start" alt="Foto de la mascota"
-                th:attr="onerror='this.onerror=null;this.src=\'' + @{/img/default-pet.png} + '\';'">
+<main class="container mt-5 pt-5 pb-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1 class="mb-0 display-5 fw-bold" th:text="${mascota.nombre}">Nombre</h1>
             </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${mascota.nombre}">Nombre</h5>
-                    <p class="card-text">
-                        <strong>Tipo:</strong> <span th:text="${mascota.tipoDeReporte}"></span><br>
-                        <strong>Especie:</strong> <span th:text="${mascota.especie}"></span><br>
-                        <strong>Raza:</strong> <span th:text="${mascota.raza}"></span><br>
-                        <strong>Color:</strong> <span th:text="${mascota.color}"></span><br>
-                        <strong>Tamaño:</strong> <span th:text="${mascota.tamano}"></span><br>
-                        <strong>Fecha:</strong> <span th:text="${mascota.fecha}"></span><br>
-                        <strong>Ubicación:</strong> <span th:text="${mascota.ubicacion}"></span><br>
-                    </p>
-                    <p class="card-text" th:text="${mascota.descripcion}"></p>
-                    <p class="card-text"><strong>Publicado por:</strong> <span th:text="${mascota.nombreDuenio}"></span></p>
-                    <a th:href="@{/iniciar-chat/{id}(id=${mascota.id})}" 
-                        class="btn btn-primary"
-                        th:if="${session.usuario?.id != mascota.idDuenio}">
-                        Contactar al dueño
-                    </a>
+            <a th:href="@{/home}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-2"></i>Volver al listado
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Detail Card Container -->
+    <div class="detail-container">
+        <div class="row g-4">
+            <!-- Left side: Photo Gallery / Carousel -->
+            <div class="col-lg-6">
+                <div class="carousel-container shadow-sm">
+                    <!-- Carousel -->
+                    <div id="mascotaCarousel" class="carousel slide" data-bs-ride="carousel" th:if="${not #lists.isEmpty(mascota.fotosUrls)}">
+                        <!-- Indicators -->
+                        <div class="carousel-indicators" th:if="${#lists.size(mascota.fotosUrls) > 1}">
+                            <button type="button" data-bs-target="#mascotaCarousel" 
+                                    th:each="foto, iter : ${mascota.fotosUrls}" 
+                                    th:data-bs-slide-to="${iter.index}" 
+                                    th:class="${iter.first} ? 'active' : ''" 
+                                    th:attr="aria-label='Slide ' + ${iter.index + 1}"
+                                    th:aria-current="${iter.first} ? 'true'">
+                            </button>
+                        </div>
+                        
+                        <!-- Carousel Items -->
+                        <div class="carousel-inner">
+                            <div th:each="foto, iter : ${mascota.fotosUrls}" 
+                                 class="carousel-item" 
+                                 th:classappend="${iter.first} ? 'active' : ''">
+                                <img th:src="@{${foto}}" class="d-block w-100 img-fluid" alt="Foto de la mascota"
+                                     th:attr="onerror='this.onerror=null;this.src=\'' + @{/img/default-pet.png} + '\';'">
+                            </div>
+                        </div>
+                        
+                        <!-- Navigation Controls -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#mascotaCarousel" data-bs-slide="prev" th:if="${#lists.size(mascota.fotosUrls) > 1}">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#mascotaCarousel" data-bs-slide="next" th:if="${#lists.size(mascota.fotosUrls) > 1}">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Thumbnail Previews -->
+                <div class="thumbnail-container" th:if="${not #lists.isEmpty(mascota.fotosUrls) and #lists.size(mascota.fotosUrls) > 1}">
+                    <button type="button" class="thumbnail-btn" 
+                            th:each="foto, iter : ${mascota.fotosUrls}" 
+                            th:classappend="${iter.first} ? 'active-thumb'"
+                            th:onclick="'selectSlide(' + ${iter.index} + ', this)'">
+                        <img th:src="@{${foto}}" alt="Miniatura"
+                             th:attr="onerror='this.onerror=null;this.src=\'' + @{/img/default-pet.png} + '\';'">
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right side: Pet and Report Info -->
+            <div class="col-lg-6 d-flex flex-column justify-content-between">
+                <div>
+                    <h3 class="fw-bold mb-3 pb-2 border-bottom text-primary d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <span>Información General</span>
+                        <span th:class="${mascota.tipoDeReporte == 'perdido' || mascota.tipoDeReporte == 'Perdido'} ? 'badge-perdido m-0' : 'badge-encontrado m-0'"
+                              th:text="${#strings.toUpperCase(mascota.tipoDeReporte)}" style="font-size: 0.75rem;">TIPO DE REPORTE</span>
+                    </h3>
+                    
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="bi bi-tag-fill"></i></span>
+                        <strong>Tipo de reporte:</strong> 
+                        <span th:text="${mascota.tipoDeReporte}" class="text-capitalize ms-1"></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="bi bi-paw-fill"></i></span>
+                        <strong>Especie:</strong> 
+                        <span th:text="${mascota.especie}" class="text-capitalize ms-1"></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="bi bi-search"></i></span>
+                        <strong>Raza:</strong> 
+                        <span th:text="${mascota.raza}" class="text-capitalize ms-1"></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="bi bi-palette-fill"></i></span>
+                        <strong>Color:</strong> 
+                        <span th:text="${mascota.color}" class="text-capitalize ms-1"></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="bi bi-rulers"></i></span>
+                        <strong>Tamaño:</strong> 
+                        <span th:text="${mascota.tamano}" class="text-capitalize ms-1"></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="bi bi-calendar-event-fill"></i></span>
+                        <strong>Fecha del suceso:</strong> 
+                        <span th:text="${mascota.fecha}" class="ms-1"></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="bi bi-geo-alt-fill"></i></span>
+                        <strong>Ubicación:</strong> 
+                        <span th:text="${mascota.ubicacion}" class="ms-1"></span>
+                    </div>
+
+                    <!-- Description block -->
+                    <div class="mt-4 p-3 bg-light rounded-3 border-start border-primary border-4">
+                        <h6 class="fw-bold text-muted mb-2"><i class="bi bi-chat-left-quote-fill me-2"></i>Descripción del reporte</h6>
+                        <p class="mb-0 text-secondary" style="font-style: italic; font-size: 0.95rem;" th:text="${mascota.descripcion}"></p>
+                    </div>
+                </div>
+
+                <!-- Contact & Publisher card -->
+                <div class="mt-4 pt-3 border-top">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="comment-avatar text-uppercase" th:text="${not #strings.isEmpty(mascota.nombreDuenio) ? #strings.substring(mascota.nombreDuenio, 0, 1) : 'U'}">U</div>
+                            <div>
+                                <small class="text-muted d-block">Publicado por</small>
+                                <strong class="text-dark" th:text="${mascota.nombreDuenio}">Dueño</strong>
+                            </div>
+                        </div>
+                        <a th:href="@{/iniciar-chat/{id}(id=${mascota.id})}" 
+                           class="btn btn-primary btn-premium-contact text-nowrap"
+                           th:if="${session.usuario?.id != mascota.idDuenio}">
+                            <i class="bi bi-chat-fill me-2"></i>Contactar al dueño
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Comments Section -->
     <div class="mt-5">
-        <h3>Comentarios públicos</h3>
+        <div class="d-flex align-items-center gap-2 mb-4">
+            <h3 class="fw-bold mb-0">Comentarios públicos</h3>
+            <span class="badge bg-primary rounded-pill px-2.5 py-1" 
+                  th:if="${not #lists.isEmpty(comentariosPublicos)}" 
+                  th:text="${#lists.size(comentariosPublicos)}">0</span>
+        </div>
 
-        <form th:action="@{/reporte/{id}/comentario(id=${mascota.id})}" method="post">
-            <div class="mb-3">
-                <textarea class="form-control" name="texto" rows="3" placeholder="Escribe un comentario..."></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Publicar comentario</button>
-        </form>
+        <!-- Add Comment Form -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+            <form th:action="@{/reporte/{id}/comentario(id=${mascota.id})}" method="post">
+                <div class="mb-3">
+                    <label for="textoComentario" class="form-label fw-semibold">Deja tu aporte o información útil</label>
+                    <textarea class="form-control rounded-3" id="textoComentario" name="texto" rows="3" 
+                              placeholder="Escribe un comentario respetuoso..."></textarea>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold">
+                        <i class="bi bi-send-fill me-2"></i>Publicar comentario
+                    </button>
+                </div>
+            </form>
+        </div>
 
-        <div th:if="${not #lists.isEmpty(comentariosPublicos)}" class="mt-4">
-            <h5>Comentarios de la comunidad</h5>
-            <div th:each="comentario : ${comentariosPublicos}" class="border rounded p-3 mb-2">
-                <strong th:text="${comentario.nombreRemitente}"></strong>
-                <small class="text-muted" th:text="${comentario.fechaCreacionFormateada}"></small>
-                <p class="mt-2" th:text="${comentario.texto}"></p>
+        <!-- Comments List -->
+        <div th:if="${not #lists.isEmpty(comentariosPublicos)}" class="mt-4 d-flex flex-column gap-3">
+            <div th:each="comentario : ${comentariosPublicos}" class="comment-bubble d-flex gap-3 align-items-start">
+                <div class="comment-avatar text-uppercase" th:text="${not #strings.isEmpty(comentario.nombreRemitente) ? #strings.substring(comentario.nombreRemitente, 0, 1) : 'U'}">U</div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="text-dark" th:text="${comentario.nombreRemitente}">Usuario</strong>
+                        <small class="text-muted" th:text="${comentario.fechaCreacionFormateada}">Fecha</small>
+                    </div>
+                    <p class="mb-0 text-secondary" style="font-size: 0.95rem; line-height: 1.5;" th:text="${comentario.texto}"></p>
+                </div>
             </div>
         </div>
 
+        <div th:if="${#lists.isEmpty(comentariosPublicos)}" class="text-center py-5 text-muted bg-white rounded-4 border border-dashed">
+            <i class="bi bi-chat-left-text display-4 mb-3 d-block text-secondary"></i>
+            Aún no hay comentarios. ¡Sé el primero en comentar!
+        </div>
     </div>
-
-    <a th:href="@{/home}" class="btn btn-secondary mt-3">Volver al listado</a>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    function selectSlide(index, button) {
+        var carouselEl = document.getElementById('mascotaCarousel');
+        if (carouselEl) {
+            var carousel = bootstrap.Carousel.getOrCreateInstance(carouselEl);
+            if (carousel) {
+                carousel.to(index);
+                updateActiveThumb(button);
+            }
+        }
+    }
+
+    function updateActiveThumb(button) {
+        // Remove active class from all thumbnail buttons
+        document.querySelectorAll('.thumbnail-btn').forEach(btn => {
+            btn.classList.remove('active-thumb');
+        });
+        // Add active class to clicked button
+        if (button) {
+            button.classList.add('active-thumb');
+        }
+    }
+    
+    // Also update active thumbnail when sliding via controls or keyboard
+    document.addEventListener('DOMContentLoaded', function() {
+        var carouselEl = document.getElementById('mascotaCarousel');
+        if (carouselEl) {
+            carouselEl.addEventListener('slide.bs.carousel', function (event) {
+                var index = event.to;
+                var thumbs = document.querySelectorAll('.thumbnail-btn');
+                if (thumbs.length > index) {
+                    thumbs.forEach(btn => btn.classList.remove('active-thumb'));
+                    thumbs[index].classList.add('active-thumb');
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>
