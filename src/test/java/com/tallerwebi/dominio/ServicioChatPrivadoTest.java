@@ -3,6 +3,7 @@ package com.tallerwebi.dominio;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -40,17 +41,14 @@ public class ServicioChatPrivadoTest {
 
     @Test
     public void enviarMensajeDebePersistirYPublicarEnChat() {
-        // given
         Long idReporte = 1L;
         String codigoChat = UUID.randomUUID().toString();
-        ChatDTO mensaje = new ChatDTO(idReporte, codigoChat, "Juan", "Hola");
+        ChatDTO mensaje = new ChatDTO(idReporte, codigoChat, "Juan", "Hola", null, null);
         ReporteMascota reporte = new ReporteMascota();
         when(repositorioReporteMascotaMock.buscarPorId(idReporte)).thenReturn(reporte);
 
-        // when
         servicioChat.enviarMensaje(mensaje);
 
-        // then
         ArgumentCaptor<Comentario> captor = ArgumentCaptor.forClass(Comentario.class);
         verify(repositorioComentarioMock).guardar(captor.capture());
         Comentario guardado = captor.getValue();
@@ -63,19 +61,16 @@ public class ServicioChatPrivadoTest {
 
     @Test
     public void iniciarChatPrivadoCuandoNoExisteDebeCrearUno() {
-        // given
         Long idReporte = 1L;
-        Usuario interesado = new Usuario();
-        interesado.setId(10L);
-        interesado.setNombre("Juan");
+        ChatDTO chat = new ChatDTO();
+        chat.setIdReporte(idReporte);
+        chat.setIdInteresado(10L);
+        chat.setRemitente("Juan");
+
         ReporteMascota reporte = new ReporteMascota();
         when(repositorioReporteMascotaMock.buscarPorId(idReporte)).thenReturn(reporte);
-        when(repositorioComentarioMock.buscarChatDelInteresado(idReporte, 10L)).thenReturn(null);
+        when(repositorioComentarioMock.obtenerCodigoChatExistente(idReporte, 10L)).thenReturn(null);
 
-        // when
-        String codigoChat = servicioChat.iniciarChatPrivado(idReporte, interesado);
-
-        // then
         ArgumentCaptor<Comentario> captor = ArgumentCaptor.forClass(Comentario.class);
         verify(repositorioComentarioMock).guardar(captor.capture());
         Comentario guardado = captor.getValue();
@@ -87,27 +82,24 @@ public class ServicioChatPrivadoTest {
 
     @Test
     public void iniciarChatPrivadoCuandoExisteDebeRetornarElCodigoExistente() {
-        // given
         Long idReporte = 1L;
-        Usuario interesado = new Usuario();
-        interesado.setId(10L);
+        ChatDTO chat = new ChatDTO();
+        chat.setIdReporte(idReporte);
+        chat.setIdInteresado(10L);
+
         ReporteMascota reporte = new ReporteMascota();
-        Comentario existente = new Comentario();
-        existente.setCodigoChat(UUID.randomUUID().toString());
+        String codigoExistente = UUID.randomUUID().toString();
         when(repositorioReporteMascotaMock.buscarPorId(idReporte)).thenReturn(reporte);
-        when(repositorioComentarioMock.buscarChatDelInteresado(idReporte, 10L)).thenReturn(existente);
+        when(repositorioComentarioMock.obtenerCodigoChatExistente(idReporte, 10L)).thenReturn(codigoExistente);
 
-        // when
-        String codigoChat = servicioChat.iniciarChatPrivado(idReporte, interesado);
+        String codigoChat = servicioChat.iniciarChatPrivado(chat);
 
-        // then
         verify(repositorioComentarioMock, never()).guardar(any());
-        assertThat(codigoChat, equalTo(existente.getCodigoChat()));
+        assertThat(codigoChat, equalTo(codigoExistente));
     }
 
     @Test
     public void obtenerHistorialDebeRetornarListaDeMensajesDTO() {
-        // given
         String codigoChat = UUID.randomUUID().toString();
         List<Comentario> comentarios = new ArrayList<>();
         Comentario c = new Comentario();
@@ -116,10 +108,8 @@ public class ServicioChatPrivadoTest {
         comentarios.add(c);
         when(repositorioComentarioMock.obtenerMensajesPorCodigoChat(codigoChat)).thenReturn(comentarios);
 
-        // when
         List<MensajeDTO> resultado = servicioChat.obtenerHistorial(codigoChat);
 
-        // then
         assertThat(resultado, hasSize(1));
         assertThat(resultado.get(0).getNombreRemitente(), equalTo("Juan"));
         assertThat(resultado.get(0).getTexto(), equalTo("Mensaje"));
@@ -127,7 +117,6 @@ public class ServicioChatPrivadoTest {
 
     @Test
     public void obtenerConversacionesPorReporteDebeAgruparPorCodigoChat() {
-        // given
         Long idReporte = 1L;
         String codigoChat1 = UUID.randomUUID().toString();
         String codigoChat2 = UUID.randomUUID().toString();
@@ -152,10 +141,8 @@ public class ServicioChatPrivadoTest {
         List<Comentario> mensajes = List.of(c1, c2, c3, c4);
         when(repositorioComentarioMock.obtenerTodosMensajesDelReporte(idReporte)).thenReturn(mensajes);
 
-        // when
         List<ConversacionDTO> resultado = servicioChat.obtenerConversacionesPorReporte(idReporte);
 
-        // then
         assertThat(resultado, hasSize(2));
         assertThat(resultado.get(0).getCodigoChat(), equalTo(codigoChat1));
         assertThat(resultado.get(0).getUltimoMensaje(), equalTo("Último mensaje 1"));
@@ -165,23 +152,26 @@ public class ServicioChatPrivadoTest {
     @Test
     public void puedeAccederAlChatSiEsDuenioDelReporte() {
         Long idReporte = 1L;
-        String codigoChat = "uuid-123";
+        ChatDTO chat = new ChatDTO();
+        chat.setIdReporte(idReporte);
         Usuario duenio = new Usuario();
         duenio.setId(10L);
         ReporteMascota reporte = new ReporteMascota();
         reporte.setUsuario(duenio);
         when(repositorioReporteMascotaMock.buscarPorId(idReporte)).thenReturn(reporte);
 
-        boolean resultado = servicioChat.puedeAccederAlChat(codigoChat, idReporte, duenio);
+        boolean resultado = servicioChat.puedeAccederAlChat(chat, duenio);
 
         assertThat(resultado, is(true));
-        verify(repositorioComentarioMock, never()).obtenerMensajesPorCodigoChat(anyString());
+        verify(repositorioComentarioMock, never()).obtenerCodigoChatExistente(anyLong(), anyLong());
     }
 
     @Test
     public void puedeAccederAlChatSiEsElInteresadoQueInicioElChat() {
         Long idReporte = 1L;
-        String codigoChat = "uuid-123";
+        ChatDTO chat = new ChatDTO();
+        chat.setIdReporte(idReporte);
+        chat.setIdInteresado(20L);
         Usuario duenio = new Usuario();
         duenio.setId(10L);
         Usuario interesado = new Usuario();
@@ -189,14 +179,9 @@ public class ServicioChatPrivadoTest {
         ReporteMascota reporte = new ReporteMascota();
         reporte.setUsuario(duenio);
         when(repositorioReporteMascotaMock.buscarPorId(idReporte)).thenReturn(reporte);
+        when(repositorioComentarioMock.obtenerCodigoChatExistente(idReporte, 20L)).thenReturn("uuid-123");
 
-        Comentario primerMensaje = new Comentario();
-        primerMensaje.setIdInteresado(20L);
-        List<Comentario> lista = new ArrayList<>();
-        lista.add(primerMensaje);
-        when(repositorioComentarioMock.obtenerMensajesPorCodigoChat(codigoChat)).thenReturn(lista);
-
-        boolean resultado = servicioChat.puedeAccederAlChat(codigoChat, idReporte, interesado);
+        boolean resultado = servicioChat.puedeAccederAlChat(chat, interesado);
 
         assertThat(resultado, is(true));
     }
@@ -204,7 +189,9 @@ public class ServicioChatPrivadoTest {
     @Test
     public void noPuedeAccederAlChatUnUsuarioDesconocido() {
         Long idReporte = 1L;
-        String codigoChat = "uuid-123";
+        ChatDTO chat = new ChatDTO();
+        chat.setIdReporte(idReporte);
+        chat.setIdInteresado(20L);
         Usuario duenio = new Usuario();
         duenio.setId(10L);
         Usuario intruso = new Usuario();
@@ -212,14 +199,9 @@ public class ServicioChatPrivadoTest {
         ReporteMascota reporte = new ReporteMascota();
         reporte.setUsuario(duenio);
         when(repositorioReporteMascotaMock.buscarPorId(idReporte)).thenReturn(reporte);
+        when(repositorioComentarioMock.obtenerCodigoChatExistente(idReporte, 20L)).thenReturn(null);
 
-        Comentario primerMensaje = new Comentario();
-        primerMensaje.setIdInteresado(20L);
-        List<Comentario> lista = new ArrayList<>();
-        lista.add(primerMensaje);
-        when(repositorioComentarioMock.obtenerMensajesPorCodigoChat(codigoChat)).thenReturn(lista);
-
-        boolean resultado = servicioChat.puedeAccederAlChat(codigoChat, idReporte, intruso);
+        boolean resultado = servicioChat.puedeAccederAlChat(chat, intruso);
 
         assertThat(resultado, is(false));
     }

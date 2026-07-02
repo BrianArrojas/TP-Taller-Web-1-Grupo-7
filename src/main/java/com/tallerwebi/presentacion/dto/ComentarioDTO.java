@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MensajeDTO {
+
+public class ComentarioDTO {
+
+    private Long idReporte;
 
     private String nombreRemitente;
 
     private String texto;
-
-    private String fechaFormateada;
-
+    
 }

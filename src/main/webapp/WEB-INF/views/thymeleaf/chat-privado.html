@@ -10,11 +10,7 @@
     <h1>Chat privado <small class="text-muted">Sala <span th:text="${codigoChat}"></span></small></h1>
 
     <div id="ventanaChat" class="border rounded p-3 mb-3" style="height: 300px; overflow-y: scroll;">
-        <div id="mensajes">
-            <th:block th:each="msg : ${historial}">
-                <p><strong th:text="${msg.nombreRemitente}"></strong>: <span th:text="${msg.texto}"></span></p>
-            </th:block>
-        </div>
+        <div id="mensajes"></div>
     </div>
 
     <div class="input-group">

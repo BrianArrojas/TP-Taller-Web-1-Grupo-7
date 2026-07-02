@@ -6,26 +6,32 @@ import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.repository.RepositorioComentario;
 import com.tallerwebi.dominio.repository.RepositorioReporteMascota;
 import com.tallerwebi.dominio.service.ServicioDetalleMascota;
+import com.tallerwebi.presentacion.dto.ComentarioDTO;
 import com.tallerwebi.presentacion.dto.DatosDetalleMascotaDTO;
+import com.tallerwebi.presentacion.dto.MensajeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 @Service("detalleMascotaService")
-@Transactional  // Permite consultar la base de datos
+@Transactional
 public class ServicioDetalleMascotaImpl implements ServicioDetalleMascota {
 
     private final RepositorioReporteMascota repositorioReporteMascota;
     private final RepositorioComentario repositorioComentario;
+    private final SimpMessagingTemplate mensajero;
 
     @Autowired
     public ServicioDetalleMascotaImpl(RepositorioReporteMascota repositorioReporteMascota,
-                                      RepositorioComentario repositorioComentario) {
+                                      RepositorioComentario repositorioComentario,
+                                      SimpMessagingTemplate mensajero) {
         this.repositorioReporteMascota = repositorioReporteMascota;
         this.repositorioComentario = repositorioComentario;
+        this.mensajero = mensajero;
     }
 
     @Override
@@ -38,21 +44,35 @@ public class ServicioDetalleMascotaImpl implements ServicioDetalleMascota {
     }
 
     @Override
-    public void publicarComentarioPublico(Long idReporte, String texto, Usuario usuario) {
-        ReporteMascota reporte = repositorioReporteMascota.buscarPorId(idReporte);
+    public void publicarComentario(ComentarioDTO dto) {
+        ReporteMascota reporte = repositorioReporteMascota.buscarPorId(dto.getIdReporte());
         if (reporte == null) {
             throw new RuntimeException("El reporte no existe");
         }
+
         Comentario comentario = new Comentario();
         comentario.setReporteMascota(reporte);
-        comentario.setNombreRemitente(usuario.getNombre());
-        comentario.setTexto(texto);
+        comentario.setNombreRemitente(dto.getNombreRemitente());
+        comentario.setTexto(dto.getTexto());
         repositorioComentario.guardar(comentario);
+
+        MensajeDTO mensaje = new MensajeDTO(
+                comentario.getNombreRemitente(),
+                comentario.getTexto(),
+                comentario.getFechaCreacion() != null ? comentario.getFechaCreacion().toString() : ""
+        );
+        mensajero.convertAndSend("/reporte/" + dto.getIdReporte() + "/foro", mensaje);
     }
 
     @Override
-    public List<Comentario> obtenerComentariosPublicos(Long idReporte) {
-        return repositorioComentario.obtenerTodosComentariosDelReporte(idReporte);
+    public List<MensajeDTO> obtenerComentariosPublicos(Long idReporte) {
+        List<Comentario> comentarios = repositorioComentario.obtenerTodosComentariosDelReporte(idReporte);
+        List<MensajeDTO> resultado = new ArrayList<>();
+        for (Comentario c : comentarios) {
+            String fecha = c.getFechaCreacion() != null ? c.getFechaCreacion().toString() : "";
+            resultado.add(new MensajeDTO(c.getNombreRemitente(), c.getTexto(), fecha));
+        }
+        return resultado;
     }
 
     private DatosDetalleMascotaDTO convertirADTO(ReporteMascota reporte) {

@@ -17,4 +17,7 @@ public class ChatDTO {
 
     private String contenido;
 
+    private Long idInteresado;
+
+    private String fechaFormateada;
 }

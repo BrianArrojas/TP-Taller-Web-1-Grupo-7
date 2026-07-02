@@ -11,9 +11,12 @@ import com.tallerwebi.dominio.repository.RepositorioComentario;
 import com.tallerwebi.dominio.repository.RepositorioReporteMascota;
 import com.tallerwebi.dominio.service.ServicioDetalleMascota;
 import com.tallerwebi.dominio.service.impl.ServicioDetalleMascotaImpl;
+import com.tallerwebi.presentacion.dto.ComentarioDTO;
 import com.tallerwebi.presentacion.dto.DatosDetalleMascotaDTO;
+import com.tallerwebi.presentacion.dto.MensajeDTO;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +25,12 @@ public class ServicioDetalleMascotaTest {
 
     RepositorioReporteMascota repositorioReporteMascotaMock = mock(RepositorioReporteMascota.class);
     RepositorioComentario repositorioComentarioMock = mock(RepositorioComentario.class);
+    SimpMessagingTemplate mensajeroMock = mock(SimpMessagingTemplate.class);
 
     ServicioDetalleMascota servicio = new ServicioDetalleMascotaImpl(
             repositorioReporteMascotaMock,
-            repositorioComentarioMock
+            repositorioComentarioMock,
+            mensajeroMock
     );
 
     @Test
@@ -48,31 +53,55 @@ public class ServicioDetalleMascotaTest {
     }
 
     @Test
-    public void publicarComentarioPublicoDebeGuardarComentario() {
+    public void publicarComentarioDebeGuardarYNotificar() {
+        // given
         Long idReporte = 1L;
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Juan");
+        ComentarioDTO dto = new ComentarioDTO();
+        dto.setIdReporte(idReporte);
+        dto.setNombreRemitente("Juan");
+        dto.setTexto("Hola");
+
         ReporteMascota reporte = new ReporteMascota();
         when(repositorioReporteMascotaMock.buscarPorId(idReporte)).thenReturn(reporte);
 
-        servicio.publicarComentarioPublico(idReporte, "Hola", usuario);
+        // when
+        servicio.publicarComentario(dto);
 
+        // then
         ArgumentCaptor<Comentario> captor = ArgumentCaptor.forClass(Comentario.class);
         verify(repositorioComentarioMock).guardar(captor.capture());
         Comentario guardado = captor.getValue();
         assertThat(guardado.getNombreRemitente(), equalTo("Juan"));
         assertThat(guardado.getTexto(), equalTo("Hola"));
         assertThat(guardado.getCodigoChat(), nullValue());
+
+        ArgumentCaptor<String> destinoCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<MensajeDTO> mensajeCaptor = ArgumentCaptor.forClass(MensajeDTO.class);
+        verify(mensajeroMock).convertAndSend(destinoCaptor.capture(), mensajeCaptor.capture());
+        assertThat(destinoCaptor.getValue(), equalTo("/reporte/" + idReporte + "/foro"));
+        assertThat(mensajeCaptor.getValue().getNombreRemitente(), equalTo("Juan"));
+        assertThat(mensajeCaptor.getValue().getTexto(), equalTo("Hola"));
     }
 
     @Test
-    public void obtenerComentariosPublicosDebeDelegarEnRepositorio() {
+    public void obtenerComentariosPublicosDebeDelegarEnRepositorioYConvertirADTO() {
+        // given
         Long idReporte = 1L;
-        List<Comentario> lista = new ArrayList<>();
-        when(repositorioComentarioMock.obtenerTodosComentariosDelReporte(idReporte)).thenReturn(lista);
+        List<Comentario> comentarios = new ArrayList<>();
+        Comentario c = new Comentario();
+        c.setNombreRemitente("Juan");
+        c.setTexto("Hola");
+        c.setFechaCreacion(java.time.LocalDateTime.now());
+        comentarios.add(c);
+        when(repositorioComentarioMock.obtenerTodosComentariosDelReporte(idReporte)).thenReturn(comentarios);
 
-        List<Comentario> resultado = servicio.obtenerComentariosPublicos(idReporte);
+        // when
+        List<MensajeDTO> resultado = servicio.obtenerComentariosPublicos(idReporte);
 
-        assertThat(resultado, equalTo(lista));
+        // then
+        assertThat(resultado, hasSize(1));
+        assertThat(resultado.get(0).getNombreRemitente(), equalTo("Juan"));
+        assertThat(resultado.get(0).getTexto(), equalTo("Hola"));
+        assertThat(resultado.get(0).getFechaFormateada(), notNullValue());
     }
 }

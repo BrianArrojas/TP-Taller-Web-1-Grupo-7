@@ -6,13 +6,11 @@ import java.util.List;
 public interface RepositorioComentario {
 
     void guardar(Comentario comentario);
-
-    Comentario buscarChatDelInteresado(Long reporteId, Long interesadoId);
-
-    List<Comentario> obtenerTodosComentariosDelReporte(Long reporteId);
-
-    List<Comentario> obtenerTodosMensajesDelReporte(Long reporteId);
+    String obtenerCodigoChatExistente(Long reporteId, Long interesadoId);
+    Comentario buscarPrimerMensajePorCodigoChat(String codigoChat);
 
     List<Comentario> obtenerMensajesPorCodigoChat(String codigoChat);
+    List<Comentario> obtenerTodosComentariosDelReporte(Long reporteId);
+    List<Comentario> obtenerTodosMensajesDelReporte(Long reporteId);
 
 }

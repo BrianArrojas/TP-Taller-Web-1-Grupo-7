@@ -1,8 +1,8 @@
 package com.tallerwebi.presentacion.controller;
 
-import com.tallerwebi.dominio.model.Comentario;
 import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.service.ServicioDetalleMascota;
+import com.tallerwebi.presentacion.dto.ComentarioDTO;
 import com.tallerwebi.presentacion.dto.DatosDetalleMascotaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @Controller
 public class ControladorDetalleMascota {
@@ -33,9 +32,6 @@ public class ControladorDetalleMascota {
         DatosDetalleMascotaDTO dto = servicioDetalleMascota.obtenerDetalle(id);
         model.put("mascota", dto);
 
-        List<Comentario> comentarios = servicioDetalleMascota.obtenerComentariosPublicos(id);
-        model.put("comentariosPublicos", comentarios);
-
         return new ModelAndView("detalle-mascota", model);
     }
 
@@ -48,7 +44,12 @@ public class ControladorDetalleMascota {
             return new ModelAndView("redirect:/login");
         }
 
-        servicioDetalleMascota.publicarComentarioPublico(idReporte, texto, usuario);
+        ComentarioDTO dto = new ComentarioDTO();
+        dto.setIdReporte(idReporte);
+        dto.setNombreRemitente(usuario.getNombre());
+        dto.setTexto(texto);
+
+        servicioDetalleMascota.publicarComentario(dto);
         return new ModelAndView("redirect:/detalle/" + idReporte);
     }
 }
