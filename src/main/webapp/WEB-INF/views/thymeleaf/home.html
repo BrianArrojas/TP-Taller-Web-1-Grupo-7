@@ -192,6 +192,18 @@
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
         crossorigin="anonymous"></script>
 
+    <!-- Librerías WebSocket -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <!-- ID de usuario para notificaciones -->
+    <script th:inline="javascript">
+        window.userId = /*[[${session.usuario?.id}]]*/ null;
+    </script>
+
+    <!-- Script de notificaciones -->
+    <script th:src="@{/js/notificaciones.js}"></script>
+
 </body>
 
 </html>

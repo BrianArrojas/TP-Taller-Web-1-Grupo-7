@@ -26,6 +26,28 @@ public class RepositorioComentarioImpl implements RepositorioComentario {
     }
 
     @Override
+    public String obtenerCodigoChatExistente(Long reporteId, Long interesadoId) {
+        Comentario comentario = (Comentario) sessionFactory.getCurrentSession()
+                .createCriteria(Comentario.class)
+                .add(Restrictions.eq("reporteMascota.id", reporteId))
+                .add(Restrictions.eq("idInteresado", interesadoId))
+                .add(Restrictions.isNotNull("codigoChat"))
+                .setMaxResults(1)
+                .uniqueResult();
+        return comentario != null ? comentario.getCodigoChat() : null;
+    }
+
+    @Override
+    public Comentario buscarPrimerMensajePorCodigoChat(String codigoChat) {
+        return (Comentario) sessionFactory.getCurrentSession()
+                .createCriteria(Comentario.class)
+                .add(Restrictions.eq("codigoChat", codigoChat))
+                .addOrder(Order.asc("fechaCreacion"))
+                .setMaxResults(1)
+                .uniqueResult();
+    }
+
+    @Override
     public List<Comentario> obtenerTodosComentariosDelReporte(Long reporteId) {
         return (List<Comentario>) sessionFactory.getCurrentSession()
                 .createCriteria(Comentario.class)
@@ -46,16 +68,6 @@ public class RepositorioComentarioImpl implements RepositorioComentario {
                 .list();
     }
 
-    @Override
-    public Comentario buscarChatDelInteresado(Long reporteId, Long interesadoId) {
-        return (Comentario) sessionFactory.getCurrentSession()
-                .createCriteria(Comentario.class)
-                .add(Restrictions.eq("reporteMascota.id", reporteId))
-                .add(Restrictions.eq("idInteresado", interesadoId))
-                .add(Restrictions.isNotNull("codigoChat"))
-                .setMaxResults(1)
-                .uniqueResult();
-    }
 
     @Override
     public List<Comentario> obtenerTodosMensajesDelReporte(Long reporteId) {

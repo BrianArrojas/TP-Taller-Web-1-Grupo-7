@@ -5,13 +5,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.tallerwebi.dominio.model.Usuario;
 import com.tallerwebi.dominio.service.ServicioChatPrivado;
 import com.tallerwebi.presentacion.controller.ControladorChatPrivado;
-import com.tallerwebi.presentacion.dto.MensajeDTO;
+import com.tallerwebi.presentacion.dto.ChatDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,8 +24,16 @@ public class ControladorChatPrivadoTest {
         String codigoChat = "uuid-123";
         MockHttpServletRequest request = new MockHttpServletRequest();
         Usuario interesado = new Usuario();
+        interesado.setId(10L);
+        interesado.setNombre("Juan");
         request.getSession().setAttribute("usuario", interesado);
-        when(servicioChatPrivadoMock.iniciarChatPrivado(idReporte, interesado)).thenReturn(codigoChat);
+
+        ChatDTO chatEsperado = new ChatDTO();
+        chatEsperado.setIdReporte(idReporte);
+        chatEsperado.setIdInteresado(interesado.getId());
+        chatEsperado.setRemitente(interesado.getNombre());
+
+        when(servicioChatPrivadoMock.iniciarChatPrivado(chatEsperado)).thenReturn(codigoChat);
 
         ModelAndView mav = controlador.iniciarChat(idReporte, request);
 
@@ -52,9 +57,12 @@ public class ControladorChatPrivadoTest {
         usuario.setNombre("Juan");
         request.getSession().setAttribute("usuario", usuario);
 
-        when(servicioChatPrivadoMock.puedeAccederAlChat(codigoChat, idReporte, usuario)).thenReturn(true);
-        List<MensajeDTO> historial = new ArrayList<>();
-        when(servicioChatPrivadoMock.obtenerHistorial(codigoChat)).thenReturn(historial);
+        ChatDTO chatAcceso = new ChatDTO();
+        chatAcceso.setCodigoChat(codigoChat);
+        chatAcceso.setIdReporte(idReporte);
+        chatAcceso.setIdInteresado(usuario.getId());
+
+        when(servicioChatPrivadoMock.puedeAccederAlChat(chatAcceso, usuario)).thenReturn(true);
 
         ModelAndView mav = controlador.mostrarChatPrivado(codigoChat, idReporte, request);
 
@@ -62,7 +70,6 @@ public class ControladorChatPrivadoTest {
         assertThat(mav.getModel().get("codigoChat"), equalTo(codigoChat));
         assertThat(mav.getModel().get("idReporte"), equalTo(idReporte));
         assertThat(mav.getModel().get("remitente"), equalTo("Juan"));
-        assertThat(mav.getModel().get("historial"), equalTo(historial));
     }
 
     @Test
@@ -84,7 +91,12 @@ public class ControladorChatPrivadoTest {
         Usuario usuario = new Usuario();
         request.getSession().setAttribute("usuario", usuario);
 
-        when(servicioChatPrivadoMock.puedeAccederAlChat(codigoChat, idReporte, usuario)).thenReturn(false);
+        ChatDTO chatAcceso = new ChatDTO();
+        chatAcceso.setCodigoChat(codigoChat);
+        chatAcceso.setIdReporte(idReporte);
+        chatAcceso.setIdInteresado(usuario.getId());
+
+        when(servicioChatPrivadoMock.puedeAccederAlChat(chatAcceso, usuario)).thenReturn(false);
 
         ModelAndView mav = controlador.mostrarChatPrivado(codigoChat, idReporte, request);
 

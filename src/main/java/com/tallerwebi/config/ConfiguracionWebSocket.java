@@ -17,7 +17,7 @@ public class ConfiguracionWebSocket implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registro) {
-        registro.enableSimpleBroker("/chat");
+        registro.enableSimpleBroker("/chat", "/reporte", "/usuario");
         registro.setApplicationDestinationPrefixes("/enviar");
     }
 }

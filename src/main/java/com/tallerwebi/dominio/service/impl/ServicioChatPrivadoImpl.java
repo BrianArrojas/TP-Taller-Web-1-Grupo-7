@@ -44,12 +44,28 @@ public class ServicioChatPrivadoImpl implements ServicioChatPrivado {
 
         if (idReporte != null) {
             ReporteMascota reporte = repositorioReporteMascota.buscarPorId(idReporte);
-            Comentario comentario = new Comentario();
-            comentario.setReporteMascota(reporte);
-            comentario.setNombreRemitente(mensaje.getRemitente());
-            comentario.setTexto(mensaje.getContenido());
-            comentario.setCodigoChat(codigoChat);
+            Comentario comentario = crearComentario(reporte, mensaje);
             repositorioComentario.guardar(comentario);
+
+            if (comentario.getFechaCreacion() != null) {
+                mensaje.setFechaFormateada(comentario.getFechaCreacion().toString());
+            }
+
+            String nombreMascota = reporte.getNombre() != null ? reporte.getNombre() : "una mascota";
+            String notificacion = String.format(
+                "{\"action\":\"new_message\", \"codigoChat\":\"%s\", \"nombreMascota\":\"%s\", \"idReporte\":%d}",
+                codigoChat, nombreMascota, idReporte
+            );
+
+            Usuario duenio = reporte.getUsuario();
+            if (duenio != null) {
+                mensajero.convertAndSend("/usuario/" + duenio.getId() + "/chats", notificacion);
+            }
+
+            Comentario primerMensaje = repositorioComentario.buscarPrimerMensajePorCodigoChat(codigoChat);
+            if (primerMensaje != null && primerMensaje.getIdInteresado() != null) {
+                mensajero.convertAndSend("/usuario/" + primerMensaje.getIdInteresado() + "/chats", notificacion);
+            }
         }
 
         String destino = (codigoChat != null) ? "/chat/" + codigoChat : "/reporte/" + idReporte;
@@ -57,55 +73,51 @@ public class ServicioChatPrivadoImpl implements ServicioChatPrivado {
     }
 
     @Override
-    public String iniciarChatPrivado(Long idReporte, Usuario interesado) {
-        ReporteMascota reporte = repositorioReporteMascota.buscarPorId(idReporte);
+    public String iniciarChatPrivado(ChatDTO chat) {
+        ReporteMascota reporte = repositorioReporteMascota.buscarPorId(chat.getIdReporte());
         if (reporte == null) throw new RuntimeException("El reporte no existe");
 
-        Comentario existente = repositorioComentario.buscarChatDelInteresado(idReporte, interesado.getId());
-        if (existente != null) {
-            return existente.getCodigoChat();
+        String codigoExistente = repositorioComentario.obtenerCodigoChatExistente(
+                chat.getIdReporte(), chat.getIdInteresado());
+        if (codigoExistente != null) {
+            return codigoExistente;
         }
 
         String codigoChat = UUID.randomUUID().toString();
-        Comentario comentario = new Comentario();
-        comentario.setReporteMascota(reporte);
-        comentario.setNombreRemitente(interesado.getNombre());
-        comentario.setTexto("Chat iniciado");
-        comentario.setCodigoChat(codigoChat);
-        comentario.setIdInteresado(interesado.getId());
+        chat.setCodigoChat(codigoChat);
+        chat.setContenido("Chat iniciado");
+
+        Comentario comentario = crearComentario(reporte, chat);
         repositorioComentario.guardar(comentario);
 
         return codigoChat;
     }
 
     @Override
-    public boolean puedeAccederAlChat(String codigoChat, Long idReporte, Usuario usuario) {
+    public boolean puedeAccederAlChat(ChatDTO chat, Usuario usuario) {
         if (usuario == null) return false;
 
-        ReporteMascota reporte = repositorioReporteMascota.buscarPorId(idReporte);
+        ReporteMascota reporte = repositorioReporteMascota.buscarPorId(chat.getIdReporte());
         if (reporte != null && reporte.getUsuario().getId().equals(usuario.getId())) {
             return true;
         }
 
-        List<Comentario> mensajes = repositorioComentario.obtenerMensajesPorCodigoChat(codigoChat);
-        if (!mensajes.isEmpty()) {
-            Comentario primerMensaje = mensajes.get(0);
-            Long idInteresado = primerMensaje.getIdInteresado();
-            if (idInteresado != null && idInteresado.equals(usuario.getId())) {
-                return true;
-            }
-    }
+        if (chat.getIdInteresado() != null) {
+            return repositorioComentario.obtenerCodigoChatExistente(
+                    chat.getIdReporte(), chat.getIdInteresado()) != null;
+        }
 
-    return false;
-}
+        return false;
+    }
 
     @Override
     public List<MensajeDTO> obtenerHistorial(String codigoChat) {
         List<Comentario> comentarios = repositorioComentario.obtenerMensajesPorCodigoChat(codigoChat);
         List<MensajeDTO> resultado = new ArrayList<>();
         for (Comentario c : comentarios) {
-            resultado.add(new MensajeDTO(c.getNombreRemitente(), c.getTexto()));
-        }
+        String fecha = c.getFechaCreacion() != null ? c.getFechaCreacion().toString() : "";
+        resultado.add(new MensajeDTO(c.getNombreRemitente(), c.getTexto(), fecha));
+    }
         return resultado;
     }
 
@@ -135,5 +147,19 @@ public class ServicioChatPrivadoImpl implements ServicioChatPrivado {
             resultado.add(dto);
         }
         return resultado;
+    }
+
+    private Comentario crearComentario(ReporteMascota reporte, ChatDTO chat) {
+        Comentario comentario = new Comentario();
+        comentario.setReporteMascota(reporte);
+        comentario.setNombreRemitente(chat.getRemitente());
+        comentario.setTexto(chat.getContenido());
+        comentario.setCodigoChat(chat.getCodigoChat());
+
+        if (chat.getIdInteresado() != null) {
+            comentario.setIdInteresado(chat.getIdInteresado());
+        }
+
+        return comentario;
     }
 }

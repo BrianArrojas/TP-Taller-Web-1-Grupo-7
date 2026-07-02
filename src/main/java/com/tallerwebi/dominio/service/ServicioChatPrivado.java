@@ -11,9 +11,9 @@ public interface ServicioChatPrivado {
 
     void enviarMensaje(ChatDTO mensaje);
     
-    String iniciarChatPrivado(Long idReporte, Usuario interesado);
+    String iniciarChatPrivado(ChatDTO chat);
 
-    boolean puedeAccederAlChat(String codigoChat, Long idReporte, Usuario usuario);
+    boolean puedeAccederAlChat(ChatDTO chat, Usuario usuario);
 
     List<MensajeDTO> obtenerHistorial(String codigoChat);
 

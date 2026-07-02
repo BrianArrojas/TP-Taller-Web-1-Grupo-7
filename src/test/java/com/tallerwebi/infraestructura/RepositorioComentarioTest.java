@@ -125,25 +125,26 @@ public class RepositorioComentarioTest {
     @Test
     @Transactional
     @Rollback
-    public void deberiaBuscarChatDelInteresadoExistente() {
+    public void deberiaObtenerCodigoChatExistente() {
         Usuario usuario = dadoQueTengoUnUsuario("test@unlam.edu.ar", "test", "USER");
         sessionFactory.getCurrentSession().save(usuario);
         ReporteMascota reporte = dadoQueTengoUnReporte("Firulais", "Perro", usuario);
         sessionFactory.getCurrentSession().save(reporte);
 
         Long interesadoId = 20L;
+        String codigoChat = UUID.randomUUID().toString();
         Comentario comentario = new Comentario();
         comentario.setReporteMascota(reporte);
         comentario.setNombreRemitente("Interesado");
         comentario.setTexto("Chat iniciado");
-        comentario.setCodigoChat(UUID.randomUUID().toString());
+        comentario.setCodigoChat(codigoChat);
         comentario.setIdInteresado(interesadoId);
         sessionFactory.getCurrentSession().save(comentario);
 
-        Comentario encontrado = repositorioComentario.buscarChatDelInteresado(reporte.getId(), interesadoId);
+        String codigoObtenido = repositorioComentario.obtenerCodigoChatExistente(reporte.getId(), interesadoId);
 
-        assertThat(encontrado, notNullValue());
-        assertThat(encontrado.getCodigoChat(), notNullValue());
+        assertThat(codigoObtenido, notNullValue());
+        assertThat(codigoObtenido, equalTo(codigoChat));
     }
 
     @Test
